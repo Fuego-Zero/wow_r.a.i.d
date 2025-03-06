@@ -8,7 +8,7 @@ import "@ant-design/v5-patch-for-react-19";
 import RaidContent from "./components/RaidContent";
 import { useEffect, useState } from "react";
 import { Data } from "./types";
-import storage from "@/classes/Storage";
+import storage from "@/app/classes/Storage";
 
 const { Header, Content } = Layout;
 
