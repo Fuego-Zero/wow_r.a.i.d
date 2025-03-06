@@ -34,6 +34,8 @@ export enum ActorMap {
 
   KBZ = "KBZ", //战士
   FZ = "FZ",
+
+  EMPTY = "EMPTY", //空, 用于占位
 }
 
 export type ActorType = keyof typeof ActorMap;
