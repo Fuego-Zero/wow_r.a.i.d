@@ -12,6 +12,7 @@ import storage from "@/app/classes/Storage";
 import { toPng } from "html-to-image";
 import classNames from "classnames";
 import { htmlToPngDownload } from "./utils";
+import { ActorMap } from "./components/RaidContent/constant";
 
 const { Header, Content } = Layout;
 
@@ -93,6 +94,17 @@ export default function Home() {
     });
   }
 
+  function delPlayer(time: string, index: number) {
+    const newData = data.map((item) => {
+      if (item.time !== time) return item;
+
+      item.players[index] = { actor: ActorMap.EMPTY, name: "" };
+      return item;
+    });
+
+    setDataHandler(newData);
+  }
+
   return (
     <StyleProvider layer>
       <ConfigProvider locale={zhCN} theme={{ algorithm: theme.darkAlgorithm }}>
@@ -112,7 +124,7 @@ export default function Home() {
               />
             </Header>
             <Content>
-              <RaidContent data={data} />
+              <RaidContent data={data} delPlayer={delPlayer} />
             </Content>
           </Layout>
           {contextHolder}
