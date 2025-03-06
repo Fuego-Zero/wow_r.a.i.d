@@ -30,10 +30,10 @@ const actorToCharacterClassMap: Record<ActorType, CharacterClass> = {
   CSZ: "DZ",
   ZDZ: "DZ",
 
-  ACD: "XD",
+  AC: "XD",
   ND: "XD",
-  YDT: "XD",
-  TD: "XD",
+  XT: "XD",
+  YD: "XD",
 
   KBZ: "ZS",
   FZ: "ZS",

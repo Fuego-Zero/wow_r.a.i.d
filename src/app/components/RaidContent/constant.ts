@@ -1,38 +1,38 @@
 export enum ActorMap {
-  FQ = "FQ",
-  CJQ = "CJQ",
-  NQ = "NQ",
+  FQ = "FQ", //防骑
+  CJQ = "CJQ", //惩戒骑
+  NQ = "NQ", //奶骑
 
-  XDK = "XDK",
-  DKT = "DKT",
-  BDK = "BDK",
+  XDK = "XDK", //邪DK
+  DKT = "DKT", //血DK
+  BDK = "BDK", //冰DK
 
-  DS = "DS",
-  NS = "NS",
-  ZQS = "ZQS",
+  DS = "DS", //电萨
+  NS = "NS", //奶萨
+  ZQS = "ZQS", //增强萨
 
-  AM = "AM",
-  JLM = "JLM",
+  AM = "AM", //暗牧
+  JLM = "JLM", //戒律牧
 
-  HF = "HF",
+  HF = "HF", //法师
   BF = "BF",
   AF = "AF",
 
-  EMS = "EMS",
-  TKS = "TKS",
+  EMS = "EMS", //恶魔术
+  TKS = "TKS", //痛苦术
 
   SWL = "SWL",
-  SCL = "SCL",
+  SCL = "SCL", //猎人
 
   CSZ = "CSZ",
-  ZDZ = "ZDZ",
+  ZDZ = "ZDZ", //盗贼
 
-  ACD = "ACD",
-  ND = "ND",
-  YDT = "YDT",
-  TD = "TD",
+  AC = "AC", //鸟德
+  ND = "ND", //奶德
+  XT = "XT",
+  YD = "YD", //猫德
 
-  KBZ = "KBZ",
+  KBZ = "KBZ", //战士
   FZ = "FZ",
 }
 

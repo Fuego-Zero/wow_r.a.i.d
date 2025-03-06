@@ -8,16 +8,16 @@ function Actor(props: { actor: ActorType }) {
 
   switch (actor) {
     // 德鲁伊
-    case ActorMap.ACD:
+    case ActorMap.AC:
       offset = 12;
       break;
     case ActorMap.ND:
       offset = 16;
       break;
-    case ActorMap.YDT:
+    case ActorMap.XT:
       offset = 15;
       break;
-    case ActorMap.TD:
+    case ActorMap.YD:
       offset = 14;
       break;
 
