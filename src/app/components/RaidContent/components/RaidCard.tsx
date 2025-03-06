@@ -1,9 +1,10 @@
-import { Button, Card } from "antd";
-import React from "react";
+import { Button, Card, notification } from "antd";
+import React, { useRef, useState } from "react";
 import Actor from "./Actor";
 import Players from "./Players";
 
 import mock from "@/data/mock.json";
+import { toPng } from "html-to-image";
 
 type Actor = Parameters<typeof Actor>["0"]["actor"];
 
@@ -18,11 +19,44 @@ type Data = {
 const data: Data = mock[0] as Data;
 
 function RaidCard() {
+  const el = useRef(null);
+  const [isShowBtn, setIsShowBtn] = useState(true);
+
+  async function onCopy() {
+    if (!el.current) return;
+    setIsShowBtn(false);
+
+    const dataUrl = await toPng(el.current, { cacheBust: true });
+    const res = await fetch(dataUrl);
+    const blob = await res.blob();
+
+    await navigator.clipboard.write([
+      new ClipboardItem({
+        [blob.type]: blob,
+      }),
+    ]);
+
+    notification.success({
+      message: "复制成功",
+      description: "已将图片复制到剪贴板",
+      duration: 1,
+    });
+
+    setIsShowBtn(true);
+  }
+
   return (
     <Card
       size="small"
       title={data.time}
-      extra={<Button type="link">复制</Button>}
+      extra={
+        isShowBtn && (
+          <Button type="link" onClick={onCopy}>
+            复制
+          </Button>
+        )
+      }
+      ref={el}
     >
       {data.players.map((item, index) => (
         <Card.Grid
