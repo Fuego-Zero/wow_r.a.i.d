@@ -1,4 +1,4 @@
-import { Button, Card, notification } from "antd";
+import { App, Button, Card } from "antd";
 import React, { useRef, useState } from "react";
 import Actor from "./Actor";
 import Players from "./Players";
@@ -19,6 +19,7 @@ type Data = {
 const data: Data = mock[0] as Data;
 
 function RaidCard() {
+  const { notification } = App.useApp();
   const el = useRef(null);
   const [isShowBtn, setIsShowBtn] = useState(true);
 
