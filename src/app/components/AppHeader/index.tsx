@@ -1,12 +1,17 @@
 "use client";
 
+import { hiddenButtonClass } from "@/app/common";
 import { Data } from "@/app/types";
 import { App, Button } from "antd";
 import axios from "axios";
 import React, { useState } from "react";
 
-function AppHeader(props: { setData: (value: Data) => void }) {
-  const { setData } = props;
+function AppHeader(props: {
+  setData: (value: Data) => void;
+  onCopy: () => Promise<void>;
+  onDownload: () => Promise<void>;
+}) {
+  const { setData, onCopy, onDownload } = props;
   const [file, setFile] = useState<File>();
   const { message, notification } = App.useApp();
   const [loading, setLoading] = useState(false);
@@ -62,8 +67,14 @@ function AppHeader(props: { setData: (value: Data) => void }) {
         <span className="ml-2">(Roster Auto-Integrated Deployment)</span>
       </h1>
       <div className="mr-5">{file && file.name}</div>
-      <div>
-        <Button onClick={onUpload} disabled={loading}>
+      <div className={hiddenButtonClass}>
+        <Button onClick={onDownload} disabled={loading}>
+          下载全部
+        </Button>
+        <Button className="ml-5" onClick={onCopy} disabled={loading}>
+          复制全部
+        </Button>
+        <Button className="ml-5" onClick={onUpload} disabled={loading}>
           上传名单
         </Button>
         <Button

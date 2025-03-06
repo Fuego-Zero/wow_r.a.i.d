@@ -8,6 +8,7 @@ import { toPng } from "html-to-image";
 import { Data, InferArrayItem } from "@/app/types";
 import { CloseOutlined } from "@ant-design/icons";
 import { htmlToPngDownload } from "@/app/utils";
+import { hiddenButtonClass } from "@/app/common";
 
 function RaidCard(props: { data: InferArrayItem<Data> }) {
   const { data } = props;
@@ -60,10 +61,14 @@ function RaidCard(props: { data: InferArrayItem<Data> }) {
       extra={
         isShowBtn && (
           <>
-            <Button type="link" onClick={onDownload}>
+            <Button
+              type="link"
+              className={hiddenButtonClass}
+              onClick={onDownload}
+            >
               下载
             </Button>
-            <Button type="link" onClick={onCopy}>
+            <Button type="link" className={hiddenButtonClass} onClick={onCopy}>
               复制
             </Button>
           </>

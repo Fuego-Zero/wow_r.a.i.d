@@ -7,7 +7,7 @@ function RaidContent(props: { data: Data }) {
   const { data } = props;
 
   return (
-    <Row gutter={[16, 8]} className="!mx-0 mt-5">
+    <Row gutter={[16, 8]} className="!mx-0 py-5">
       {data.map((item, index) => (
         <Col xs={24} lg={12} key={index}>
           <RaidCard data={item} />
