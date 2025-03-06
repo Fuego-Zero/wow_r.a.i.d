@@ -10,7 +10,8 @@ function AppHeader(props: {
 }) {
   const { setData } = props;
   const [file, setFile] = useState<File>();
-  const { message } = App.useApp();
+  const { message, notification } = App.useApp();
+  const [loading, setLoading] = useState(false);
 
   function onUpload() {
     const input = document.createElement("input");
@@ -35,13 +36,25 @@ function AppHeader(props: {
   }
 
   async function submit() {
-    if (!file) return message.error("请先上传名单");
+    try {
+      if (!file) return message.error("请先上传名单");
+      setLoading(true);
 
-    const formData = new FormData();
-    formData.append("file", file);
+      const formData = new FormData();
+      formData.append("file", file);
 
-    const res = await axios.post("/api/roster", formData);
-    setData(res.data);
+      const res = await axios.post("/api/roster", formData);
+      setData(res.data);
+    } catch (error) {
+      console.log(error);
+
+      notification.error({
+        message: "自动分配失败",
+        description: (error as Error).message,
+      });
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -52,8 +65,15 @@ function AppHeader(props: {
       </h1>
       <div className="mr-5">{file && file.name}</div>
       <div>
-        <Button onClick={onUpload}>上传名单</Button>
-        <Button className="ml-5" type="primary" onClick={submit}>
+        <Button onClick={onUpload} disabled={loading}>
+          上传名单
+        </Button>
+        <Button
+          className="ml-5"
+          type="primary"
+          onClick={submit}
+          disabled={loading}
+        >
           自动分配
         </Button>
       </div>
