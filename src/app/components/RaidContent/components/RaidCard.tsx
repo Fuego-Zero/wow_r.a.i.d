@@ -9,9 +9,13 @@ import { Data, InferArrayItem } from "@/app/types";
 import { CloseOutlined } from "@ant-design/icons";
 import { htmlToPngDownload } from "@/app/utils";
 import { hiddenButtonClass } from "@/app/common";
+import Empty from "./Empty";
 
-function RaidCard(props: { data: InferArrayItem<Data> }) {
-  const { data } = props;
+function RaidCard(props: {
+  data: InferArrayItem<Data>;
+  delPlayer: (time: string, index: number) => void;
+}) {
+  const { data, delPlayer } = props;
   const { notification } = App.useApp();
   const el = useRef(null);
   const [isShowBtn, setIsShowBtn] = useState(true);
@@ -82,15 +86,26 @@ function RaidCard(props: { data: InferArrayItem<Data> }) {
           hoverable={false}
           className="flex relative items-center justify-start py-1 px-2 min-w-0 w-[20%] group"
         >
-          <Actor actor={item.actor} />
-          <Players actor={item.actor}>{item.name}</Players>
-          <Button
-            className="hidden group-hover:block absolute right-0"
-            type="link"
-            size="small"
-            danger
-            icon={<CloseOutlined />}
-          />
+          {item.actor !== "EMPTY" ? (
+            <>
+              <Actor actor={item.actor} />
+              <Players actor={item.actor}>{item.name}</Players>
+              <Button
+                className="hidden group-hover:block absolute right-0"
+                type="link"
+                size="small"
+                danger
+                icon={<CloseOutlined />}
+                onClick={() => delPlayer(data.time, index)}
+              />
+            </>
+          ) : (
+            <Empty
+              onClick={() => {
+                console.log(data.time, index);
+              }}
+            />
+          )}
         </Card.Grid>
       ))}
     </Card>
