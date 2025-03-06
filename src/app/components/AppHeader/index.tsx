@@ -5,9 +5,7 @@ import { App, Button } from "antd";
 import axios from "axios";
 import React, { useState } from "react";
 
-function AppHeader(props: {
-  setData: React.Dispatch<React.SetStateAction<Data>>;
-}) {
+function AppHeader(props: { setData: (value: Data) => void }) {
   const { setData } = props;
   const [file, setFile] = useState<File>();
   const { message, notification } = App.useApp();
