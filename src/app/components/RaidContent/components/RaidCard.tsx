@@ -3,22 +3,12 @@ import React, { useRef, useState } from "react";
 import Actor from "./Actor";
 import Players from "./Players";
 
-import mock from "@/data/mock.json";
+// import mock from "@/data/mock.json";
 import { toPng } from "html-to-image";
+import { Data, InferArrayItem } from "@/app/types";
 
-type Actor = Parameters<typeof Actor>["0"]["actor"];
-
-type Data = {
-  time: string;
-  players: Array<{
-    name: string;
-    actor: Actor;
-  }>;
-};
-
-const data: Data = mock[0] as Data;
-
-function RaidCard() {
+function RaidCard(props: { data: InferArrayItem<Data> }) {
+  const { data } = props;
   const { notification } = App.useApp();
   const el = useRef(null);
   const [isShowBtn, setIsShowBtn] = useState(true);
