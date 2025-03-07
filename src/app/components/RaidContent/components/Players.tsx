@@ -37,6 +37,8 @@ const actorToCharacterClassMap: Record<ActorType, CharacterClass> = {
 
   KBZ: "ZS",
   FZ: "ZS",
+
+  EMPTY: "EMPTY",
 };
 
 function Players(props: { actor: ActorType } & React.PropsWithChildren) {
