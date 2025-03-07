@@ -9,6 +9,7 @@ import { Data, InferArrayItem } from "@/app/types";
 import { CloseOutlined } from "@ant-design/icons";
 import { htmlToPngDownload } from "@/app/utils";
 import Empty from "./Empty";
+import classNames from "classnames";
 
 function RaidCard(props: {
   data: InferArrayItem<Data>;
@@ -71,7 +72,12 @@ function RaidCard(props: {
         <Card.Grid
           key={index}
           hoverable={false}
-          className="flex relative items-center justify-start py-1 px-2 min-w-0 w-[20%] group/delPlayer"
+          className={classNames(
+            "flex relative items-center justify-start py-1 px-2 min-w-0 w-[20%] group/delPlayer",
+            {
+              "bg-amber-300/20": item.name === "空缺",
+            }
+          )}
         >
           {item.actor !== "EMPTY" ? (
             <>
