@@ -20,7 +20,6 @@ function RaidCard(props: {
 
   async function onCopy() {
     if (!el.current) return;
-    setIsShowBtn(false);
 
     const dataUrl = await toPng(el.current, { cacheBust: true });
     const res = await fetch(dataUrl);
@@ -37,13 +36,10 @@ function RaidCard(props: {
       description: "已将图片复制到剪贴板",
       duration: 1,
     });
-
-    setIsShowBtn(true);
   }
 
   async function onDownload() {
     if (!el.current) return;
-    setIsShowBtn(false);
 
     await htmlToPngDownload(el.current, data.time);
 
@@ -52,8 +48,6 @@ function RaidCard(props: {
       description: "图片已成功下载",
       duration: 1,
     });
-
-    setIsShowBtn(true);
   }
 
   return (
