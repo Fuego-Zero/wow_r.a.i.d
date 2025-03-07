@@ -51,6 +51,8 @@ export enum CharacterClassMap {
   SM = "SM",
   SS = "SS",
   ZS = "ZS",
+
+  EMPTY = "EMPTY", //空, 用于占位
 }
 
 export type CharacterClass = keyof typeof CharacterClassMap;
@@ -66,4 +68,5 @@ export const CharacterClassColorMap: Record<CharacterClass, string> = {
   SM: "#0070dd",
   SS: "#8788ee",
   ZS: "#c69b6d",
+  EMPTY: "red",
 };
