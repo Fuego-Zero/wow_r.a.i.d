@@ -38,9 +38,17 @@ export type PlayersData = {
    */
   group: [number, string] | [];
   /**
-   * 角色名
+   * 组合名称
    */
   name: string;
+  /**
+   * 微信昵称
+   */
+  pname: string;
+  /**
+   * 角色名称
+   */
+  cname: string;
   /**
    * 角色职业
    */
