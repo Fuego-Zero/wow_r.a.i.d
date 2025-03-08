@@ -123,7 +123,7 @@ export default function Home() {
       if (!item.group.length) return prev;
 
       const key = JSON.stringify(item.group);
-
+      item.name = `${item.pname} (${item.cname})`;
       prev[key] ??= [];
       prev[key].push(item);
 
