@@ -1,13 +1,13 @@
 "use client";
 
 import { hiddenButtonClass } from "@/app/common";
-import { Data } from "@/app/types";
+import { PlayersData } from "@/app/types";
 import { App, Button } from "antd";
 import axios from "axios";
 import React, { useState } from "react";
 
 function AppHeader(props: {
-  setData: (value: Data) => void;
+  setData: (value: PlayersData) => void;
   onCopy: () => Promise<void>;
   onDownload: () => Promise<void>;
 }) {
@@ -46,7 +46,7 @@ function AppHeader(props: {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await axios.post("/api/roster", formData);
+      const res = await axios.post("/api/v2/roster", formData);
       setData(res.data);
     } catch (error) {
       console.log(error);
