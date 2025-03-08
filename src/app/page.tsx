@@ -6,7 +6,7 @@ import zhCN from "antd/locale/zh_CN";
 import AppHeader from "./components/AppHeader";
 import "@ant-design/v5-patch-for-react-19";
 import RaidContent from "./components/RaidContent";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PlayersData, RaidData } from "./types";
 import storage from "@/app/classes/Storage";
 import { toPng } from "html-to-image";
@@ -101,17 +101,20 @@ export default function Home() {
     });
   }
 
-  function delPlayer(groupTitle: string, playerName: string) {
-    const newData = playersData.map((item) => {
-      if (item.group[1] !== groupTitle) return item;
-      if (item.name !== playerName) return item;
+  const delPlayer = useCallback(
+    (groupTitle: string, playerName: string) => {
+      const newData = playersData.map((item) => {
+        if (item.group[1] !== groupTitle) return item;
+        if (item.name !== playerName) return item;
 
-      item.group = [];
-      return item;
-    });
+        item.group = [];
+        return item;
+      });
 
-    setDataHandler(newData);
-  }
+      setDataHandler(newData);
+    },
+    [playersData]
+  );
 
   const raidData = useMemo<RaidData>(() => {
     const data: RaidData = [];
@@ -163,11 +166,14 @@ export default function Home() {
   const [openSelectModal, selectModalContextHolder] =
     usePlayerSelect(playersData);
 
-  async function selectPlayer(time: number, title: string) {
-    const player = await openSelectModal(time, title);
-    player.group = [time, title];
-    setDataHandler([...playersData]);
-  }
+  const selectPlayer = useCallback(
+    async (time: number, title: string) => {
+      const player = await openSelectModal(time, title);
+      player.group = [time, title];
+      setDataHandler([...playersData]);
+    },
+    [openSelectModal, playersData]
+  );
 
   return (
     <StyleProvider layer>
