@@ -6,28 +6,35 @@ import zhCN from "antd/locale/zh_CN";
 import AppHeader from "./components/AppHeader";
 import "@ant-design/v5-patch-for-react-19";
 import RaidContent from "./components/RaidContent";
-import { useEffect, useRef, useState } from "react";
-import { Data } from "./types";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { PlayersData, RaidData } from "./types";
 import storage from "@/app/classes/Storage";
 import { toPng } from "html-to-image";
 import classNames from "classnames";
 import { htmlToPngDownload } from "./utils";
-import { ActorMap } from "./components/RaidContent/constant";
+import { ACTOR_ORDER, DAY_ORDER } from "./common";
+import usePlayerSelect from "./components/RaidContent/hooks/usePlayerSelect";
 
 const { Header, Content } = Layout;
 
+function extractTimeNumber(timeString: string): number {
+  const match = timeString.match(/\d{2}:\d{2}/);
+  if (match) return parseInt(match[0].replace(":", ""), 10);
+  return 0;
+}
+
 export default function Home() {
-  const [data, setData] = useState<Data>([]);
+  const [playersData, setPlayersData] = useState<PlayersData>([]);
   const [isHiddenBtn, setIsHiddenBtn] = useState(false);
   const [api, contextHolder] = notification.useNotification();
 
   useEffect(() => {
-    setData(storage.getData());
+    setPlayersData(storage.getData());
   }, []);
 
-  function setDataHandler(value: Data) {
+  function setDataHandler(value: PlayersData) {
     storage.setData(value);
-    setData(value);
+    setPlayersData(value);
   }
 
   const el = useRef<HTMLElement>(null);
@@ -94,15 +101,72 @@ export default function Home() {
     });
   }
 
-  function delPlayer(time: string, index: number) {
-    const newData = data.map((item) => {
-      if (item.time !== time) return item;
+  function delPlayer(groupTitle: string, playerName: string) {
+    const newData = playersData.map((item) => {
+      if (item.group[1] !== groupTitle) return item;
+      if (item.name !== playerName) return item;
 
-      item.players[index] = { actor: ActorMap.EMPTY, name: "" };
+      item.group = [];
       return item;
     });
 
     setDataHandler(newData);
+  }
+
+  const raidData = useMemo<RaidData>(() => {
+    const data: RaidData = [];
+
+    const groupedPlayers = playersData.reduce((prev, item) => {
+      if (!item.group.length) return prev;
+
+      const key = JSON.stringify(item.group);
+
+      prev[key] ??= [];
+      prev[key].push(item);
+
+      return prev;
+    }, {} as Record<string, PlayersData>);
+
+    Object.values(groupedPlayers).forEach((players) => {
+      players.sort((a, b) => {
+        const actorA = ACTOR_ORDER.indexOf(a.actor);
+        const actorB = ACTOR_ORDER.indexOf(b.actor);
+        return actorA - actorB;
+      });
+    });
+
+    const sortedKeys = Object.keys(groupedPlayers).sort((a, b) => {
+      const [dayA, timeA] = JSON.parse(a) as [number, string];
+      const [dayB, timeB] = JSON.parse(b) as [number, string];
+
+      const dayIndexA = DAY_ORDER.indexOf(dayA);
+      const dayIndexB = DAY_ORDER.indexOf(dayB);
+
+      if (dayIndexA !== dayIndexB) return dayIndexA - dayIndexB;
+      return extractTimeNumber(timeA) - extractTimeNumber(timeB);
+    });
+
+    sortedKeys.forEach((key) => {
+      const [time, title] = JSON.parse(key) as [number, string];
+      const players = groupedPlayers[key];
+
+      data.push({
+        title,
+        time,
+        players,
+      });
+    });
+
+    return data;
+  }, [playersData]);
+
+  const [openSelectModal, selectModalContextHolder] =
+    usePlayerSelect(playersData);
+
+  async function selectPlayer(time: number, title: string) {
+    const player = await openSelectModal(time, title);
+    player.group = [time, title];
+    setDataHandler([...playersData]);
   }
 
   return (
@@ -124,10 +188,15 @@ export default function Home() {
               />
             </Header>
             <Content>
-              <RaidContent data={data} delPlayer={delPlayer} />
+              <RaidContent
+                data={raidData}
+                delPlayer={delPlayer}
+                selectPlayer={selectPlayer}
+              />
             </Content>
           </Layout>
           {contextHolder}
+          {selectModalContextHolder}
         </App>
       </ConfigProvider>
     </StyleProvider>
