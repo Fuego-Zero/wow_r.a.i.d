@@ -1,4 +1,4 @@
-export enum ActorMap {
+enum ActorMap {
   FQ = "FQ", //防骑
   CJQ = "CJQ", //惩戒骑
   NQ = "NQ", //奶骑
