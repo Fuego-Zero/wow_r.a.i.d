@@ -1,7 +1,7 @@
 "use client";
 
 import { Button, ButtonProps, Col, Divider, Modal, Row, Tooltip } from "antd";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { ActorType } from "../constant";
 
 const TANK: ActorType[] = ["FQ", "DKT"];
@@ -37,7 +37,7 @@ function usePlayerSelect(
   players: PlayersData
 ): [(time: number, title: string) => Promise<PlayerData>, React.ReactNode] {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedActor, setSelectedActor] = useState<ActorType>("EMPTY");
+  const [selectedActor, setSelectedActor] = useState<ActorType>("FQ");
 
   const isSelectProps: ButtonProps = {
     color: "primary",
@@ -56,15 +56,19 @@ function usePlayerSelect(
   const [time, setTime] = useState(0);
   const [title, setTitle] = useState("");
   const promise = useRef<(player: PlayerData) => void | null>(null);
-  function openSelectModal(time: number, title: string): Promise<PlayerData> {
-    setIsOpen(true);
-    setTime(time);
-    setTitle(title);
 
-    return new Promise((resolve) => {
-      promise.current = resolve;
-    });
-  }
+  const openSelectModal = useCallback(
+    (time: number, title: string): Promise<PlayerData> => {
+      setIsOpen(true);
+      setTime(time);
+      setTitle(title);
+
+      return new Promise((resolve) => {
+        promise.current = resolve;
+      });
+    },
+    []
+  );
 
   const innerPlayers = useMemo(() => {
     return players.filter((player) => {
@@ -129,13 +133,14 @@ function usePlayerSelect(
             />
           );
         })}
-        <Button
+        {/* 目前全量数据太多了，会渲染卡顿，暂时关闭 */}
+        {/* <Button
           onClick={() => {
             onSelectActor("EMPTY");
           }}
         >
           全部
-        </Button>
+        </Button> */}
       </Row>
       <Divider className="my-4" />
       <div className="overflow-auto h-[60vh]">
