@@ -1,5 +1,5 @@
 import { App, Button, Card } from "antd";
-import React, { useMemo, useRef } from "react";
+import React, { memo, useMemo, useRef } from "react";
 import Actor from "./Actor";
 import Players from "./Players";
 
@@ -119,4 +119,4 @@ function RaidCard(
   );
 }
 
-export default RaidCard;
+export default memo(RaidCard);
