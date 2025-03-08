@@ -169,7 +169,12 @@ export default function Home() {
   const selectPlayer = useCallback(
     async (time: number, title: string) => {
       const player = await openSelectModal(time, title);
+
+      playersData.forEach((item) => {
+        if (item.name === player.name) item.group = [];
+      });
       player.group = [time, title];
+
       setDataHandler([...playersData]);
     },
     [openSelectModal, playersData]
