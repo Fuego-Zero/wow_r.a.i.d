@@ -1,5 +1,5 @@
 import React from "react";
-import { ActorType, ActorMap } from "../constant";
+import { ActorType } from "../constant";
 
 function Actor(props: { actor: ActorType }) {
   const { actor } = props;
@@ -8,100 +8,100 @@ function Actor(props: { actor: ActorType }) {
 
   switch (actor) {
     // 德鲁伊
-    case ActorMap.AC:
+    case "AC":
       offset = 12;
       break;
-    case ActorMap.ND:
+    case "ND":
       offset = 16;
       break;
-    case ActorMap.XT:
+    case "XT":
       offset = 15;
       break;
-    case ActorMap.YD:
+    case "YD":
       offset = 14;
       break;
 
     // 死亡骑士
-    case ActorMap.XDK:
+    case "XDK":
       offset = 7;
       break;
-    case ActorMap.DKT:
+    case "DKT":
       offset = 1;
       break;
-    case ActorMap.BDK:
+    case "BDK":
       offset = 3;
       break;
 
     // 猎人
-    case ActorMap.SWL:
+    case "SWL":
       offset = 24;
       break;
-    case ActorMap.SCL:
+    case "SCL":
       offset = 28;
       break;
 
     // 法师
-    case ActorMap.HF:
+    case "HF":
       offset = 31;
       break;
-    case ActorMap.BF:
+    case "BF":
       offset = 32;
       break;
-    case ActorMap.AF:
+    case "AF":
       offset = 30;
       break;
 
     // 牧师
-    case ActorMap.AM:
+    case "AM":
       offset = 50;
       break;
-    case ActorMap.JLM:
+    case "JLM":
       offset = 47;
       break;
 
     // 圣骑士
-    case ActorMap.FQ:
+    case "FQ":
       offset = 43;
       break;
-    case ActorMap.CJQ:
+    case "CJQ":
       offset = 44;
       break;
-    case ActorMap.NQ:
+    case "NQ":
       offset = 41;
       break;
 
     // 萨满
-    case ActorMap.DS:
+    case "DS":
       offset = 60;
       break;
-    case ActorMap.NS:
+    case "NS":
       offset = 62;
       break;
-    case ActorMap.ZQS:
+    case "ZQS":
       offset = 61;
       break;
 
     // 盗贼
-    case ActorMap.CSZ:
+    case "CSZ":
       offset = 53;
       break;
-    case ActorMap.ZDZ:
+    case "ZDZ":
       offset = 54;
       break;
 
     // 术士
-    case ActorMap.EMS:
+    case "EMS":
       offset = 68;
       break;
-    case ActorMap.TKS:
+    case "TKS":
       offset = 67;
       break;
 
     // 战士
-    case ActorMap.KBZ:
+    case "KBZ":
       offset = 75;
       break;
-    case ActorMap.FZ:
+    case "FZ":
       offset = 78;
       break;
   }

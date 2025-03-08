@@ -1,21 +1,24 @@
 import { App, Button, Card } from "antd";
-import React, { useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import Actor from "./Actor";
 import Players from "./Players";
 
-// import mock from "@/data/mock.json";
 import { toPng } from "html-to-image";
-import { Data, InferArrayItem } from "@/app/types";
+import { RaidData, InferArrayItem, Handler } from "@/app/types";
 import { CloseOutlined } from "@ant-design/icons";
 import { htmlToPngDownload } from "@/app/utils";
 import Empty from "./Empty";
 import classNames from "classnames";
 
-function RaidCard(props: {
-  data: InferArrayItem<Data>;
-  delPlayer: (time: string, index: number) => void;
-}) {
-  const { data, delPlayer } = props;
+type Data = InferArrayItem<RaidData>;
+type Player = InferArrayItem<Data["players"]>;
+
+function RaidCard(
+  props: {
+    data: Data;
+  } & Handler
+) {
+  const { data, delPlayer, selectPlayer } = props;
   const { notification } = App.useApp();
   const el = useRef(null);
 
@@ -42,7 +45,7 @@ function RaidCard(props: {
   async function onDownload() {
     if (!el.current) return;
 
-    await htmlToPngDownload(el.current, data.time);
+    await htmlToPngDownload(el.current, data.title);
 
     notification.success({
       message: "下载成功",
@@ -51,10 +54,21 @@ function RaidCard(props: {
     });
   }
 
+  const innerPlayers = useMemo(() => {
+    const empty = Array.from({
+      length: 25,
+    }).fill({
+      actor: "EMPTY",
+      name: "空缺",
+    }) as Player[];
+
+    return data.players.concat(empty).slice(0, 25);
+  }, [data.players]);
+
   return (
     <Card
       size="small"
-      title={data.time}
+      title={data.title}
       className="group/RaidCard"
       extra={
         <div className="group-hover/RaidCard:block hidden">
@@ -68,12 +82,12 @@ function RaidCard(props: {
       }
       ref={el}
     >
-      {data.players.map((item, index) => (
+      {innerPlayers.map((item, index) => (
         <Card.Grid
           key={index}
           hoverable={false}
           className={classNames(
-            "flex relative items-center justify-start py-1 px-2 min-w-0 w-[20%] group/delPlayer",
+            "flex relative items-center justify-start py-1 px-2 min-w-0 w-[20%] min-h-[44px] group/delPlayer",
             {
               "bg-amber-300/20": item.name === "空缺",
             }
@@ -89,13 +103,13 @@ function RaidCard(props: {
                 size="small"
                 danger
                 icon={<CloseOutlined />}
-                onClick={() => delPlayer(data.time, index)}
+                onClick={() => delPlayer(data.title, item.name)}
               />
             </>
           ) : (
             <Empty
               onClick={() => {
-                console.log(data.time, index);
+                selectPlayer(data.time, data.title);
               }}
             />
           )}
