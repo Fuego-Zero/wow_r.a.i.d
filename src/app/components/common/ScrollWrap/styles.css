@@ -1,0 +1,76 @@
+.ScrollWrap {
+  position: relative;
+  overflow: hidden;
+}
+.ScrollWrap .wrap {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.ScrollWrap .wrap::-webkit-scrollbar {
+  display: none;
+}
+.ScrollWrap .scrollbar {
+  z-index: 100000;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.ScrollWrap .scrollbar.scrollbarY {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 14px;
+}
+.ScrollWrap .scrollbar.scrollbarY .thumb {
+  top: 0;
+  right: 0;
+  width: 100%;
+}
+.ScrollWrap .scrollbar.scrollbarX {
+  position: absolute;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  height: 14px;
+}
+.ScrollWrap .scrollbar.scrollbarX .thumb {
+  bottom: 0;
+  left: 0;
+  height: 100%;
+}
+.ScrollWrap .scrollbar .thumb {
+  pointer-events: visible;
+  position: absolute;
+  opacity: 1;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+  z-index: 1;
+  user-select: none;
+}
+.ScrollWrap.defaultHideScrollbar .scrollbar {
+  opacity: 0;
+}
+.ScrollWrap:hover .scrollbar {
+  opacity: 1;
+}
+.ScrollWrap.light .thumb {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+.ScrollWrap.light .thumb:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+.ScrollWrap.light .thumb:active {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+.ScrollWrap.dark .thumb {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.ScrollWrap.dark .thumb:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+.ScrollWrap.dark .thumb:active {
+  background-color: rgba(255, 255, 255, 0.3);
+}
