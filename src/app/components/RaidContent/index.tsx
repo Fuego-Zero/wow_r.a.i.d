@@ -1,5 +1,5 @@
 import { Col, Row } from "antd";
-import React from "react";
+import React, { memo } from "react";
 import RaidCard from "./components/RaidCard";
 import { Handler, RaidData } from "@/app/types";
 
@@ -21,4 +21,4 @@ function RaidContent(
   );
 }
 
-export default RaidContent;
+export default memo(RaidContent);
