@@ -1,16 +1,16 @@
-import { Data } from "@/app/types";
+import { PlayersData } from "@/app/types";
 
-const key = "DATA";
+const key = "PLAYERS_DATA";
 
 class Storage {
-  private data: Data = [];
+  private data: PlayersData = [];
 
-  setData(data: Data) {
+  setData(data: PlayersData) {
     this.data = data;
     localStorage.setItem(key, JSON.stringify(data));
   }
 
-  getData(): Data {
+  getData(): PlayersData {
     const data = localStorage.getItem(key);
 
     if (data) {
