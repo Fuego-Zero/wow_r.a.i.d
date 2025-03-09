@@ -147,6 +147,44 @@ function usePlayerSelect(
         <ScrollWrap>
           <Row align="middle" className="!mx-0" gutter={[8, 8]}>
             {innerPlayers.map((player, index) => {
+              const filtered = players.filter((item) => {
+                return item.name === player.name && item.group.length > 0;
+              });
+
+              let el = null;
+              if (player.group.length > 0 && filtered.length === 1) {
+                //* 当前天赋有分配时间，且其他天赋无分配
+                el = (
+                  <Tooltip title={`分配时间：${player.group[1]}`}>
+                    <PushpinFilled className="mr-1" />
+                  </Tooltip>
+                );
+              } else if (filtered.length > 0) {
+                //* 不论当前天赋是否有分配时间，考虑其他天赋有分配
+                const title = (
+                  <>
+                    <div>分配时间：</div>
+                    {filtered.map((player) => {
+                      return (
+                        <div
+                          key={player.group[1]}
+                          className="flex items-center"
+                        >
+                          <Actor actor={player.actor} />
+                          {player.group[1]}
+                        </div>
+                      );
+                    })}
+                  </>
+                );
+
+                el = (
+                  <Tooltip title={title}>
+                    <PushpinFilled className="mr-1" />
+                  </Tooltip>
+                );
+              }
+
               return (
                 <Col xs={24} sm={12} md={8} xl={6} xxl={4} key={index}>
                   <Button
@@ -158,15 +196,11 @@ function usePlayerSelect(
                     <div className="flex relative items-center justify-start w-full text-left">
                       <Actor actor={player.actor} />
                       <Players actor={player.actor}>{player.name}</Players>
-                      {player.group.length > 0 && (
-                        <Tooltip title={`分配时间：${player.group[1]}`}>
-                          <PushpinFilled className="mr-1" />
-                        </Tooltip>
-                      )}
+                      {el}
                       <Tooltip
                         title={
                           <>
-                            <div>报名时间</div>
+                            <div>报名时间：</div>
                             {player.time.map((time) => {
                               return <div key={time}>{DAY_CN[time]}</div>;
                             })}
