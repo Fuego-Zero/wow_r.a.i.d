@@ -33,7 +33,7 @@ function followProgress(stream, dockerode) {
     await open();
 
     const dockerode = new Docker({
-      host: "run.fuego.run",
+      host: "144.34.226.99",
       port: 2375,
     });
 
