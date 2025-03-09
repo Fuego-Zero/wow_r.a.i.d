@@ -10,8 +10,9 @@ function AppHeader(props: {
   setData: (value: PlayersData) => void;
   onCopy: () => Promise<void>;
   onDownload: () => Promise<void>;
+  showAdvancedBtn: boolean;
 }) {
-  const { setData, onCopy, onDownload } = props;
+  const { setData, onCopy, onDownload, showAdvancedBtn } = props;
   const [file, setFile] = useState<File>();
   const { message, notification } = App.useApp();
   const [loading, setLoading] = useState(false);
@@ -68,12 +69,16 @@ function AppHeader(props: {
       </h1>
       <div className="mr-5">{file && file.name}</div>
       <div className={hiddenButtonClass}>
-        <Button onClick={onDownload} disabled={loading}>
-          下载全部
-        </Button>
-        <Button className="ml-5" onClick={onCopy} disabled={loading}>
-          复制全部
-        </Button>
+        {showAdvancedBtn && (
+          <>
+            <Button onClick={onDownload} disabled={loading}>
+              下载全部
+            </Button>
+            <Button className="ml-5" onClick={onCopy} disabled={loading}>
+              复制全部
+            </Button>
+          </>
+        )}
         <Button className="ml-5" onClick={onUpload} disabled={loading}>
           上传名单
         </Button>

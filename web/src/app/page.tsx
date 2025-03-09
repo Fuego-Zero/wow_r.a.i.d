@@ -180,6 +180,10 @@ export default function Home() {
     [openSelectModal, playersData]
   );
 
+  const showAdvancedBtn = useMemo(() => {
+    return raidData.length > 0;
+  }, [raidData]);
+
   return (
     <StyleProvider layer>
       <ConfigProvider locale={zhCN} theme={{ algorithm: theme.darkAlgorithm }}>
@@ -196,6 +200,7 @@ export default function Home() {
                 setData={setDataHandler}
                 onCopy={onCopy}
                 onDownload={onDownload}
+                showAdvancedBtn={showAdvancedBtn}
               />
             </Header>
             <Content>
