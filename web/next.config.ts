@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  output: process.env.NODE_ENV === "production" ? "export" : undefined,
+  // output: process.env.NODE_ENV === "production" ? "export" : undefined,
 };
 
 if (process.env.NODE_ENV === "development") {
