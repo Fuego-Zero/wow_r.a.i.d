@@ -1,6 +1,8 @@
 import React from "react";
 import { ActorType } from "../constant";
 
+import actors from "@/app/images/actors.jpg";
+
 function Actor(props: { actor: ActorType }) {
   const { actor } = props;
 
@@ -109,7 +111,7 @@ function Actor(props: { actor: ActorType }) {
   return (
     <div
       style={{
-        backgroundImage: "url(/actors.jpg)",
+        backgroundImage: `url(${actors.src})`,
         backgroundPosition: `-${offset * 36}px 0`,
         transform: "scale(0.5)",
         width: 36,
