@@ -1,0 +1,17 @@
+{
+  "name": "deploy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/index.js",
+  "scripts": {
+    "p": "node ./src/index.js",
+    "p-w": "cross-env MODE=web yarn p",
+    "p-s": "cross-env MODE=server yarn p"
+  },
+  "author": "Fuego",
+  "license": "MIT",
+  "devDependencies": {
+    "cross-env": "7.0.3",
+    "dockerode": "4.0.0"
+  }
+}
