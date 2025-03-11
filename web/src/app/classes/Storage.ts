@@ -21,6 +21,11 @@ class Storage {
 
     return this.data;
   }
+
+  clear() {
+    this.data = [];
+    localStorage.removeItem(key);
+  }
 }
 
 const storage = new Storage();

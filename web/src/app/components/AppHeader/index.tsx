@@ -4,15 +4,18 @@ import { hiddenButtonClass } from "@/app/common";
 import { PlayersData } from "@/app/types";
 import { App, Button } from "antd";
 import axios from "axios";
+import classNames from "classnames";
 import React, { useState } from "react";
 
 function AppHeader(props: {
   setData: (value: PlayersData) => void;
   onCopy: () => Promise<void>;
+  clearPlayersData: () => void;
   onDownload: () => Promise<void>;
   showAdvancedBtn: boolean;
 }) {
-  const { setData, onCopy, onDownload, showAdvancedBtn } = props;
+  const { setData, onCopy, onDownload, clearPlayersData, showAdvancedBtn } =
+    props;
   const [file, setFile] = useState<File>();
   const { message, notification } = App.useApp();
   const [loading, setLoading] = useState(false);
@@ -68,26 +71,31 @@ function AppHeader(props: {
         <span className="ml-2">(Roster Auto-Integrated Deployment)</span>
       </h1>
       <div className="mr-5">{file && file.name}</div>
-      <div className={hiddenButtonClass}>
+      <div className={classNames(hiddenButtonClass, "space-x-5")}>
         {showAdvancedBtn && (
           <>
             <Button onClick={onDownload} disabled={loading}>
               下载全部
             </Button>
-            <Button className="ml-5" onClick={onCopy} disabled={loading}>
+            <Button onClick={onCopy} disabled={loading}>
               复制全部
             </Button>
           </>
         )}
-        <Button className="ml-5" onClick={onUpload} disabled={loading}>
-          上传名单
-        </Button>
         <Button
-          className="ml-5"
-          type="primary"
-          onClick={submit}
+          onClick={() => {
+            clearPlayersData();
+            message.success("缓存已清理");
+          }}
+          type="dashed"
           disabled={loading}
         >
+          清理缓存
+        </Button>
+        <Button onClick={onUpload} disabled={loading}>
+          上传名单
+        </Button>
+        <Button type="primary" onClick={submit} disabled={loading}>
           自动分配
         </Button>
       </div>

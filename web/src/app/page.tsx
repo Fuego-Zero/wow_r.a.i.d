@@ -116,6 +116,11 @@ export default function Home() {
     [playersData]
   );
 
+  const clearPlayersData = useCallback(() => {
+    storage.clear();
+    setPlayersData([]);
+  }, []);
+
   const raidData = useMemo<RaidData>(() => {
     const data: RaidData = [];
 
@@ -200,6 +205,7 @@ export default function Home() {
                 setData={setDataHandler}
                 onCopy={onCopy}
                 onDownload={onDownload}
+                clearPlayersData={clearPlayersData}
                 showAdvancedBtn={showAdvancedBtn}
               />
             </Header>
