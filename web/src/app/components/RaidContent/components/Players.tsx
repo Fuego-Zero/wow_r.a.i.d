@@ -48,6 +48,9 @@ function Players(props: { actor: ActorType } & React.PropsWithChildren) {
     return {
       color: CharacterClassColorMap[actorToCharacterClassMap[actor]],
       flex: 1,
+      minWidth: 0,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
     };
   }, [actor]);
 
