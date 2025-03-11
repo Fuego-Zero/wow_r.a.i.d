@@ -58,4 +58,5 @@ export type PlayersData = {
 export type Handler = {
   delPlayer: (groupTitle: string, playerName: string) => void;
   selectPlayer: (time: number, title: string) => Promise<void>;
+  rosterPlayer: (time: number, title: string) => Promise<void>;
 };
