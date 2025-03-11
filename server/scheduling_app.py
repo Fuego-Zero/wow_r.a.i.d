@@ -8,27 +8,14 @@ from datetime import datetime
 from enum import Enum
 from auto_wow_allocation import main
 from loguru import logger
-from flask import Flask, render_template, request, redirect, url_for, flash, send_file
-from werkzeug.utils import secure_filename
-
-
-def get_random_str(length: int = 8) -> str:
-    return ''.join(random.sample(string.ascii_letters + string.digits, length))
-
-
-# 初始化Flask应用
-app = Flask(__name__)
-app.secret_key = 'some_secret_key'  # 用于消息闪现
 
 # 设置上传文件夹和允许的扩展名
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "filestorage", "scheduling")
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'xlsx'}
 
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# 确保上传目录存在
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+def get_random_str(length: int = 8) -> str:
+    return ''.join(random.sample(string.ascii_letters + string.digits, length))
 
 
 def allowed_file(filename):
@@ -109,7 +96,7 @@ def save_file(file):
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
 
     filename = add_timestamp_to_filename(file.filename, timestamp)
-    input_file = os.path.join(UPLOAD_FOLDER, filename)
+    input_file = os.path.join(UPLOAD_FOLDER, filename) 
     # logger.info(input_file)
     file.save(input_file)
 
@@ -289,69 +276,3 @@ def process_file2(file):
         json.dump(output_result, f, ensure_ascii=False)
 
     return json_file
-
-
-@app.route('/api/v2/roster', methods=['GET', 'POST'])
-def upload_file2():
-    if request.method == 'POST':
-        # 检查请求中是否包含文件部分
-        if 'file' not in request.files:
-            flash('没有文件部分')
-            return redirect(request.url)
-        file = request.files['file']
-        # 如果用户没有选择文件，则浏览器也会提交一个空的文件名
-        if file.filename == '':
-            flash('未选择任何文件')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            # filename = secure_filename(file.filename)
-            download_filepath = process_file2(file)
-            flash('文件上传成功')
-            return send_file(download_filepath, as_attachment=True)
-            # return redirect(url_for('upload_file'))
-    return '''
-    <!doctype html>
-    <title>上传新文件</title>
-    <h1>上传新文件</h1>
-    <form action="/v2" method="post" enctype="multipart/form-data">
-        <input type=file name=file>
-        <input type=submit value=上传>
-    </form>
-'''
-
-
-@app.route('/api/roster', methods=['GET', 'POST'])
-def upload_file():
-    if request.method == 'POST':
-        # 检查请求中是否包含文件部分
-        if 'file' not in request.files:
-            flash('没有文件部分')
-            return redirect(request.url)
-        file = request.files['file']
-        # 如果用户没有选择文件，则浏览器也会提交一个空的文件名
-        if file.filename == '':
-            flash('未选择任何文件')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            # filename = secure_filename(file.filename)
-            download_filepath = process_file(file)
-            flash('文件上传成功')
-            return send_file(download_filepath, as_attachment=True)
-            # return redirect(url_for('upload_file'))
-    return '''
-    <!doctype html>
-    <title>上传新文件</title>
-    <h1>上传新文件</h1>
-    <form action="/" method="post" enctype="multipart/form-data">
-        <input type=file name=file>
-        <input type=submit value=上传>
-    </form>
-'''
-
-
-def start_application():
-    app.run(debug=True, host='0.0.0.0', port=7000)
-
-
-if __name__ == '__main__':
-    start_application()

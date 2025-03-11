@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import os
 import sys
 import platform
@@ -79,5 +77,5 @@ sys.path.insert(1, os.path.join(os.getcwd(), "site_packages"))
 sys.path.insert(2, os.path.join(os.getcwd(), "webrunner_site_packages"))
 
 if __name__ == '__main__':
-    from scheduling_app import start_application
+    from route_app import start_application
     start_application()
