@@ -11,9 +11,10 @@ import { PlayersData, RaidData } from "./types";
 import storage from "@/app/classes/Storage";
 import { toPng } from "html-to-image";
 import classNames from "classnames";
-import { htmlToPngDownload } from "./utils";
-import { ACTOR_ORDER, DAY_ORDER } from "./common";
+import { htmlToPngDownload, playersSort } from "./utils";
+import { DAY_ORDER } from "./common";
 import usePlayerSelect from "./components/RaidContent/hooks/usePlayerSelect";
+import useRaidChange from "./components/RaidContent/hooks/useRaidChange";
 
 const { Header, Content } = Layout;
 
@@ -128,20 +129,13 @@ export default function Home() {
       if (!item.group.length) return prev;
 
       const key = JSON.stringify(item.group);
-      item.name = `${item.pname} (${item.cname})`;
       prev[key] ??= [];
       prev[key].push(item);
 
       return prev;
     }, {} as Record<string, PlayersData>);
 
-    Object.values(groupedPlayers).forEach((players) => {
-      players.sort((a, b) => {
-        const actorA = ACTOR_ORDER.indexOf(a.actor);
-        const actorB = ACTOR_ORDER.indexOf(b.actor);
-        return actorA - actorB;
-      });
-    });
+    Object.values(groupedPlayers).forEach(playersSort);
 
     const sortedKeys = Object.keys(groupedPlayers).sort((a, b) => {
       const [dayA, timeA] = JSON.parse(a) as [number, string];
@@ -189,6 +183,30 @@ export default function Home() {
     return raidData.length > 0;
   }, [raidData]);
 
+  const [openChangeModal, raidChangeModalContextHolder] =
+    useRaidChange(playersData);
+  const rosterPlayer = useCallback(
+    async (time: number, title: string) => {
+      const player = await openChangeModal(time, title);
+
+      playersData.forEach((item) => {
+        if (item.group[1] === title) item.group = [];
+        if (
+          player.some((_player) => {
+            if (_player.name === item.name && _player.actor === item.actor) {
+              return true;
+            }
+          })
+        ) {
+          item.group = [time, title];
+        }
+      });
+
+      setDataHandler([...playersData]);
+    },
+    [openChangeModal, playersData]
+  );
+
   return (
     <StyleProvider layer>
       <ConfigProvider locale={zhCN} theme={{ algorithm: theme.darkAlgorithm }}>
@@ -214,11 +232,13 @@ export default function Home() {
                 data={raidData}
                 delPlayer={delPlayer}
                 selectPlayer={selectPlayer}
+                rosterPlayer={rosterPlayer}
               />
             </Content>
           </Layout>
           {contextHolder}
           {selectModalContextHolder}
+          {raidChangeModalContextHolder}
         </App>
       </ConfigProvider>
     </StyleProvider>
