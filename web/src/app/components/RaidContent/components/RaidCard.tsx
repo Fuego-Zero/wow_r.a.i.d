@@ -18,7 +18,7 @@ function RaidCard(
     data: Data;
   } & Handler
 ) {
-  const { data, delPlayer, selectPlayer } = props;
+  const { data, delPlayer, selectPlayer, rosterPlayer } = props;
   const { notification } = App.useApp();
   const el = useRef(null);
 
@@ -72,6 +72,14 @@ function RaidCard(
       className="group/RaidCard"
       extra={
         <div className="group-hover/RaidCard:block hidden">
+          <Button
+            type="link"
+            onClick={() => {
+              rosterPlayer(data.time, data.title);
+            }}
+          >
+            编辑
+          </Button>
           <Button type="link" onClick={onDownload}>
             下载
           </Button>
