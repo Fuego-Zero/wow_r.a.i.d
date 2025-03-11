@@ -14,7 +14,10 @@ class Storage {
     const data = localStorage.getItem(key);
 
     if (data) {
-      this.data = JSON.parse(data);
+      this.data = JSON.parse(data).map((item: any) => {
+        item.name = `${item.pname} (${item.cname})`;
+        return item;
+      });
     } else {
       this.data = [];
     }
