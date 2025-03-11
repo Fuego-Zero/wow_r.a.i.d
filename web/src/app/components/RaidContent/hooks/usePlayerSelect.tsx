@@ -133,14 +133,6 @@ function usePlayerSelect(
             />
           );
         })}
-        {/* 目前全量数据太多了，会渲染卡顿，暂时关闭 */}
-        {/* <Button
-          onClick={() => {
-            onSelectActor("EMPTY");
-          }}
-        >
-          全部
-        </Button> */}
       </Row>
       <Divider className="my-4" />
       <div className="overflow-auto h-[60vh]">
