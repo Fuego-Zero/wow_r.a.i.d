@@ -14,6 +14,7 @@
     "@ant-design/icons": "5.6.1",
     "@ant-design/nextjs-registry": "1.0.2",
     "@ant-design/v5-patch-for-react-19": "1.0.3",
+    "@yfsdk/web-basic-library": "2.0.1",
     "antd": "5.24.3",
     "axios": "1.8.1",
     "classnames": "2.5.1",
