@@ -16,8 +16,9 @@ class UserService {
   }
 
   static async login(body: ILoginBody): Promise<ILoginResponse> {
-    const user = await User.findOne({ account: body.account, password: body.password });
+    const user = await User.findOne({ account: body.account });
     if (!user) throw new BizException('用户不存在');
+    if (user.password !== body.password) throw new BizException('用户密码错误');
 
     const { user_name, wechat_name, play_time, id } = user;
     const token = jwt.sign({ id }, secretKey, { expiresIn: '1h' });
