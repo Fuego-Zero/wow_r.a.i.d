@@ -5,7 +5,7 @@ const globalErrorMiddleware: Middleware = async (ctx, next) => {
   try {
     await next();
   } catch (error) {
-    if (isBizException(error)) ctx.bizError(error.message);
+    if (isBizException(error)) return ctx.bizError(error.message);
     console.error('Global Error Handler:', error);
     ctx.apiError((error as Error).message);
   }
