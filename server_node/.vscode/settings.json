@@ -1,0 +1,15 @@
+{
+  "cSpell.words": ["bodyparser", "Catched", "Cooldown", "Reduct", "Timespan", "unionid", "wechat", "yfsdk"],
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "path-intellisense.mappings": {
+    "@/": "${workspaceFolder}/src"
+  },
+  "path-intellisense.autoTriggerNextSuggestion": true,
+  "[dockerfile]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-docker"
+  }
+}

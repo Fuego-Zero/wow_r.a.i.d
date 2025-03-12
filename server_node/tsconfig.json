@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2020", // 将 TypeScript 编译为指定的 ECMAScript 版本
+    "module": "CommonJS", // 使用 CommonJS 模块系统
+    "moduleResolution": "node", // 使用 Node.js 解析模块路径
+    "strict": true, // 启用所有严格的类型检查选项
+    "esModuleInterop": true, // 启用 esModuleInterop 以更好地与 CommonJS 交互
+    "skipLibCheck": true, // 跳过对声明文件的检查
+    "forceConsistentCasingInFileNames": true, // 强制一致的文件名大小写
+    "outDir": "./dist", // 指定输出目录
+    "rootDir": "./src", // 指定源代码目录
+    "baseUrl": "/", // 用于解析非相对模块的根文件
+    "types": ["node"], // 包含 Node.js 类型定义文件
+    "declaration": false, // 生成声明文件（.d.ts）
+    "sourceMap": true, // 生成 source map 文件，方便调试
+    "experimentalDecorators": true, // 启用装饰器支持
+    "emitDecoratorMetadata": true, // 在生成装饰器元数据时发出相关的装饰器元数据
+    "resolveJsonModule": true, // 允许 TypeScript 导入 JSON 文件
+    "lib": ["ES2020"], // 指定使用的 JavaScript 库版本
+    "typeRoots": ["./node_modules/@types"], // 指定类型定义文件的根目录
+  },
+  "include": ["src/**/*.ts", "typings/**/*.d.ts", "src/**/*.json"], // 包含的 TypeScript 文件
+  "exclude": ["node_modules"], // 排除的目录或文件
+}
