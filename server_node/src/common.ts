@@ -11,19 +11,6 @@ export enum RoleClassesMap {
   ZS = 'ZS',
 }
 
-export const ROLE_CLASSES: (keyof typeof RoleClassesMap)[] = [
-  'DK',
-  'XD',
-  'LR',
-  'FS',
-  'QS',
-  'MS',
-  'DZ',
-  'SM',
-  'SS',
-  'ZS',
-];
-
 export enum TalentMap {
   FQ = 'FQ', // 防骑
   CJQ = 'CJQ', // 惩戒骑
