@@ -41,8 +41,8 @@ function UserCenter() {
                 key={role.id}
               >
                 <div className="flex relative items-center justify-start w-full text-left">
-                  <Actor actor={role.talent[0]} />
-                  <Players actor={role.talent[0]}>{role.role_name}</Players>
+                  <Actor actor={role.talent} />
+                  <Players classes={role.classes}>{role.role_name}</Players>
                   {/* <Tag color="cyan">已报名</Tag> */}
                 </div>
               </Card.Grid>
@@ -62,15 +62,15 @@ function UserCenter() {
               取消报名
             </Button>
           </Col>
-          <Col span={8}>
+          <Col span={12}>
             <BindRole onReload={onReload} />
           </Col>
-          <Col span={8}>
+          {/* <Col span={8}>
             <Button block type="dashed">
               修改角色
             </Button>
-          </Col>
-          <Col span={8}>
+          </Col> */}
+          <Col span={12}>
             <UnbindRole roles={roles} onReload={onReload} />
           </Col>
         </Row>

@@ -48,8 +48,8 @@ function UnbindRole(props: Props) {
                 key={role.id}
               >
                 <div className="flex relative items-center justify-start w-full text-left">
-                  <Actor actor={role.talent[0]} />
-                  <Players actor={role.talent[0]}>{role.role_name}</Players>
+                  <Actor actor={role.talent} />
+                  <Players classes={role.classes}>{role.role_name}</Players>
                   <Popconfirm
                     title="是否确认解绑"
                     onConfirm={() => {
