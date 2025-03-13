@@ -49,14 +49,14 @@ const roleClassesNameMap: Record<RoleClasses, string> = {
 const roleClassesToTalentMap: Record<RoleClasses, TalentType[]> = {
   DK: ["BDK", "DKT", "XDK"],
   XD: ["AC", "ND", "XT", "YD"],
-  LR: ["SWL", "SCL"],
+  LR: ["SWL", "SCL", "SJL"],
   FS: ["AF", "BF", "HF"],
   QS: ["CJQ", "FQ", "NQ"],
-  MS: ["AM", "JLM"],
-  DZ: ["CSZ", "ZDZ"],
+  MS: ["AM", "JLM", "SM"],
+  DZ: ["CSZ", "ZDZ", "MRZ"],
   SM: ["DS", "NS", "ZQS"],
-  SS: ["EMS", "TKS"],
-  ZS: ["FZ", "KBZ"],
+  SS: ["EMS", "TKS", "HMS"],
+  ZS: ["FZ", "KBZ", "WQZ"],
   EMPTY: [],
 };
 
@@ -74,7 +74,7 @@ const roleClassesOptions: CheckboxGroupProps<string>["options"] =
 
 function BindRole(props: { onReload: () => Promise<void> }) {
   const { message } = App.useApp();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [form] = Form.useForm<{
     name: string;
     talent: TalentType[];
