@@ -1,13 +1,11 @@
-import React from "react";
+import React, { CSSProperties } from "react";
 import { TalentType } from "../constant";
 
 import actors from "@/app/images/actors.jpg";
+import { isArray } from "@yfsdk/web-basic-library";
 
-function Actor(props: { actor: TalentType }) {
-  const { actor } = props;
-
+function getOffset(actor: TalentType) {
   let offset = 0;
-
   switch (actor) {
     // 德鲁伊
     case "AC":
@@ -123,16 +121,57 @@ function Actor(props: { actor: TalentType }) {
       break;
   }
 
+  return offset;
+}
+
+const style: CSSProperties = {
+  position: "absolute",
+  inset: 0,
+  backgroundImage: `url(${actors.src})`,
+};
+
+function Actor(props: { actor: TalentType[] | TalentType }) {
+  const { actor } = props;
+
+  let actor1;
+  let actor2;
+
+  if (isArray(actor)) {
+    [actor1, actor2] = actor;
+  } else {
+    actor1 = actor;
+    actor2 = actor;
+  }
+
+  const offset = getOffset(actor1);
+  const offset2 = getOffset(actor2);
+
   return (
     <div
+      className="relative"
       style={{
-        backgroundImage: `url(${actors.src})`,
-        backgroundPosition: `-${offset * 36}px 0`,
         transform: "scale(0.5)",
         width: 36,
         height: 36,
       }}
-    ></div>
+    >
+      <div
+        style={{
+          ...style,
+          backgroundPosition: `-${offset * 36}px 0`,
+          clipPath: "polygon(0% 0%, 0% 100%, 100% 0%)",
+        }}
+      />
+      <div
+        style={{
+          ...style,
+          backgroundPosition: `-${
+            (actor2 === undefined ? offset : offset2) * 36
+          }px 0`,
+          clipPath: "polygon( 0% 100%,100% 100%, 100% 0%)",
+        }}
+      />
+    </div>
   );
 }
 
