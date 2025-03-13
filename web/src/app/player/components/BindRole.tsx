@@ -74,7 +74,7 @@ const roleClassesOptions: CheckboxGroupProps<string>["options"] =
 
 function BindRole(props: { onReload: () => Promise<void> }) {
   const { message } = App.useApp();
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [form] = Form.useForm<{
     name: string;
     talent: TalentType[];
