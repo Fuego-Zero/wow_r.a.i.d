@@ -159,7 +159,7 @@ function BindRole(props: { onReload: () => Promise<void> }) {
             />
           </Form.Item>
 
-          {talents ? (
+          {talents && (
             <Form.Item
               label="天赋"
               name="talent"
@@ -199,7 +199,7 @@ function BindRole(props: { onReload: () => Promise<void> }) {
                 })}
               </div>
             </Form.Item>
-          ) : null}
+          )}
         </Form>
       </Modal>
     </>
