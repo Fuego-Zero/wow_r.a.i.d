@@ -2,11 +2,11 @@
 
 import { Button, ButtonProps, Col, Divider, Modal, Row, Tooltip } from "antd";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { ActorType } from "../constant";
+import { TalentType } from "../constant";
 
-const TANK: ActorType[] = ["FQ", "DKT"];
-const HEALER: ActorType[] = ["NS", "NQ", "JLM", "ND"];
-const DPS: ActorType[] = [
+const TANK: TalentType[] = ["FQ", "DKT"];
+const HEALER: TalentType[] = ["NS", "NQ", "JLM", "ND"];
+const DPS: TalentType[] = [
   "SCL",
   "CSZ",
   "ZDZ",
@@ -37,14 +37,14 @@ function usePlayerSelect(
   players: PlayersData
 ): [(time: number, title: string) => Promise<PlayerData>, React.ReactNode] {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedActor, setSelectedActor] = useState<ActorType>("FQ");
+  const [selectedActor, setSelectedActor] = useState<TalentType>("FQ");
 
   const isSelectProps: ButtonProps = {
     color: "primary",
     variant: "outlined",
   };
 
-  function onSelectActor(actor: ActorType) {
+  function onSelectActor(actor: TalentType) {
     setSelectedActor(actor);
   }
 

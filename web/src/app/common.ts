@@ -1,4 +1,4 @@
-import { ActorType } from "./components/RaidContent/constant";
+import { TalentType } from "./components/RaidContent/constant";
 
 export const hiddenButtonClass = "[.hidden-button_&]:hidden";
 
@@ -14,7 +14,7 @@ export const DAY_CN: Record<number, string> = {
   3: "周三",
 };
 
-export const ACTOR_ORDER: ActorType[] = [
+export const ACTOR_ORDER: TalentType[] = [
   "FQ",
   "DKT",
   "NQ",

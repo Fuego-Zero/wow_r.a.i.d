@@ -1,9 +1,9 @@
 import React from "react";
-import { ActorType } from "../constant";
+import { TalentType } from "../constant";
 
 import actors from "@/app/images/actors.jpg";
 
-function Actor(props: { actor: ActorType }) {
+function Actor(props: { actor: TalentType }) {
   const { actor } = props;
 
   let offset = 0;

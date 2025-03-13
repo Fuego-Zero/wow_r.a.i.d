@@ -1,4 +1,4 @@
-enum ActorMap {
+enum TalentMap {
   FQ = "FQ", //防骑
   CJQ = "CJQ", //惩戒骑
   NQ = "NQ", //奶骑
@@ -38,9 +38,9 @@ enum ActorMap {
   EMPTY = "EMPTY", //空, 用于占位
 }
 
-export type ActorType = keyof typeof ActorMap;
+export type TalentType = keyof typeof TalentMap;
 
-export enum CharacterClassMap {
+enum RoleClassesMap {
   DK = "DK",
   XD = "XD",
   LR = "LR",
@@ -55,9 +55,9 @@ export enum CharacterClassMap {
   EMPTY = "EMPTY", //空, 用于占位
 }
 
-export type CharacterClass = keyof typeof CharacterClassMap;
+export type RoleClasses = keyof typeof RoleClassesMap;
 
-export const CharacterClassColorMap: Record<CharacterClass, string> = {
+export const ROLE_CLASSES_COLOR_MAP: Record<RoleClasses, string> = {
   DK: "#c41e3a",
   XD: "#ff7c0a",
   LR: "#aad372",

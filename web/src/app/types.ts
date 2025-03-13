@@ -1,4 +1,4 @@
-import { ActorType } from "./components/RaidContent/constant";
+import { TalentType } from "./components/RaidContent/constant";
 
 export type InferArrayItem<T> = T extends Array<infer P> ? P : never;
 
@@ -16,7 +16,7 @@ export type RaidData = {
   time: number;
   players: Array<{
     name: string;
-    actor: ActorType;
+    actor: TalentType;
   }>;
 }[];
 
@@ -52,7 +52,7 @@ export type PlayersData = {
   /**
    * 角色职业
    */
-  actor: ActorType;
+  actor: TalentType;
 }[];
 
 export type Handler = {

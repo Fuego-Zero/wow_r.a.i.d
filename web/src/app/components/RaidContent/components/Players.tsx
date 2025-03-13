@@ -1,7 +1,7 @@
 import React, { CSSProperties, useMemo } from "react";
-import { ActorType, CharacterClass, CharacterClassColorMap } from "../constant";
+import { TalentType, RoleClasses, ROLE_CLASSES_COLOR_MAP } from "../constant";
 
-const actorToCharacterClassMap: Record<ActorType, CharacterClass> = {
+const actorToRoleMap: Record<TalentType, RoleClasses> = {
   FQ: "QS",
   CJQ: "QS",
   NQ: "QS",
@@ -41,12 +41,12 @@ const actorToCharacterClassMap: Record<ActorType, CharacterClass> = {
   EMPTY: "EMPTY",
 };
 
-function Players(props: { actor: ActorType } & React.PropsWithChildren) {
+function Players(props: { actor: TalentType } & React.PropsWithChildren) {
   const { actor, children } = props;
 
   const style = useMemo<CSSProperties>(() => {
     return {
-      color: CharacterClassColorMap[actorToCharacterClassMap[actor]],
+      color: ROLE_CLASSES_COLOR_MAP[actorToRoleMap[actor]],
       flex: 1,
       minWidth: 0,
       overflow: "hidden",
