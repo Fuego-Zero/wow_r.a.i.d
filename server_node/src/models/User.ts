@@ -50,7 +50,10 @@ const schema = new Schema<IUser>({
     type: Date,
     default: Date.now,
   },
-  update_time: Date,
+  update_time: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const User = mongoose.model<IUser>('User', schema, 'user');
