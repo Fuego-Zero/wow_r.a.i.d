@@ -64,6 +64,16 @@ class RoleController {
       throw error;
     }
   }
+
+  static async getAllRole(ctx: Context) {
+    try {
+      const res = await RoleService.getAllRole(ctx.state.user.id);
+      ctx.success(res);
+    } catch (error) {
+      if (isBizException(error)) ctx.bizError(error.message);
+      throw error;
+    }
+  }
 }
 
 export default RoleController;

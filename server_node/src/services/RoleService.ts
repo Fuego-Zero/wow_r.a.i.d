@@ -1,6 +1,6 @@
 import { BizException } from '@yfsdk/web-basic-library';
 
-import { IBindRoleBody, IUpdateRoleBody, IUpdateRoleResponse } from '../interfaces/IRole';
+import { IBindRoleBody, IGetAllRoleResponse, IUpdateRoleBody, IUpdateRoleResponse } from '../interfaces/IRole';
 import Role from '../models/Role';
 import { RoleId, UserId } from '../types';
 
@@ -51,6 +51,15 @@ class RoleService {
       talent: updatedRole.talent,
       id: updatedRole.id,
     };
+  }
+
+  static async getAllRole(userId: UserId): Promise<IGetAllRoleResponse> {
+    const roles = await Role.find({ user_id: userId }).lean();
+
+    return roles.map((role) => {
+      const { role_name, talent, classes, user_id, _id } = role;
+      return { role_name, talent, classes, user_id, id: _id };
+    });
   }
 }
 
