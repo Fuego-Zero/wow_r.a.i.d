@@ -6,6 +6,7 @@ import Players from "@/app/components/RaidContent/components/Players";
 import BindRole from "./BindRole";
 import { getAllRole } from "../api";
 import { RoleInfo } from "../types";
+import UnbindRole from "./UnbindRole";
 
 function UserCenter() {
   const { message } = App.useApp();
@@ -70,9 +71,7 @@ function UserCenter() {
             </Button>
           </Col>
           <Col span={8}>
-            <Button block type="dashed">
-              解绑角色
-            </Button>
+            <UnbindRole roles={roles} onReload={onReload} />
           </Col>
         </Row>
       </Col>

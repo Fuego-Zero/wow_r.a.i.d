@@ -5,6 +5,7 @@
     "cssinjs",
     "hoverable",
     "Newtab",
+    "Popconfirm",
     "sockjs",
     "tailwindcss",
     "turbopack",

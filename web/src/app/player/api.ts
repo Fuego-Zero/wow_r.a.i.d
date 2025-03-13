@@ -24,3 +24,7 @@ export function bindRole(params: {
 export function getAllRole(): Promise<RoleInfo[]> {
   return http.get("/get_all_role");
 }
+
+export function unbindRole(roleId: RoleInfo["id"]): Promise<void> {
+  return http.post("/unbind_role", { id: roleId });
+}
