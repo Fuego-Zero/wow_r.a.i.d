@@ -41,6 +41,9 @@ function Actor(props: { actor: TalentType }) {
     case "SCL":
       offset = 28;
       break;
+    case "SJL":
+      offset = 25;
+      break;
 
     // 法师
     case "HF":
@@ -54,6 +57,9 @@ function Actor(props: { actor: TalentType }) {
       break;
 
     // 牧师
+    case "SM":
+      offset = 49;
+      break;
     case "AM":
       offset = 50;
       break;
@@ -84,6 +90,9 @@ function Actor(props: { actor: TalentType }) {
       break;
 
     // 盗贼
+    case "MRZ":
+      offset = 57;
+      break;
     case "CSZ":
       offset = 53;
       break;
@@ -92,6 +101,9 @@ function Actor(props: { actor: TalentType }) {
       break;
 
     // 术士
+    case "HMS":
+      offset = 69;
+      break;
     case "EMS":
       offset = 68;
       break;
@@ -100,6 +112,9 @@ function Actor(props: { actor: TalentType }) {
       break;
 
     // 战士
+    case "WQZ":
+      offset = 73;
+      break;
     case "KBZ":
       offset = 75;
       break;
