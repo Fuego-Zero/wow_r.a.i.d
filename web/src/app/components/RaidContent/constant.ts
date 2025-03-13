@@ -13,27 +13,32 @@ enum TalentMap {
 
   AM = "AM", //暗牧
   JLM = "JLM", //戒律牧
+  SM = "SM", //神牧
 
-  HF = "HF", //法师
-  BF = "BF",
-  AF = "AF",
+  HF = "HF", //火法
+  BF = "BF", //冰法
+  AF = "AF", //奥法
 
   EMS = "EMS", //恶魔术
   TKS = "TKS", //痛苦术
+  HMS = "HMS", //毁灭术
 
-  SWL = "SWL",
-  SCL = "SCL", //猎人
+  SWL = "SWL", //兽王猎
+  SCL = "SCL", //生存猎
+  SJL = "SJL", //射击猎
 
-  CSZ = "CSZ",
-  ZDZ = "ZDZ", //盗贼
+  CSZ = "CSZ", //刺杀贼
+  ZDZ = "ZDZ", //战斗贼
+  MRZ = "MRZ", //敏锐贼
 
   AC = "AC", //鸟德
   ND = "ND", //奶德
-  XT = "XT",
+  XT = "XT", //熊T
   YD = "YD", //猫德
 
-  KBZ = "KBZ", //战士
-  FZ = "FZ",
+  WQZ = "WQZ", //武器战
+  KBZ = "KBZ", //狂暴战
+  FZ = "FZ", //防战
 
   EMPTY = "EMPTY", //空, 用于占位
 }
