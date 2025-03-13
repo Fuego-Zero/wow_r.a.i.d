@@ -49,6 +49,13 @@ http.interceptors.request.use((config) => {
 
 http.interceptors.response.use((response: HttpResponse<UserInfo>): any => {
   if (response.data.code === ResponseCode.success) return response.data.data;
+  if (
+    response.data.code === ResponseCode.apiError &&
+    response.data.data.message.includes("Authentication")
+  ) {
+    UserStorage.clear();
+  }
+
   throw new BizException(response.data.data.message);
 });
 
