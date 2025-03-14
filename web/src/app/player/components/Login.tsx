@@ -1,6 +1,6 @@
 import { App, Button, Form, FormProps, Input, Row } from "antd";
 import React from "react";
-import { useAuth } from "../context";
+import { useAuth } from "../context/authContext";
 import { isBizException } from "@yfsdk/web-basic-library";
 
 type FieldType = {
