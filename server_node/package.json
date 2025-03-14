@@ -1,7 +1,6 @@
 {
   "name": "wow_r.a.i.d_node_server",
   "version": "0.1.0",
-  "main": "index.js",
   "scripts": {
     "serve": "set NODE_ENV=production&& node ./dist/server.js",
     "dev": "nodemon ./src/server.ts",
