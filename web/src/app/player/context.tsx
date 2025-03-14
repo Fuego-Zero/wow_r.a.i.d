@@ -14,6 +14,7 @@ import { BizException, isBizException } from "@yfsdk/web-basic-library";
 
 import * as api from "./api";
 import { App } from "antd";
+import { hashPassword } from "./utils";
 
 type AuthContextType = {
   isLogin: boolean;
@@ -46,6 +47,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const login: AuthContextType["login"] = async (value) => {
+    value.password = hashPassword(value.password);
     const user = await api.login(value);
 
     userStorage.setUser(user);
