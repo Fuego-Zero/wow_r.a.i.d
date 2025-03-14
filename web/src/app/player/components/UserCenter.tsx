@@ -1,5 +1,5 @@
 import { App, Button, Card, Col, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/authContext";
 import Actor from "@/app/components/RaidContent/components/Actor";
 import Players from "@/app/components/RaidContent/components/Players";
@@ -7,10 +7,12 @@ import BindRole from "./BindRole";
 import { getAllRole } from "../api";
 import { RoleInfo } from "../types";
 import UnbindRole from "./UnbindRole";
+import { useAppConfig } from "../context/appConfigContext";
 
 function UserCenter() {
   const { message } = App.useApp();
   const { userInfo } = useAuth();
+  const { raidTimeNameMap } = useAppConfig();
   const [roles, setRoles] = useState<RoleInfo[]>([]);
 
   async function onReload() {
@@ -22,6 +24,14 @@ function UserCenter() {
     onReload();
   }, []);
 
+  const playTime = useMemo(() => {
+    return (
+      userInfo?.play_time
+        .map((time) => raidTimeNameMap.get(time))
+        .filter(Boolean) ?? []
+    );
+  }, [raidTimeNameMap, userInfo?.play_time]);
+
   return (
     <Row justify="center" className="!mx-0 mt-5" gutter={[16, 16]}>
       <Col span={24}>
@@ -31,7 +41,7 @@ function UserCenter() {
           extra={`微信名：${userInfo?.wechat_name}`}
         >
           <Card.Grid className="p-2 w-full" hoverable={false}>
-            报名时间：{userInfo?.play_time.join("、")}
+            报名时间：{playTime.join("、")}
           </Card.Grid>
           {roles.map((role) => {
             return (
