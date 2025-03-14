@@ -1,4 +1,5 @@
 import { BizException } from '@yfsdk/web-basic-library';
+import bcrypt from 'bcrypt'; // eslint-disable-line
 import jwt from 'jsonwebtoken';
 
 import { secretKey } from '../config';
@@ -18,7 +19,9 @@ class UserService {
   static async login(body: ILoginBody): Promise<ILoginResponse> {
     const user = await User.findOne({ account: body.account });
     if (!user) throw new BizException('用户不存在');
-    if (user.password !== body.password) throw new BizException('用户密码错误');
+
+    const isValid = await bcrypt.compare(body.password, user.password);
+    if (!isValid) throw new BizException('用户密码错误');
 
     const { user_name, wechat_name, play_time, id } = user;
     const token = jwt.sign({ id }, secretKey, { expiresIn: '1h' });
@@ -28,6 +31,10 @@ class UserService {
   static async changePassword(userId: UserId, password: string): Promise<boolean> {
     const user = await User.findOne({ _id: userId });
     if (!user) throw new BizException('用户不存在');
+
+    const salt = await bcrypt.genSalt(12);
+    password = await bcrypt.hash(password, salt);
+
     await User.updateOne({ _id: userId }, { password });
     return true;
   }
