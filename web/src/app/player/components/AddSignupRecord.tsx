@@ -80,7 +80,6 @@ function AddSignupRecord(props: Props) {
       num = 0;
     } else {
       const ids = roles
-
         .map((role) => role.id)
         .filter((id) => !signupRecords.has(id));
 
