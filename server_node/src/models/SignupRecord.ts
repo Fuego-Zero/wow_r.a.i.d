@@ -1,9 +1,9 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 import { RoleClassesMap, TalentMap } from '../common';
-import { RoleId, UserId } from '../types';
+import { RoleId, SignupRecordId, UserId } from '../types';
 
-export interface ISignupRecord extends Document {
+export interface ISignupRecord extends Document<SignupRecordId> {
   /**
    * 角色ID
    */

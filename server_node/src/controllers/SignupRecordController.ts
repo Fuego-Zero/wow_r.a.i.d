@@ -38,6 +38,16 @@ class SignupRecordController {
       throw error;
     }
   }
+
+  static async getAllRecord(ctx: Context) {
+    try {
+      const res = await SignupRecordService.getAllRecord(ctx.state.user.id);
+      ctx.success(res);
+    } catch (error) {
+      if (isBizException(error)) ctx.bizError(error.message);
+      throw error;
+    }
+  }
 }
 
 export default SignupRecordController;
