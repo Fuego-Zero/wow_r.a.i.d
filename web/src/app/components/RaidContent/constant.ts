@@ -39,8 +39,6 @@ enum TalentMap {
   WQZ = "WQZ", //武器战
   KBZ = "KBZ", //狂暴战
   FZ = "FZ", //防战
-
-  EMPTY = "EMPTY", //空, 用于占位
 }
 
 export type TalentType = keyof typeof TalentMap;
