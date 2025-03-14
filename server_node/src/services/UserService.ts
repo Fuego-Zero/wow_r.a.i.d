@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 
 import { secretKey } from '../config';
 import { ILoginBody, ILoginResponse } from '../interfaces/ILogin';
-import { IChangeUserinfoBody, IChangeUserinfoResponse } from '../interfaces/IUser';
+import { IChangeUserInfoBody, IChangeUserInfoResponse } from '../interfaces/IUser';
 import User, { IUser } from '../models/User';
 import { UserId } from '../types';
 
@@ -40,7 +40,7 @@ class UserService {
     return true;
   }
 
-  static async changeUserinfo(userId: UserId, body: IChangeUserinfoBody): Promise<IChangeUserinfoResponse> {
+  static async changeUserInfo(userId: UserId, body: IChangeUserInfoBody): Promise<IChangeUserInfoResponse> {
     const user = await User.findOne({ _id: userId });
     if (!user) throw new BizException('用户不存在');
 

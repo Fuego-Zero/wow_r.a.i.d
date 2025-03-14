@@ -2,7 +2,7 @@ import { BizException, isBizException } from '@yfsdk/web-basic-library';
 import { Context } from 'koa';
 
 import { ILoginBody } from '../interfaces/ILogin';
-import { IChangePasswordBody, IChangeUserinfoBody } from '../interfaces/IUser';
+import { IChangePasswordBody, IChangeUserInfoBody } from '../interfaces/IUser';
 import UserService from '../services/UserService';
 
 class UserController {
@@ -22,9 +22,9 @@ class UserController {
     if (password.length !== 64) throw new BizException('password length error');
   }
 
-  private static validateChangeUserinfoParams(body: any): asserts body is IChangeUserinfoBody {
+  private static validateChangeUserInfoParams(body: any): asserts body is IChangeUserInfoBody {
     if (!body) throw new BizException('body is undefined');
-    const { account, play_time, user_name, wechat_name } = body as IChangeUserinfoBody;
+    const { account, play_time, user_name, wechat_name } = body as IChangeUserInfoBody;
 
     if (!account) throw new BizException('body.account is error');
     if (!play_time) throw new BizException('body.play_time is error');
@@ -68,10 +68,10 @@ class UserController {
     }
   }
 
-  static async changeUserinfo(ctx: Context) {
+  static async changeUserInfo(ctx: Context) {
     try {
-      UserController.validateChangeUserinfoParams(ctx.request.body);
-      const user = await UserService.changeUserinfo(ctx.state.user.id, ctx.request.body);
+      UserController.validateChangeUserInfoParams(ctx.request.body);
+      const user = await UserService.changeUserInfo(ctx.state.user.id, ctx.request.body);
       ctx.success(user);
     } catch (error) {
       if (isBizException(error)) ctx.bizError(error.message);
