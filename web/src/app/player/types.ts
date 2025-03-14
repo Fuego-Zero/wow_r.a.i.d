@@ -14,6 +14,10 @@ export type UserInfo = {
    */
   play_time: string[];
   /**
+   * 账号
+   */
+  account: string;
+  /**
    * token
    */
   token: string;
