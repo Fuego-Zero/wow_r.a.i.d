@@ -46,3 +46,9 @@ export function getRaidTime(): Promise<RaidTime[]> {
 export function getAllRecord(): Promise<SignupRecord[]> {
   return http.get("/raid/all_record");
 }
+
+export function addRecord(params: {
+  ids: RoleInfo["id"][];
+}): Promise<SignupRecord[]> {
+  return http.post("/raid/add_record", params);
+}
