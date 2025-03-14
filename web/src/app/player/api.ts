@@ -1,5 +1,5 @@
 import http from "./http";
-import { RoleInfo, UserInfo } from "./types";
+import { RaidTime, RoleInfo, UserInfo } from "./types";
 
 export function getUserInfo(): Promise<UserInfo> {
   return http.get("/user_info");
@@ -18,15 +18,15 @@ export function bindRole(params: {
   talent: string[];
 }): Promise<RoleInfo> {
   const { name, ...rest } = params;
-  return http.post("/bind_role", { role_name: name, ...rest });
+  return http.post("/role/bind_role", { role_name: name, ...rest });
 }
 
 export function getAllRole(): Promise<RoleInfo[]> {
-  return http.get("/get_all_role");
+  return http.get("/role/get_all_role");
 }
 
 export function unbindRole(roleId: RoleInfo["id"]): Promise<void> {
-  return http.post("/unbind_role", { id: roleId });
+  return http.post("/role/unbind_role", { id: roleId });
 }
 
 export function changePassword(password: string): Promise<void> {
@@ -37,4 +37,8 @@ export function changeUserinfo(
   params: Omit<UserInfo, "token">
 ): Promise<Omit<UserInfo, "token">> {
   return http.post("/change_user_info", params);
+}
+
+export function getRaidTime(): Promise<RaidTime[]> {
+  return http.get("/config/raid_time");
 }
