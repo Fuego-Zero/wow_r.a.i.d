@@ -1,7 +1,7 @@
 import React, { CSSProperties, useMemo } from "react";
 import { RoleClasses, ROLE_CLASSES_COLOR_MAP } from "../constant";
 
-function Players(props: { classes: RoleClasses } & React.PropsWithChildren) {
+function Players(props: React.PropsWithChildren<{ classes: RoleClasses }>) {
   const { classes, children } = props;
 
   const style = useMemo<CSSProperties>(() => {
