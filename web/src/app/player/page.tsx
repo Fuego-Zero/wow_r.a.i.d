@@ -6,9 +6,10 @@ import zhCN from "antd/locale/zh_CN";
 import "@ant-design/v5-patch-for-react-19";
 import classNames from "classnames";
 import Login from "./components/Login";
-import { AuthProvider, useAuth } from "./context";
+import { AuthProvider, useAuth } from "./context/authContext";
 import UserCenter from "./components/UserCenter";
 import { Header } from "./components/Header";
+import { AppConfigProvider } from "./context/appConfigContext";
 
 function PlayerContent() {
   const { isLogin } = useAuth();
@@ -31,7 +32,9 @@ export default function Player() {
       <ConfigProvider locale={zhCN} theme={{ algorithm: theme.darkAlgorithm }}>
         <App>
           <AuthProvider>
-            <PlayerContent />
+            <AppConfigProvider>
+              <PlayerContent />
+            </AppConfigProvider>
           </AuthProvider>
         </App>
       </ConfigProvider>

@@ -9,12 +9,12 @@ import {
 } from "react";
 
 import userStorage from "@/app/classes/UserStorage";
-import { UserInfo } from "./types";
+import { UserInfo } from "../types";
 import { BizException, isBizException } from "@yfsdk/web-basic-library";
 
-import * as api from "./api";
+import * as api from "../api";
 import { App } from "antd";
-import { hashPassword } from "./utils";
+import { hashPassword } from "../utils";
 
 type AuthContextType = {
   isLogin: boolean;

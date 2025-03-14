@@ -38,3 +38,14 @@ export type RoleInfo = {
   talent: TalentType[];
   id: string;
 };
+
+export type RaidTime = {
+  /**
+   * 团本时间中文名
+   */
+  time_name: string;
+  /**
+   * 团本时间
+   */
+  time_key: string;
+};
