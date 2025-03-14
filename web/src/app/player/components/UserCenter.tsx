@@ -28,7 +28,7 @@ function UserCenter() {
         <Card
           title={`用户名：${userInfo?.user_name}`}
           size="small"
-          extra={`微信：${userInfo?.wechat_name}`}
+          extra={`微信名：${userInfo?.wechat_name}`}
         >
           <Card.Grid className="p-2 w-full" hoverable={false}>
             游戏时间：{userInfo?.play_time.join("、")}
