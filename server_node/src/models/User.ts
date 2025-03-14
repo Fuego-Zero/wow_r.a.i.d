@@ -31,30 +31,35 @@ export interface IUser extends Document {
   update_time: Date;
 }
 
-const schema = new Schema<IUser>({
-  account: {
-    type: String,
-    required: true,
+const schema = new Schema<IUser>(
+  {
+    account: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    user_name: {
+      type: String,
+      required: true,
+    },
+    wechat_name: String,
+    play_time: [String],
+    create_time: {
+      type: Date,
+      default: Date.now,
+    },
+    update_time: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  password: {
-    type: String,
-    required: true,
+  {
+    versionKey: false,
   },
-  user_name: {
-    type: String,
-    required: true,
-  },
-  wechat_name: String,
-  play_time: [String],
-  create_time: {
-    type: Date,
-    default: Date.now,
-  },
-  update_time: {
-    type: Date,
-    default: Date.now,
-  },
-});
+);
 
 const User = mongoose.model<IUser>('User', schema, 'user');
 
