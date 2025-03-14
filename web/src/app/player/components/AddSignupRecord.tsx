@@ -1,4 +1,4 @@
-import { App, Button, Checkbox, Divider, Form, Modal } from "antd";
+import { App, Button, Checkbox, Divider, Empty, Form, Modal } from "antd";
 import React, { useMemo, useState } from "react";
 import { isBizException } from "@yfsdk/web-basic-library";
 import { RoleInfo, SignupRecord } from "../types";
@@ -9,10 +9,11 @@ import { addRecord } from "../api";
 type Props = {
   roles: RoleInfo[];
   signupRecords: Set<SignupRecord["id"]>;
+  onReload: () => Promise<void>;
 };
 
 function AddSignupRecord(props: Props) {
-  const { roles, signupRecords } = props;
+  const { roles, signupRecords, onReload } = props;
 
   const { message } = App.useApp();
   const [isOpen, setIsOpen] = useState(false);
@@ -31,6 +32,7 @@ function AddSignupRecord(props: Props) {
 
   function close() {
     form.resetFields();
+    onReload();
     setIsOpen(false);
   }
 
@@ -70,9 +72,6 @@ function AddSignupRecord(props: Props) {
   const indeterminate =
     checkedListLength > 0 && checkedListLength < options.length;
 
-  console.log(options.length, "options.length");
-  console.log(checkedListLength, "checkedListLength");
-
   function onCheckAllChange() {
     let num;
 
@@ -106,28 +105,32 @@ function AddSignupRecord(props: Props) {
         forceRender
       >
         <Form form={form} initialValues={{ ids: [] }}>
-          <Form.Item
-            label="角色列表"
-            className="[&_.ant-checkbox-group-item]:items-center"
-          >
-            <Checkbox
-              indeterminate={indeterminate}
-              onChange={onCheckAllChange}
-              checked={checkAll}
+          {options.length > 0 ? (
+            <Form.Item
+              label="角色列表"
+              className="[&_.ant-checkbox-group-item]:items-center"
             >
-              全选
-            </Checkbox>
-            <Divider className="my-1" />
-            <Form.Item name="ids" noStyle>
-              <Checkbox.Group
-                options={options}
-                onChange={() => {
-                  const ids = form.getFieldValue("ids");
-                  setCheckedListLength(ids.length);
-                }}
-              />
+              <Checkbox
+                indeterminate={indeterminate}
+                onChange={onCheckAllChange}
+                checked={checkAll}
+              >
+                全选
+              </Checkbox>
+              <Divider className="my-1" />
+              <Form.Item name="ids" noStyle>
+                <Checkbox.Group
+                  options={options}
+                  onChange={() => {
+                    const ids = form.getFieldValue("ids");
+                    setCheckedListLength(ids.length);
+                  }}
+                />
+              </Form.Item>
             </Form.Item>
-          </Form.Item>
+          ) : (
+            <Empty />
+          )}
         </Form>
       </Modal>
     </>
