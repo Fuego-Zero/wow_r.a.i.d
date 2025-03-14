@@ -42,7 +42,7 @@ function DelSignupRecord(props: Props) {
 
       if (value.ids.length > 0) {
         await delRecord(value);
-        message.success("报名成功");
+        message.success("取消成功");
       }
       close();
     } catch (error) {
