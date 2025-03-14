@@ -3,7 +3,7 @@ import { Dropdown, MenuProps } from "antd";
 import React from "react";
 import { useAuth } from "../context";
 import useChangePassword from "../hooks/useChangePassword";
-import useChangeUserinfo from "../hooks/useChangeUserinfo";
+import useChangeUserinfo from "../hooks/useChangeUserInfo";
 
 export const Header = () => {
   const { isLogin, logout } = useAuth();
