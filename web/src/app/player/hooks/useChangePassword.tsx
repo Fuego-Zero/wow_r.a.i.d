@@ -25,7 +25,7 @@ function useChangePassword(): [() => void, React.ReactNode] {
   async function onFinish() {
     try {
       const value = await form.validateFields();
-      const password = hashPassword(value.password);
+      const password = await hashPassword(value.password);
       await changePassword(password);
       close();
       message.success("修改成功");

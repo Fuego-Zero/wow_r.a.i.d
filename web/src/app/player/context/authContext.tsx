@@ -52,7 +52,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const login: AuthContextType["login"] = async (value) => {
-    value.password = hashPassword(value.password);
+    value.password = await hashPassword(value.password);
     const user = await api.login(value);
 
     userStorage.setUser(user);
