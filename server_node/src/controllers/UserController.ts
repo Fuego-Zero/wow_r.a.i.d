@@ -19,7 +19,7 @@ class UserController {
     const { password } = body as IChangePasswordBody;
 
     if (!password) throw new BizException('body.password is undefined');
-    if (password.length < 8 || password.length > 16) throw new BizException('password length must be between 8 and 16');
+    if (password.length !== 64) throw new BizException('password length error');
   }
 
   static async login(ctx: Context) {
