@@ -41,7 +41,11 @@ async function createContainer(dockerode, containerConfig) {
       data = data.toString();
       console.log(data);
 
-      if (data.includes("Ready in") || data.includes("Running on")) {
+      if (
+        data.includes("Ready in") ||
+        data.includes("Running on") ||
+        data.includes("Listening on")
+      ) {
         attachStream.destroy();
         resolve();
       }
