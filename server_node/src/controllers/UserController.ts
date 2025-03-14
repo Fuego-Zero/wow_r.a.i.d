@@ -2,7 +2,7 @@ import { BizException, isBizException } from '@yfsdk/web-basic-library';
 import { Context } from 'koa';
 
 import { ILoginBody } from '../interfaces/ILogin';
-import { IChangePasswordBody } from '../interfaces/IUser';
+import { IChangePasswordBody, IChangeUserinfoBody } from '../interfaces/IUser';
 import UserService from '../services/UserService';
 
 class UserController {
@@ -10,16 +10,26 @@ class UserController {
     if (!body) throw new BizException('body is undefined');
     const { account, password } = body as ILoginBody;
 
-    if (!account) throw new BizException('body.account is undefined');
-    if (!password) throw new BizException('body.password is undefined');
+    if (!account) throw new BizException('body.account is error');
+    if (!password) throw new BizException('body.password is error');
   }
 
   private static validateChangePasswordParams(body: any): asserts body is IChangePasswordBody {
     if (!body) throw new BizException('body is undefined');
     const { password } = body as IChangePasswordBody;
 
-    if (!password) throw new BizException('body.password is undefined');
+    if (!password) throw new BizException('body.password is error');
     if (password.length !== 64) throw new BizException('password length error');
+  }
+
+  private static validateChangeUserinfoParams(body: any): asserts body is IChangeUserinfoBody {
+    if (!body) throw new BizException('body is undefined');
+    const { account, play_time, user_name, wechat_name } = body as IChangeUserinfoBody;
+
+    if (!account) throw new BizException('body.account is error');
+    if (!play_time) throw new BizException('body.play_time is error');
+    if (!user_name) throw new BizException('body.user_name is error');
+    if (!wechat_name) throw new BizException('body.wechat_name is error');
   }
 
   static async login(ctx: Context) {
@@ -51,6 +61,17 @@ class UserController {
       UserController.validateChangePasswordParams(ctx.request.body);
       const { password } = ctx.request.body;
       const user = await UserService.changePassword(ctx.state.user.id, password);
+      ctx.success(user);
+    } catch (error) {
+      if (isBizException(error)) ctx.bizError(error.message);
+      throw error;
+    }
+  }
+
+  static async changeUserinfo(ctx: Context) {
+    try {
+      UserController.validateChangeUserinfoParams(ctx.request.body);
+      const user = await UserService.changeUserinfo(ctx.state.user.id, ctx.request.body);
       ctx.success(user);
     } catch (error) {
       if (isBizException(error)) ctx.bizError(error.message);
