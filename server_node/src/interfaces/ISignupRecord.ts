@@ -7,3 +7,4 @@ interface SignupRecord
 
 export interface IAddSignupRecordBody extends Pick<ISignupRecord, 'role_id'> {}
 export interface IAddSignupRecordResponse extends SignupRecord {}
+export interface IDelSignupRecordBody extends Pick<ISignupRecord, 'id'> {}

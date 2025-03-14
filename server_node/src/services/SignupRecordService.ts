@@ -4,7 +4,7 @@ import { IAddSignupRecordResponse } from '../interfaces/ISignupRecord';
 import Role from '../models/Role';
 import SignupRecord from '../models/SignupRecord';
 import User from '../models/User';
-import { RoleId, UserId } from '../types';
+import { RoleId, SignupRecordId, UserId } from '../types';
 import { getRaidDateRange } from '../utils';
 
 class SignupRecordService {
@@ -20,6 +20,7 @@ class SignupRecordService {
     let record = await SignupRecord.findOne({
       user_id: userId,
       role_id: roleId,
+      delete_time: null,
       create_time: {
         $gte: date.startDate,
         $lte: date.endDate,
@@ -52,6 +53,16 @@ class SignupRecordService {
       play_time: record.play_time,
       user_name: record.user_name,
     };
+  }
+
+  static async delRecord(recordId: SignupRecordId): Promise<boolean> {
+    let record = await SignupRecord.findById(recordId).lean();
+    if (!record) throw new BizException('报名记录不存在');
+
+    record = await SignupRecord.findOneAndUpdate({ _id: recordId }, { delete_time: new Date() });
+    if (!record) throw new BizException('删除失败');
+
+    return true;
   }
 }
 
