@@ -21,7 +21,7 @@ export const getRaidDateRange = (now?: Date) => {
   const endDate = dayjs(startDate).add(6, 'd').endOf('d');
 
   return {
-    start: startDate.toDate(),
-    end: endDate.toDate(),
+    startDate: startDate.toDate(),
+    endDate: endDate.toDate(),
   };
 };
