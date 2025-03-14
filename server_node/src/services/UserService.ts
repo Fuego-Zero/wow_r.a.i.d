@@ -24,6 +24,13 @@ class UserService {
     const token = jwt.sign({ id }, secretKey, { expiresIn: '1h' });
     return { token, user_name, wechat_name, play_time };
   }
+
+  static async changePassword(userId: UserId, password: string): Promise<boolean> {
+    const user = await User.findOne({ _id: userId });
+    if (!user) throw new BizException('用户不存在');
+    await User.updateOne({ _id: userId }, { password });
+    return true;
+  }
 }
 
 export default UserService;
