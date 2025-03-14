@@ -32,3 +32,9 @@ export function unbindRole(roleId: RoleInfo["id"]): Promise<void> {
 export function changePassword(password: string): Promise<void> {
   return http.post("/change_password", { password });
 }
+
+export function changeUserinfo(
+  params: Omit<UserInfo, "token">
+): Promise<Omit<UserInfo, "token">> {
+  return http.post("/change_user_info", params);
+}

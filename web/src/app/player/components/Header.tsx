@@ -3,23 +3,20 @@ import { Dropdown, MenuProps } from "antd";
 import React from "react";
 import { useAuth } from "../context";
 import useChangePassword from "../hooks/useChangePassword";
+import useChangeUserinfo from "../hooks/useChangeUserinfo";
 
 export const Header = () => {
   const { isLogin, logout } = useAuth();
   const [openChangePassword, changePasswordHolder] = useChangePassword();
+  const [openChangeUserinfo, changeUserinfoHolder] = useChangeUserinfo();
 
   const items: MenuProps["items"] = [
     {
       key: "1",
-      label: (
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://www.antgroup.com"
-        >
-          编辑账号
-        </a>
-      ),
+      label: "编辑账号",
+      onClick: () => {
+        openChangeUserinfo();
+      },
     },
     {
       key: "2",
@@ -47,6 +44,7 @@ export const Header = () => {
         </Dropdown>
       )}
       {changePasswordHolder}
+      {changeUserinfoHolder}
     </div>
   );
 };

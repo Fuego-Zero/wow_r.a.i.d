@@ -21,6 +21,7 @@ type AuthContextType = {
   userInfo: UserInfo | null;
   login: (value: { account: string; password: string }) => Promise<void>;
   logout: () => void;
+  reloadUserInfo: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,15 +31,19 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const { message } = App.useApp();
 
+  async function reloadUserInfo() {
+    const user = await api.getUserInfo();
+    setUserInfo(user);
+  }
+
   useEffect(() => {
     (async () => {
       try {
         const storedUser = userStorage.getUser();
         if (!storedUser) return;
 
-        const user = await api.getUserInfo();
+        await reloadUserInfo();
         setIsLogin(true);
-        setUserInfo(user);
       } catch (error) {
         if (isBizException(error)) return message.error("获取用户信息失败");
         console.error(error);
@@ -62,7 +67,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
   };
 
   return (
-    <AuthContext.Provider value={{ isLogin, userInfo, login, logout }}>
+    <AuthContext.Provider
+      value={{ isLogin, userInfo, login, logout, reloadUserInfo }}
+    >
       {children}
     </AuthContext.Provider>
   );
