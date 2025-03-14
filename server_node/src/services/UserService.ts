@@ -35,7 +35,7 @@ class UserService {
     const salt = await bcrypt.genSalt(12);
     password = await bcrypt.hash(password, salt);
 
-    await User.updateOne({ _id: userId }, { password });
+    await User.updateOne({ _id: userId }, { password, update_time: Date.now() });
     return true;
   }
 }
