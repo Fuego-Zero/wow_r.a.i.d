@@ -1,7 +1,7 @@
 import { MenuOutlined } from "@ant-design/icons";
 import { Dropdown, MenuProps } from "antd";
 import React from "react";
-import { useAuth } from "../context";
+import { useAuth } from "../context/authContext";
 import useChangePassword from "../hooks/useChangePassword";
 import useChangeUserinfo from "../hooks/useChangeUserInfo";
 
