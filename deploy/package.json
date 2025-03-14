@@ -6,7 +6,8 @@
   "scripts": {
     "p": "node ./src/index.js",
     "p-w": "cross-env MODE=web yarn p",
-    "p-s": "cross-env MODE=server yarn p"
+    "p-s": "cross-env MODE=server yarn p",
+    "p-s-node": "cross-env MODE=server_node yarn p"
   },
   "author": "Fuego",
   "license": "MIT",
