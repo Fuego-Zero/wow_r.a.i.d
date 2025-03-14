@@ -1,6 +1,8 @@
 import { IRaidTimeResponse } from '../interfaces/IRaidTime';
 import RaidTime from '../models/RaidTime';
 
+const { NODE_ENV } = process.env;
+
 class ConfigService {
   static async initRaidTime(): Promise<void> {
     const date = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
@@ -27,6 +29,6 @@ class ConfigService {
   }
 }
 
-ConfigService.initRaidTime();
+if (NODE_ENV === 'develop') ConfigService.initRaidTime();
 
 export default ConfigService;
