@@ -31,7 +31,7 @@ function UserCenter() {
           extra={`微信名：${userInfo?.wechat_name}`}
         >
           <Card.Grid className="p-2 w-full" hoverable={false}>
-            游戏时间：{userInfo?.play_time.join("、")}
+            报名时间：{userInfo?.play_time.join("、")}
           </Card.Grid>
           {roles.map((role) => {
             return (

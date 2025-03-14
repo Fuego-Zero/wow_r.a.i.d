@@ -10,7 +10,7 @@ export type UserInfo = {
    */
   wechat_name: string;
   /**
-   * 游戏时间
+   * 报名时间
    */
   play_time: string[];
   /**
