@@ -28,3 +28,7 @@ export function getAllRole(): Promise<RoleInfo[]> {
 export function unbindRole(roleId: RoleInfo["id"]): Promise<void> {
   return http.post("/unbind_role", { id: roleId });
 }
+
+export function changePassword(password: string): Promise<void> {
+  return http.post("/change_password", { password });
+}

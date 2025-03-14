@@ -8,20 +8,19 @@ import classNames from "classnames";
 import Login from "./components/Login";
 import { AuthProvider, useAuth } from "./context";
 import UserCenter from "./components/UserCenter";
-
-const { Header, Content } = Layout;
+import { Header } from "./components/Header";
 
 function PlayerContent() {
   const { isLogin } = useAuth();
 
   return (
     <Layout className={classNames("h-[100vh] flex overflow-auto")}>
-      <Header>
-        <span className="text-xl">个人中心</span>
-      </Header>
-      <Content className="min-w-0">
+      <Layout.Header>
+        <Header />
+      </Layout.Header>
+      <Layout.Content className="min-w-0">
         {isLogin ? <UserCenter /> : <Login />}
-      </Content>
+      </Layout.Content>
     </Layout>
   );
 }
