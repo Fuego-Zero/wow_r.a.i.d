@@ -35,5 +35,4 @@ export const ACTOR_ORDER: TalentType[] = [
   "AC",
   "YD",
   "KBZ",
-  "EMPTY",
 ];
