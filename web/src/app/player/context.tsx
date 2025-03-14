@@ -54,6 +54,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   };
 
   const logout = () => {
+    userStorage.clear();
     setUserInfo(null);
     setIsLogin(false);
   };
