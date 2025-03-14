@@ -1,14 +1,16 @@
-import { App, Form, Input, Modal } from "antd";
-import React, { useState } from "react";
+import { App, Checkbox, Divider, Form, Input, Modal } from "antd";
+import React, { useMemo, useState } from "react";
 import { isBizException } from "@yfsdk/web-basic-library";
 import { UserInfo } from "../types";
-import { useAuth } from "../context";
+import { useAuth } from "../context/authContext";
 import { changeUserinfo } from "../api";
+import { useAppConfig } from "../context/appConfigContext";
 
 function useChangeUserinfo(): [() => void, React.ReactNode] {
   const { message } = App.useApp();
   const { userInfo, reloadUserInfo } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const { raidTime } = useAppConfig();
 
   const [form] = Form.useForm<{
     user_name: UserInfo["user_name"];
@@ -18,6 +20,13 @@ function useChangeUserinfo(): [() => void, React.ReactNode] {
   }>();
 
   function openChangeUserinfo() {
+    form.setFieldsValue({
+      user_name: userInfo?.user_name,
+      wechat_name: userInfo?.wechat_name,
+      play_time: userInfo?.play_time,
+      account: userInfo?.account,
+    });
+    setCheckedListLength(userInfo?.play_time.length || 0);
     setIsOpen(true);
   }
 
@@ -39,6 +48,36 @@ function useChangeUserinfo(): [() => void, React.ReactNode] {
     }
   }
 
+  const raidTimeOptions = useMemo(() => {
+    return raidTime.map((item) => {
+      return {
+        label: item.time_name,
+        value: item.time_key,
+      };
+    });
+  }, [raidTime]);
+
+  const [checkedListLength, setCheckedListLength] = useState(0);
+  const checkAll = raidTimeOptions.length === checkedListLength;
+  const indeterminate =
+    checkedListLength > 0 && checkedListLength < raidTimeOptions.length;
+
+  function onCheckAllChange() {
+    let num;
+
+    if (checkedListLength === raidTimeOptions.length) {
+      form.setFieldsValue({ play_time: [] });
+      num = 0;
+    } else {
+      form.setFieldsValue({
+        play_time: raidTimeOptions.map((item) => item.value),
+      });
+      num = raidTimeOptions.length;
+    }
+
+    setCheckedListLength(num);
+  }
+
   const holder = (
     <Modal
       open={isOpen}
@@ -50,10 +89,10 @@ function useChangeUserinfo(): [() => void, React.ReactNode] {
       <Form
         form={form}
         initialValues={{
-          user_name: userInfo?.user_name,
-          wechat_name: userInfo?.wechat_name,
-          play_time: userInfo?.play_time,
-          account: userInfo?.account,
+          user_name: "",
+          wechat_name: "",
+          play_time: [],
+          account: "",
         }}
       >
         <Form.Item
@@ -92,16 +131,18 @@ function useChangeUserinfo(): [() => void, React.ReactNode] {
         >
           <Input />
         </Form.Item>
-        <Form.Item
-          name="play_time"
-          label="报名时间"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Input />
+        <Form.Item label="报名时间">
+          <Checkbox
+            indeterminate={indeterminate}
+            onChange={onCheckAllChange}
+            checked={checkAll}
+          >
+            全选
+          </Checkbox>
+          <Divider className="my-1" />
+          <Form.Item name="play_time" noStyle>
+            <Checkbox.Group options={raidTimeOptions} />
+          </Form.Item>
         </Form.Item>
       </Form>
     </Modal>
