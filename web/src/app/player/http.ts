@@ -33,8 +33,8 @@ export type HttpResponse<T = any> = AxiosResponse<
 
 const baseURL =
   process.env.NODE_ENV === "development"
-    ? "http://localhost:3000/api2"
-    : "/api2";
+    ? "http://localhost:3000/api_node"
+    : "/api_node";
 
 const http = axios.create({
   baseURL,
