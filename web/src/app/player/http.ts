@@ -54,6 +54,7 @@ http.interceptors.response.use((response: HttpResponse<UserInfo>): any => {
     response.data.data.message.includes("Authentication")
   ) {
     UserStorage.clear();
+    window.location.reload();
   }
 
   throw new BizException(response.data.data.message);
