@@ -17,6 +17,7 @@
   "dependencies": {
     "@yfsdk/web-basic-library": "2.0.1",
     "bcrypt": "5.1.1",
+    "dayjs": "1.11.13",
     "jsonwebtoken": "9.0.2",
     "koa": "2.16.0",
     "koa-bodyparser": "4.4.1",

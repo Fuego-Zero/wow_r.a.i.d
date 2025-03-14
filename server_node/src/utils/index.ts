@@ -1,9 +1,27 @@
-import { BizException } from '@yfsdk/web-basic-library';
-import { Context } from 'koa';
+import dayjs from 'dayjs';
 
-import { UserId } from '../types';
+/**
+ * 获取指定日期的CD范围
+ *
+ * @description 以周四为分界线，获取指定日期的CD范围，now 默认为当前时间
+ */
+export const getRaidDateRange = (now?: Date) => {
+  now ??= new Date();
+  const currentDay = now.getDay();
 
-export const getUserIdBy = (ctx: Context): UserId => {
-  if (ctx.state.user) return ctx.state.user.id;
-  throw new BizException('user is undefined');
+  let perv = 0;
+
+  if (currentDay >= 4) {
+    perv = currentDay - 4;
+  } else {
+    perv = 7 - 4 + currentDay;
+  }
+
+  const startDate = dayjs(now).subtract(perv, 'd').startOf('d');
+  const endDate = dayjs(startDate).add(6, 'd').endOf('d');
+
+  return {
+    start: startDate.toDate(),
+    end: endDate.toDate(),
+  };
 };
