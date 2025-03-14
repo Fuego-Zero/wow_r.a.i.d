@@ -5,7 +5,11 @@ export interface SignupRecord
   id: ISignupRecord['_id'];
 }
 
-export interface IAddSignupRecordBody extends Pick<ISignupRecord, 'role_id'> {}
-export interface IAddSignupRecordResponse extends SignupRecord {}
-export interface IDelSignupRecordBody extends Pick<ISignupRecord, 'id'> {}
+export interface IAddSignupRecordBody {
+  ids: Array<ISignupRecord['role_id']>;
+}
+export interface IAddSignupRecordResponse extends Array<SignupRecord> {}
+export interface IDelSignupRecordBody {
+  ids: Array<ISignupRecord['role_id']>;
+}
 export interface IAllSignupRecordResponse extends Array<SignupRecord> {}

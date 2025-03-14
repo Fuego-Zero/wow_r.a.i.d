@@ -1,6 +1,8 @@
 import { IRole } from '../models/Role';
 
-interface Role extends Pick<IRole, 'role_name' | 'classes' | 'talent' | 'id'> {}
+interface Role extends Pick<IRole, 'role_name' | 'classes' | 'talent'> {
+  id: IRole['_id'];
+}
 
 export interface IBindRoleBody extends Pick<IRole, 'role_name' | 'classes' | 'talent'> {}
 export interface IUnbindRoleBody extends Pick<IRole, 'id'> {}

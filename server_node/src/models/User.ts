@@ -1,6 +1,8 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-export interface IUser extends Document {
+import { UserId } from '../types';
+
+export interface IUser extends Document<UserId> {
   /**
    * 账号
    */
