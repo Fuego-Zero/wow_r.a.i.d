@@ -9,12 +9,12 @@ import User, { IUser } from '../models/User';
 import { UserId } from '../types';
 
 class UserService {
-  static async findUser(id: UserId): Promise<Pick<IUser, 'wechat_name' | 'play_time' | 'user_name'>> {
+  static async findUser(id: UserId): Promise<Pick<IUser, 'wechat_name' | 'play_time' | 'user_name' | 'account'>> {
     const user = await User.findById(id).lean();
     if (!user) throw new BizException('用户不存在');
 
-    const { wechat_name, play_time, user_name } = user;
-    return { wechat_name, play_time, user_name };
+    const { wechat_name, play_time, user_name, account } = user;
+    return { wechat_name, play_time, user_name, account };
   }
 
   static async login(body: ILoginBody): Promise<ILoginResponse> {
@@ -49,7 +49,6 @@ class UserService {
     let foundUser = await User.findOne({ account });
     if (foundUser && user.id !== foundUser.id) throw new BizException('账号已存在');
 
-    foundUser = await User.findOne({ user_name });
     if (foundUser && user.id !== foundUser.id) throw new BizException('用户名已存在');
 
     foundUser = await User.findOne({ wechat_name });
