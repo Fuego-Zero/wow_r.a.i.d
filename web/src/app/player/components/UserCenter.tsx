@@ -1,4 +1,4 @@
-import { App, Button, Card, Col, Row, Tag } from "antd";
+import { Card, Col, Row, Tag } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/authContext";
 import Actor from "@/app/components/RaidContent/components/Actor";
@@ -8,30 +8,34 @@ import { getAllRecord, getAllRole } from "../api";
 import { RoleInfo, SignupRecord } from "../types";
 import UnbindRole from "./UnbindRole";
 import { useAppConfig } from "../context/appConfigContext";
+import AddSignupRecord from "./AddSignupRecord";
+import DelSignupRecord from "./DelSignupRecord";
 
 function UserCenter() {
-  const { message } = App.useApp();
   const { userInfo } = useAuth();
   const { raidTimeNameMap } = useAppConfig();
   const [roles, setRoles] = useState<RoleInfo[]>([]);
-  const [signupRecords, setSignupRecords] = useState<Set<SignupRecord["id"]>>(
-    new Set()
-  );
+  const [signupRecordSet, setSignupRecordSet] = useState<
+    Set<SignupRecord["id"]>
+  >(new Set());
+  const [signupRecords, setSignupRecords] = useState<SignupRecord[]>([]);
+
   async function onReload() {
     const [roles, records] = await Promise.all([getAllRole(), getAllRecord()]);
 
+    const set = records.reduce((set, record) => {
+      set.add(record.role_id);
+      return set;
+    }, new Set<SignupRecord["id"]>());
+
     setRoles(roles);
-
-    records.forEach((record) => {
-      signupRecords.add(record.role_id);
-    });
-
-    setSignupRecords(new Set(signupRecords));
+    setSignupRecordSet(new Set(set));
+    setSignupRecords(records);
   }
 
   useEffect(() => {
     onReload();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const playTime = useMemo(() => {
     return (
@@ -58,7 +62,9 @@ function UserCenter() {
                 <div className="flex relative items-center justify-start w-full text-left">
                   <Actor actor={role.talent} />
                   <Players classes={role.classes}>{role.role_name}</Players>
-                  {signupRecords.has(role.id) && <Tag color="cyan">已报名</Tag>}
+                  {signupRecordSet.has(role.id) && (
+                    <Tag color="cyan">已报名</Tag>
+                  )}
                 </div>
               </Card.Grid>
             );
@@ -68,14 +74,18 @@ function UserCenter() {
       <Col span={24}>
         <Row gutter={[8, 8]}>
           <Col span={12}>
-            <Button block type="primary">
-              立即报名
-            </Button>
+            <AddSignupRecord
+              onReload={onReload}
+              roles={roles}
+              signupRecords={signupRecordSet}
+            />
           </Col>
           <Col span={12}>
-            <Button block type="dashed" danger>
-              取消报名
-            </Button>
+            <DelSignupRecord
+              onReload={onReload}
+              roles={roles}
+              signupRecords={signupRecords}
+            />
           </Col>
           <Col span={12}>
             <BindRole onReload={onReload} />

@@ -52,3 +52,9 @@ export function addRecord(params: {
 }): Promise<SignupRecord[]> {
   return http.post("/raid/add_record", params);
 }
+
+export function delRecord(params: {
+  ids: RoleInfo["id"][];
+}): Promise<SignupRecord[]> {
+  return http.post("/raid/del_record", params);
+}
