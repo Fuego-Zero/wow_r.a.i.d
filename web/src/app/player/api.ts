@@ -1,5 +1,5 @@
 import http from "./http";
-import { RaidTime, RoleInfo, UserInfo } from "./types";
+import { RaidTime, RoleInfo, SignupRecord, UserInfo } from "./types";
 
 export function getUserInfo(): Promise<UserInfo> {
   return http.get("/user_info");
@@ -41,4 +41,8 @@ export function changeUserinfo(
 
 export function getRaidTime(): Promise<RaidTime[]> {
   return http.get("/config/raid_time");
+}
+
+export function getAllRecord(): Promise<SignupRecord[]> {
+  return http.get("/raid/all_record");
 }

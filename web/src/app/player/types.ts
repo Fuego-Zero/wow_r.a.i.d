@@ -49,3 +49,37 @@ export type RaidTime = {
    */
   time_key: string;
 };
+
+export type SignupRecord = {
+  id: string;
+
+  /**
+   * 角色ID
+   */
+  role_id: string;
+  /**
+   * 角色天赋
+   */
+  talent: TalentType[];
+  /**
+   * 角色职业
+   */
+  classes: RoleClasses;
+  /**
+   * 角色名
+   */
+  role_name: string;
+
+  /**
+   * 用户ID
+   */
+  user_id: string;
+  /**
+   * 游戏时间
+   */
+  play_time: string[];
+  /**
+   * 用户名
+   */
+  user_name: string;
+};

@@ -1,11 +1,11 @@
-import { App, Button, Card, Col, Row } from "antd";
+import { App, Button, Card, Col, Row, Tag } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/authContext";
 import Actor from "@/app/components/RaidContent/components/Actor";
 import Players from "@/app/components/RaidContent/components/Players";
 import BindRole from "./BindRole";
-import { getAllRole } from "../api";
-import { RoleInfo } from "../types";
+import { getAllRecord, getAllRole } from "../api";
+import { RoleInfo, SignupRecord } from "../types";
 import UnbindRole from "./UnbindRole";
 import { useAppConfig } from "../context/appConfigContext";
 
@@ -14,15 +14,24 @@ function UserCenter() {
   const { userInfo } = useAuth();
   const { raidTimeNameMap } = useAppConfig();
   const [roles, setRoles] = useState<RoleInfo[]>([]);
-
+  const [signupRecords, setSignupRecords] = useState<Set<SignupRecord["id"]>>(
+    new Set()
+  );
   async function onReload() {
-    const res = await getAllRole();
-    setRoles(res);
+    const [roles, records] = await Promise.all([getAllRole(), getAllRecord()]);
+
+    setRoles(roles);
+
+    records.forEach((record) => {
+      signupRecords.add(record.role_id);
+    });
+
+    setSignupRecords(new Set(signupRecords));
   }
 
   useEffect(() => {
     onReload();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const playTime = useMemo(() => {
     return (
@@ -45,15 +54,11 @@ function UserCenter() {
           </Card.Grid>
           {roles.map((role) => {
             return (
-              <Card.Grid
-                className="p-2 w-[50%]"
-                hoverable={false}
-                key={role.id}
-              >
+              <Card.Grid className="p-2 w-full" hoverable={false} key={role.id}>
                 <div className="flex relative items-center justify-start w-full text-left">
                   <Actor actor={role.talent} />
                   <Players classes={role.classes}>{role.role_name}</Players>
-                  {/* <Tag color="cyan">已报名</Tag> */}
+                  {signupRecords.has(role.id) && <Tag color="cyan">已报名</Tag>}
                 </div>
               </Card.Grid>
             );
