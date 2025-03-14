@@ -1,6 +1,6 @@
 import { App, Button, Card, Col, Row } from "antd";
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../context";
+import { useAuth } from "../context/authContext";
 import Actor from "@/app/components/RaidContent/components/Actor";
 import Players from "@/app/components/RaidContent/components/Players";
 import BindRole from "./BindRole";
