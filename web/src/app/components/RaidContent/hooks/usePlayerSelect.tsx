@@ -73,7 +73,8 @@ function usePlayerSelect(
   const innerPlayers = useMemo(() => {
     return players.filter((player) => {
       if (!player.time.includes(time)) return false;
-      return player.actor === selectedActor || selectedActor === "EMPTY";
+      // TODO 该处要修复
+      return player.actor === selectedActor || selectedActor === "SM";
     });
   }, [players, selectedActor, time]);
 
@@ -187,7 +188,8 @@ function usePlayerSelect(
                   >
                     <div className="flex relative items-center justify-start w-full text-left">
                       <Actor actor={player.actor} />
-                      <Players actor={player.actor}>{player.name}</Players>
+                      {/* // TODO 该处要修复 */}
+                      <Players classes="SM">{player.name}</Players>
                       {el}
                       <Tooltip
                         title={

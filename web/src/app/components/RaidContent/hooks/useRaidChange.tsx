@@ -194,7 +194,8 @@ function useRaidChange(
                 el = (
                   <div className="flex relative items-center justify-start w-full text-left pl-[11px]">
                     <Actor actor={item.actor} />
-                    <Players actor={item.actor}>{item.name}</Players>
+                    {/* // TODO 该处要修复 */}
+                    <Players classes="DK">{item.name}</Players>
                   </div>
                 );
               } else {
@@ -205,7 +206,8 @@ function useRaidChange(
                       <>
                         <div className="flex relative items-center justify-start w-full text-left">
                           <Actor actor={item.actor} />
-                          <Players actor={item.actor}>{item.name}</Players>
+                          {/* // TODO 该处要修复 */}
+                          <Players classes="SM">{item.name}</Players>
                         </div>
                       </>
                     ),
@@ -294,7 +296,7 @@ function useRaidChange(
                                   >
                                     <div className="flex relative items-center justify-start w-full text-left">
                                       <Actor actor={player.actor} />
-                                      <Players actor={player.actor}>
+                                      <Players classes="SM">
                                         {player.name}
                                       </Players>
                                     </div>

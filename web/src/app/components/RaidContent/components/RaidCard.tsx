@@ -101,10 +101,11 @@ function RaidCard(
             }
           )}
         >
-          {item.actor !== "EMPTY" ? (
+          {/* // TODO 该处要修复 */}
+          {item.actor !== "SM" ? (
             <>
               <Actor actor={item.actor} />
-              <Players actor={item.actor}>{item.name}</Players>
+              <Players classes="DK">{item.name}</Players>
               <Button
                 className="hidden group-hover/delPlayer:block absolute right-0"
                 type="link"
