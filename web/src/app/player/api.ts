@@ -34,7 +34,7 @@ export function changePassword(password: string): Promise<void> {
 }
 
 export function changeUserinfo(
-  params: Omit<UserInfo, "token">
+  params: Omit<UserInfo, "token" | "is_admin">
 ): Promise<Omit<UserInfo, "token">> {
   return http.post("/change_user_info", params);
 }
