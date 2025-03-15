@@ -4,7 +4,7 @@
   "scripts": {
     "serve": "set NODE_ENV=production&& node ./dist/server.js",
     "dev": "nodemon ./src/server.ts",
-    "debug": "set NODE_ENV=develop&& set SIGN_CHECK_TIME=false&& set SIGN_CHECK=false&& nodemon --inspect=5858 -e ts --exec node -r ts-node/register ./src/server.ts",
+    "debug": "set NODE_ENV=development&& set SIGN_CHECK_TIME=false&& set SIGN_CHECK=false&& nodemon --inspect=5858 -e ts --exec node -r ts-node/register ./src/server.ts",
     "build": "tsc",
     "test-ts": "ts-node ./src/server.ts",
     "lint": "eslint . --fix --ignore-path .gitignore"

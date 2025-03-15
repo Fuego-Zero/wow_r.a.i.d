@@ -93,6 +93,21 @@ class UserService {
       is_admin: u.is_admin,
     }));
   }
+
+  static async resetPassword(userId: UserId, targetUserId: UserId, password: string): Promise<boolean> {
+    const user = await User.findOne({ _id: userId });
+    if (!user) throw new BizException('用户不存在');
+    if (user.is_admin === false) throw new BizException('没有权限');
+
+    const targetUser = await User.findOne({ _id: targetUserId });
+    if (!targetUser) throw new BizException('目标用户不存在');
+
+    const salt = await bcrypt.genSalt(12);
+    password = await bcrypt.hash(password, salt);
+
+    await User.updateOne({ _id: targetUserId }, { password, update_time: Date.now() });
+    return true;
+  }
 }
 
 export default UserService;

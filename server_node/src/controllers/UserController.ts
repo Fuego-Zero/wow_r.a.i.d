@@ -2,7 +2,7 @@ import { BizException, isBizException } from '@yfsdk/web-basic-library';
 import { Context } from 'koa';
 
 import { ILoginBody } from '../interfaces/ILogin';
-import { IChangePasswordBody, IChangeUserInfoBody } from '../interfaces/IUser';
+import { IChangePasswordBody, IChangeUserInfoBody, IResetPasswordBody } from '../interfaces/IUser';
 import UserService from '../services/UserService';
 
 class UserController {
@@ -20,6 +20,15 @@ class UserController {
 
     if (!password) throw new BizException('body.password is error');
     if (password.length !== 64) throw new BizException('password length error');
+  }
+
+  private static validateResetPasswordParams(body: any): asserts body is IResetPasswordBody {
+    if (!body) throw new BizException('body is undefined');
+    const { password, targetUserId } = body as IResetPasswordBody;
+
+    if (!password) throw new BizException('body.password is error');
+    if (password.length !== 64) throw new BizException('password length error');
+    if (!targetUserId) throw new BizException('body.targetUserId is error');
   }
 
   private static validateChangeUserInfoParams(body: any): asserts body is IChangeUserInfoBody {
@@ -82,6 +91,18 @@ class UserController {
   static async allUsers(ctx: Context) {
     try {
       const user = await UserService.getAllUsers(ctx.state.user.id);
+      ctx.success(user);
+    } catch (error) {
+      if (isBizException(error)) ctx.bizError(error.message);
+      throw error;
+    }
+  }
+
+  static async resetPassword(ctx: Context) {
+    try {
+      UserController.validateResetPasswordParams(ctx.request.body);
+      const { password, targetUserId } = ctx.request.body;
+      const user = await UserService.resetPassword(ctx.state.user.id, targetUserId, password);
       ctx.success(user);
     } catch (error) {
       if (isBizException(error)) ctx.bizError(error.message);

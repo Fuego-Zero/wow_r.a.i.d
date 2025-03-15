@@ -35,7 +35,7 @@ const signatureMiddleware: Middleware = async (ctx, next) => {
   if (innerSign === SIGN && currentDate - +TIMESTAMP < difference) {
     await next();
   } else {
-    throw new BizException(`改？${NODE_ENV === 'develop' ? innerSign : ''}`);
+    throw new BizException(`改？${NODE_ENV === 'development' ? innerSign : ''}`);
   }
 };
 

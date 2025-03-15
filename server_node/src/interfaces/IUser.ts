@@ -6,3 +6,7 @@ export interface IChangePasswordBody extends Pick<IUser, 'password'> {}
 export interface IChangeUserInfoBody extends User {}
 export interface IChangeUserInfoResponse extends User {}
 export interface IAllUsersResponse extends Array<User & { id: IUser['_id'] }> {}
+
+export interface IResetPasswordBody extends Pick<IUser, 'password'> {
+  targetUserId: IUser['_id'];
+}
