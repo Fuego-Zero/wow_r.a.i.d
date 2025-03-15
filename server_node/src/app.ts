@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 
 import { CustomContextMethod } from '../typings';
 import { DB_URI } from './config';
+import { mongoDBConfig } from './config/core';
 import adminCheck from './middleware/adminCheck';
 import globalErrorHandler from './middleware/globalErrorHandler';
 import JWTMiddleware from './middleware/JWTMiddleware';
@@ -18,9 +19,13 @@ extend();
 
 const app = new Koa<any, CustomContextMethod>();
 
+const { NODE_ENV } = process.env;
+
+const options = NODE_ENV === 'development' ? {} : mongoDBConfig;
+
 // 连接 MongoDB 数据库
 mongoose
-  .connect(DB_URI)
+  .connect(DB_URI, options)
   .then(() => {
     console.log('Connected to MongoDB');
   })
