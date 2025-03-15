@@ -7,7 +7,7 @@ import useChangeUserinfo from "../hooks/useChangeUserInfo";
 import { useRouter } from "next/navigation";
 
 export const Header = () => {
-  const { isLogin, logout, userInfo } = useAuth();
+  const { isLogin, isAdmin, logout } = useAuth();
   const [openChangePassword, changePasswordHolder] = useChangePassword();
   const [openChangeUserinfo, changeUserinfoHolder] = useChangeUserinfo();
   const router = useRouter();
@@ -37,7 +37,7 @@ export const Header = () => {
     },
   ];
 
-  if (userInfo?.is_admin) {
+  if (isAdmin) {
     items.unshift({
       key: "0",
       label: "管理后台",

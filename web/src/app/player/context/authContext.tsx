@@ -6,6 +6,7 @@ import {
   useState,
   useEffect,
   PropsWithChildren,
+  useMemo,
 } from "react";
 
 import userStorage from "@/app/classes/UserStorage";
@@ -18,6 +19,7 @@ import { hashPassword } from "../utils";
 
 type AuthContextType = {
   isLogin: boolean;
+  isAdmin: boolean;
   userInfo: UserInfo | null;
   login: (value: { account: string; password: string }) => Promise<void>;
   logout: () => void;
@@ -66,9 +68,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
     setIsLogin(false);
   };
 
+  const isAdmin = useMemo<boolean>(() => {
+    return Boolean(userInfo?.is_admin);
+  }, [userInfo?.is_admin]);
+
   return (
     <AuthContext.Provider
-      value={{ isLogin, userInfo, login, logout, reloadUserInfo }}
+      value={{ isLogin, isAdmin, userInfo, login, logout, reloadUserInfo }}
     >
       {children}
     </AuthContext.Provider>
