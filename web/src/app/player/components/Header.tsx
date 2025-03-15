@@ -4,11 +4,13 @@ import React from "react";
 import { useAuth } from "../context/authContext";
 import useChangePassword from "../hooks/useChangePassword";
 import useChangeUserinfo from "../hooks/useChangeUserInfo";
+import { useRouter } from "next/navigation";
 
 export const Header = () => {
-  const { isLogin, logout } = useAuth();
+  const { isLogin, logout, userInfo } = useAuth();
   const [openChangePassword, changePasswordHolder] = useChangePassword();
   const [openChangeUserinfo, changeUserinfoHolder] = useChangeUserinfo();
+  const router = useRouter();
 
   const items: MenuProps["items"] = [
     {
@@ -34,6 +36,16 @@ export const Header = () => {
       },
     },
   ];
+
+  if (userInfo?.is_admin) {
+    items.unshift({
+      key: "0",
+      label: "管理后台",
+      onClick: () => {
+        router.push("/manage");
+      },
+    });
+  }
 
   return (
     <div className="flex items-center h-full">

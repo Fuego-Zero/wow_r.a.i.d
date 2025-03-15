@@ -21,6 +21,10 @@ export type UserInfo = {
    * token
    */
   token: string;
+  /**
+   * 是否是管理员
+   */
+  is_admin: boolean;
 };
 
 export type RoleInfo = {
