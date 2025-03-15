@@ -98,9 +98,12 @@ function AppHeader(props: {
         <Button type="primary" onClick={submit} disabled={loading}>
           自动分配
         </Button>
+        <Link href="/player">
+          <Button type="link">个人中心</Button>
+        </Link>
       </div>
     </div>
   );
 }
-
+import Link from "next/link";
 export default AppHeader;
