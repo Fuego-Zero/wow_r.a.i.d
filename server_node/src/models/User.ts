@@ -24,6 +24,10 @@ export interface IUser extends Document<UserId> {
    */
   play_time: string[];
   /**
+   * 是否是管理员
+   */
+  is_admin: boolean;
+  /**
    * 创建时间
    */
   create_time: Date;
@@ -49,6 +53,10 @@ const schema = new Schema<IUser>(
     },
     wechat_name: String,
     play_time: [String],
+    is_admin: {
+      type: Boolean,
+      default: false,
+    },
     create_time: {
       type: Date,
       default: Date.now,

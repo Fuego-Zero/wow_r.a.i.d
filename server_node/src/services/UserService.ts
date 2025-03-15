@@ -4,17 +4,17 @@ import jwt from 'jsonwebtoken';
 
 import { secretKey } from '../config';
 import { ILoginBody, ILoginResponse } from '../interfaces/ILogin';
-import { IChangeUserInfoBody, IChangeUserInfoResponse } from '../interfaces/IUser';
-import User, { IUser } from '../models/User';
+import { IAllUsersResponse, IChangeUserInfoBody, IChangeUserInfoResponse } from '../interfaces/IUser';
+import User from '../models/User';
 import { UserId } from '../types';
 
 class UserService {
-  static async findUser(id: UserId): Promise<Pick<IUser, 'wechat_name' | 'play_time' | 'user_name' | 'account'>> {
+  static async findUser(id: UserId): Promise<Omit<ILoginResponse, 'token'>> {
     const user = await User.findById(id).lean();
     if (!user) throw new BizException('用户不存在');
 
-    const { wechat_name, play_time, user_name, account } = user;
-    return { wechat_name, play_time, user_name, account };
+    const { wechat_name, play_time, user_name, account, is_admin } = user;
+    return { wechat_name, play_time, user_name, account, is_admin };
   }
 
   static async login(body: ILoginBody): Promise<ILoginResponse> {
@@ -26,7 +26,7 @@ class UserService {
 
     const { user_name, wechat_name, play_time, id, account } = user;
     const token = jwt.sign({ id }, secretKey, { expiresIn: '1h' });
-    return { token, user_name, wechat_name, play_time, account };
+    return { token, user_name, wechat_name, play_time, account, is_admin: user.is_admin };
   }
 
   static async changePassword(userId: UserId, password: string): Promise<boolean> {
@@ -73,7 +73,25 @@ class UserService {
       play_time: updatedUser.play_time,
       user_name: updatedUser.user_name,
       wechat_name: updatedUser.wechat_name,
+      is_admin: updatedUser.is_admin,
     };
+  }
+
+  static async getAllUsers(userId: UserId): Promise<IAllUsersResponse> {
+    const user = await User.findOne({ _id: userId });
+    if (!user) throw new BizException('用户不存在');
+    if (user.is_admin === false) throw new BizException('没有权限');
+
+    const users = await User.find({}).lean();
+
+    return users.map((u) => ({
+      id: u._id,
+      account: u.account,
+      play_time: u.play_time,
+      user_name: u.user_name,
+      wechat_name: u.wechat_name,
+      is_admin: u.is_admin,
+    }));
   }
 }
 

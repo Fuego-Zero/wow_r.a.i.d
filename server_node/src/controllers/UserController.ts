@@ -78,6 +78,16 @@ class UserController {
       throw error;
     }
   }
+
+  static async allUsers(ctx: Context) {
+    try {
+      const user = await UserService.getAllUsers(ctx.state.user.id);
+      ctx.success(user);
+    } catch (error) {
+      if (isBizException(error)) ctx.bizError(error.message);
+      throw error;
+    }
+  }
 }
 
 export default UserController;
