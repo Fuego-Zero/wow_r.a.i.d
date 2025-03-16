@@ -6,6 +6,7 @@ import classNames from "classnames";
 import React, { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/app/player/context/authContext";
+import axios from "axios";
 
 function AppHeader(props: {
   reload: () => void;
@@ -13,20 +14,16 @@ function AppHeader(props: {
   onDownload: () => Promise<void>;
   showAdvancedBtn: boolean;
 }) {
-  const { onCopy, onDownload, showAdvancedBtn } = props;
+  const { reload, onCopy, onDownload, showAdvancedBtn } = props;
   const { notification } = App.useApp();
   const [loading, setLoading] = useState(false);
   const { isAdmin } = useAuth();
 
   async function submit() {
     try {
-      // if (!file) return message.error("请先上传名单");
-      // setLoading(true);
-      // const formData = new FormData();
-      // formData.append("file", file);
-      // http.po
-      // const res = await axios.post("/api/v2/roster", formData);
-      // setData(res.data);
+      setLoading(true);
+      await axios.post("/api/roster");
+      reload();
     } catch (error) {
       console.log(error);
 

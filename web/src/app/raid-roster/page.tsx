@@ -5,6 +5,7 @@ import classNames from "classnames";
 import { toPng } from "html-to-image";
 import {
   addPlayerSchedule,
+  formatRaidDataData,
   htmlToPngDownload,
   playersSortByOrder,
   playersSortByTalent,
@@ -137,31 +138,7 @@ function ScheduleContent() {
   );
 
   const raidData = useMemo<RaidData>(() => {
-    const data: RaidData = [];
-
-    playersSortByOrder(playersData);
-
-    const groupedPlayers = playersData.reduce((prev, item) => {
-      if (!item.is_scheduled) return prev;
-
-      const key = item.group_time_key;
-      prev[key] ??= [];
-      prev[key].push(item);
-
-      return prev;
-    }, {} as Record<GroupTimeKey, PlayersData>);
-
-    Object.values(groupedPlayers).forEach(playersSortByTalent);
-
-    Object.entries(groupedPlayers).forEach(([key, value]) => {
-      data.push({
-        group_title: value[0].group_title,
-        group_time_key: key,
-        players: value,
-      });
-    });
-
-    return data;
+    return formatRaidDataData(playersData);
   }, [playersData]);
 
   const [openSelectModal, selectModalContextHolder] =
