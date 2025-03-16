@@ -1,14 +1,12 @@
 "use client";
 
-import { StyleProvider } from "@ant-design/cssinjs";
-import { ConfigProvider, theme, Layout, App } from "antd";
-import zhCN from "antd/locale/zh_CN";
 import "@ant-design/v5-patch-for-react-19";
 import classNames from "classnames";
-import { AuthProvider, useAuth } from "../player/context/authContext";
-import { AppConfigProvider } from "../player/context/appConfigContext";
+import { useAuth } from "../player/context/authContext";
 import UserList from "./components/UserList";
 import { Header } from "./components/Header";
+import BaseProvider from "../components/common/BaseProvider";
+import { Layout } from "antd";
 
 function PlayerContent() {
   const { isAdmin } = useAuth();
@@ -33,16 +31,8 @@ function PlayerContent() {
 
 export default function Player() {
   return (
-    <StyleProvider layer>
-      <ConfigProvider locale={zhCN} theme={{ algorithm: theme.darkAlgorithm }}>
-        <App>
-          <AuthProvider>
-            <AppConfigProvider>
-              <PlayerContent />
-            </AppConfigProvider>
-          </AuthProvider>
-        </App>
-      </ConfigProvider>
-    </StyleProvider>
+    <BaseProvider>
+      <PlayerContent />
+    </BaseProvider>
   );
 }
