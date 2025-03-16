@@ -1,7 +1,5 @@
 import { App, Button, Card } from "antd";
 import React, { memo, useMemo, useRef } from "react";
-import Actor from "./Actor";
-import Players from "./Players";
 
 import { toPng } from "html-to-image";
 import { CloseOutlined } from "@ant-design/icons";
@@ -10,6 +8,8 @@ import Empty from "./Empty";
 import classNames from "classnames";
 import { InferArrayItem } from "@yfsdk/web-basic-library";
 import { Handler, RaidData } from "@/app/raid-roster/types";
+import Actor from "@/app/components/Actor";
+import Players from "@/app/components/Players";
 
 type Data = InferArrayItem<RaidData>;
 type Player = InferArrayItem<Data["players"]>;

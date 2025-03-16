@@ -20,9 +20,9 @@ import {
 } from "@/app/utils";
 import { GroupTimeKey, PlayerData, PlayersData } from "../types";
 import ScrollWrap from "@/app/components/common/ScrollWrap";
-import Actor from "../component/RaidContent/components/Actor";
-import Players from "../component/RaidContent/components/Players";
 import { useAppConfig } from "@/app/player/context/appConfigContext";
+import Actor from "@/app/components/Actor";
+import Players from "@/app/components/Players";
 
 type PlayerUserName = PlayerData["user_name"];
 
