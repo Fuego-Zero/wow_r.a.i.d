@@ -1,6 +1,11 @@
 import { toPng } from "html-to-image";
 import { ACTOR_ORDER } from "../common";
-import { PlayerData, PlayersData } from "../raid-roster/types";
+import {
+  GroupTimeKey,
+  PlayerData,
+  PlayersData,
+  RaidData,
+} from "../raid-roster/types";
 
 export async function htmlToPngDownload(el: HTMLElement, name: string) {
   const dataUrl = await toPng(el, { cacheBust: true });
@@ -46,4 +51,32 @@ export function addPlayerSchedule(
   item.group_title = group_title;
   item.group_time_order = group_time_order;
   item.is_scheduled = true;
+}
+
+export function formatRaidDataData(playersData: PlayersData): RaidData {
+  const data: RaidData = [];
+
+  playersSortByOrder(playersData);
+
+  const groupedPlayers = playersData.reduce((prev, item) => {
+    if (!item.is_scheduled) return prev;
+
+    const key = item.group_time_key;
+    prev[key] ??= [];
+    prev[key].push(item);
+
+    return prev;
+  }, {} as Record<GroupTimeKey, PlayersData>);
+
+  Object.values(groupedPlayers).forEach(playersSortByTalent);
+
+  Object.entries(groupedPlayers).forEach(([key, value]) => {
+    data.push({
+      group_title: value[0].group_title,
+      group_time_key: key,
+      players: value,
+    });
+  });
+
+  return data;
 }
