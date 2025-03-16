@@ -5,6 +5,7 @@ import { App, Button } from "antd";
 import classNames from "classnames";
 import React, { useState } from "react";
 import Link from "next/link";
+import { useAuth } from "@/app/player/context/authContext";
 
 function AppHeader(props: {
   reload: () => void;
@@ -15,6 +16,7 @@ function AppHeader(props: {
   const { onCopy, onDownload, showAdvancedBtn } = props;
   const { notification } = App.useApp();
   const [loading, setLoading] = useState(false);
+  const { isAdmin } = useAuth();
 
   async function submit() {
     try {
@@ -54,9 +56,11 @@ function AppHeader(props: {
             </Button>
           </>
         )}
-        <Button type="primary" onClick={submit} disabled={loading}>
-          自动分配
-        </Button>
+        {isAdmin && (
+          <Button type="primary" onClick={submit} disabled={loading}>
+            自动分配
+          </Button>
+        )}
         <Link href="/player">
           <Button type="link">个人中心</Button>
         </Link>
