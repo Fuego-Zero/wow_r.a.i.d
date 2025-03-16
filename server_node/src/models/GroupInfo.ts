@@ -27,6 +27,7 @@ const schema = new Schema<IGroupInfo>(
       type: String,
       required: true,
       index: true,
+      ref: 'RaidTime',
       validate: {
         async validator(v: string) {
           const raidTime = await RaidTime.findOne({ time_key: v }).lean();
