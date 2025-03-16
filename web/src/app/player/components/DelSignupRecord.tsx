@@ -2,8 +2,8 @@ import { App, Button, Checkbox, Divider, Empty, Form, Modal } from "antd";
 import React, { useMemo, useState } from "react";
 import { isBizException } from "@yfsdk/web-basic-library";
 import { RoleInfo, SignupRecord } from "../types";
-import Actor from "@/app/components/RaidContent/components/Actor";
-import Players from "@/app/components/RaidContent/components/Players";
+import Actor from "@/app/components/Actor";
+import Players from "@/app/components/Players";
 import { delRecord } from "../api";
 
 type Props = {

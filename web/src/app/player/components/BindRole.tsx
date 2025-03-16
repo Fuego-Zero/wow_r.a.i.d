@@ -1,9 +1,9 @@
-import Actor from "@/app/components/RaidContent/components/Actor";
+import Actor from "@/app/components/Actor";
 import {
   TalentType,
   ROLE_CLASSES_COLOR_MAP,
   RoleClasses,
-} from "@/app/components/RaidContent/constant";
+} from "@/app/constant";
 import {
   App,
   Button,

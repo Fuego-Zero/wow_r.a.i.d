@@ -1,8 +1,8 @@
 import { Card, Col, Row, Tag } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/authContext";
-import Actor from "@/app/components/RaidContent/components/Actor";
-import Players from "@/app/components/RaidContent/components/Players";
+import Actor from "@/app/components/Actor";
+import Players from "@/app/components/Players";
 import BindRole from "./BindRole";
 import { getAllRecord, getAllRole } from "../api";
 import { RoleInfo, SignupRecord } from "../types";

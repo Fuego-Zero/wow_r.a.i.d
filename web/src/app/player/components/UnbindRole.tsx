@@ -1,8 +1,8 @@
-import Actor from "@/app/components/RaidContent/components/Actor";
+import Actor from "@/app/components/Actor";
 import { App, Button, Card, Modal, Popconfirm } from "antd";
 import React, { useState } from "react";
 import { RoleInfo } from "../types";
-import Players from "@/app/components/RaidContent/components/Players";
+import Players from "@/app/components/Players";
 import { DisconnectOutlined } from "@ant-design/icons";
 import { unbindRole } from "../api";
 
