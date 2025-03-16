@@ -1,4 +1,4 @@
-import { PlayersData } from "@/app/types";
+import { PlayersData } from "../raid-roster/types";
 
 const key = "PLAYERS_DATA";
 
