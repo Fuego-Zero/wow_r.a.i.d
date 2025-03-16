@@ -6,7 +6,8 @@ import { Handler, RaidData } from "../../types";
 function RaidContent(
   props: {
     data: RaidData;
-  } & Handler
+    displayMode?: boolean;
+  } & Partial<Handler>
 ) {
   const { data, ...rest } = props;
 

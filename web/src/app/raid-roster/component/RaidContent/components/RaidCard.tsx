@@ -17,9 +17,10 @@ type Player = InferArrayItem<Data["players"]>;
 function RaidCard(
   props: {
     data: Data;
-  } & Handler
+    displayMode?: boolean;
+  } & Partial<Handler>
 ) {
-  const { data, delPlayer, selectPlayer, rosterPlayer } = props;
+  const { data, displayMode, delPlayer, selectPlayer, rosterPlayer } = props;
   const { notification } = App.useApp();
   const el = useRef(null);
 
@@ -70,14 +71,16 @@ function RaidCard(
       className="group/RaidCard"
       extra={
         <div className="group-hover/RaidCard:block hidden">
-          <Button
-            type="link"
-            onClick={() => {
-              rosterPlayer(data.group_time_key, data.group_title);
-            }}
-          >
-            编辑
-          </Button>
+          {displayMode && (
+            <Button
+              type="link"
+              onClick={() => {
+                rosterPlayer?.(data.group_time_key, data.group_title);
+              }}
+            >
+              编辑
+            </Button>
+          )}
           <Button type="link" onClick={onDownload}>
             下载
           </Button>
@@ -105,19 +108,23 @@ function RaidCard(
               <Players classes={item.classes}>
                 {item.role_name} ({item.user_name})
               </Players>
-              <Button
-                className="hidden group-hover/delPlayer:block absolute right-0"
-                type="link"
-                size="small"
-                danger
-                icon={<CloseOutlined />}
-                onClick={() => delPlayer(item.role_id)}
-              />
+              {displayMode && (
+                <Button
+                  className="hidden group-hover/delPlayer:block absolute right-0"
+                  type="link"
+                  size="small"
+                  danger
+                  icon={<CloseOutlined />}
+                  onClick={() => delPlayer?.(item.role_id)}
+                />
+              )}
             </>
           ) : (
             <Empty
               onClick={() => {
-                selectPlayer(data.group_time_key, data.group_title);
+                if (displayMode) {
+                  selectPlayer?.(data.group_time_key, data.group_title);
+                }
               }}
             />
           )}
