@@ -15,6 +15,7 @@ import { useAuth } from "./authContext";
 
 type AppConfigContextType = {
   raidTime: RaidTime[];
+  raidTimeOrderMap: Map<RaidTime["time_key"], number>;
   raidTimeNameMap: Map<RaidTime["time_key"], RaidTime["time_name"]>;
 };
 
@@ -27,6 +28,9 @@ export function AppConfigProvider({ children }: PropsWithChildren) {
   const [raidTime, setRaidTime] = useState<AppConfigContextType["raidTime"]>(
     []
   );
+  const [raidTimeOrderMap, setRaidTimeOrderMap] = useState<
+    AppConfigContextType["raidTimeOrderMap"]
+  >(new Map());
   const [raidTimeNameMap, setRaidTimeNameMap] = useState<
     AppConfigContextType["raidTimeNameMap"]
   >(new Map());
@@ -34,10 +38,12 @@ export function AppConfigProvider({ children }: PropsWithChildren) {
   async function getData() {
     const raidTime = await getRaidTime();
     setRaidTime(raidTime);
-    raidTime.forEach((value) => {
+
+    raidTime.forEach((value, index) => {
       setRaidTimeNameMap(
         (prev) => new Map(prev.set(value.time_key, value.time_name))
       );
+      setRaidTimeOrderMap((prev) => new Map(prev.set(value.time_key, index)));
     });
   }
 
@@ -46,7 +52,9 @@ export function AppConfigProvider({ children }: PropsWithChildren) {
   }, [isLogin]);
 
   return (
-    <AppConfigContext.Provider value={{ raidTime, raidTimeNameMap }}>
+    <AppConfigContext.Provider
+      value={{ raidTime, raidTimeNameMap, raidTimeOrderMap }}
+    >
       {children}
     </AppConfigContext.Provider>
   );
