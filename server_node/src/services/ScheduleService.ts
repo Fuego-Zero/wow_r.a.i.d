@@ -24,12 +24,15 @@ class ScheduleService {
       },
     }).lean();
 
+    const scheduledRoleIds = new Set(players.map((player) => player.role_id.toString()));
+
     const records = await SignupRecord.find({
       delete_time: null,
       create_time: {
         $gte: startDate,
         $lte: endDate,
       },
+      role_id: { $nin: Array.from(scheduledRoleIds) },
     }).lean();
 
     players.forEach((player) => {
