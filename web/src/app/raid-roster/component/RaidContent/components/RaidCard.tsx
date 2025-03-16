@@ -71,7 +71,7 @@ function RaidCard(
       className="group/RaidCard"
       extra={
         <div className="group-hover/RaidCard:block hidden">
-          {displayMode && (
+          {!displayMode && (
             <Button
               type="link"
               onClick={() => {
@@ -108,7 +108,7 @@ function RaidCard(
               <Players classes={item.classes}>
                 {item.role_name} ({item.user_name})
               </Players>
-              {displayMode && (
+              {!displayMode && (
                 <Button
                   className="hidden group-hover/delPlayer:block absolute right-0"
                   type="link"
@@ -122,9 +122,8 @@ function RaidCard(
           ) : (
             <Empty
               onClick={() => {
-                if (displayMode) {
-                  selectPlayer?.(data.group_time_key, data.group_title);
-                }
+                if (displayMode) return;
+                selectPlayer?.(data.group_time_key, data.group_title);
               }}
             />
           )}
