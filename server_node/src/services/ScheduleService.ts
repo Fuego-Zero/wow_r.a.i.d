@@ -167,6 +167,42 @@ class ScheduleService {
       group_title: player.group_title,
     }));
   }
+
+  static async publish(userId: UserId): Promise<boolean> {
+    await validateUserAccess(userId);
+
+    const { startDate, endDate } = getRaidDateRange();
+
+    await Schedule.updateMany(
+      {
+        create_time: {
+          $gte: startDate,
+          $lte: endDate,
+        },
+      },
+      { is_publish: true },
+    );
+
+    return true;
+  }
+
+  static async unpublish(userId: UserId): Promise<boolean> {
+    await validateUserAccess(userId);
+
+    const { startDate, endDate } = getRaidDateRange();
+
+    await Schedule.updateMany(
+      {
+        create_time: {
+          $gte: startDate,
+          $lte: endDate,
+        },
+      },
+      { is_publish: false },
+    );
+
+    return true;
+  }
 }
 
 export default ScheduleService;

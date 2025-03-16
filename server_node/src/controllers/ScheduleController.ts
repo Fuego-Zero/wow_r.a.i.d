@@ -41,6 +41,26 @@ class ScheduleController {
       throw error;
     }
   }
+
+  static async publish(ctx: Context) {
+    try {
+      const res = await ScheduleService.publish(ctx.state.user.id);
+      ctx.success(res);
+    } catch (error) {
+      if (isBizException(error)) ctx.bizError(error.message);
+      throw error;
+    }
+  }
+
+  static async unpublish(ctx: Context) {
+    try {
+      const res = await ScheduleService.unpublish(ctx.state.user.id);
+      ctx.success(res);
+    } catch (error) {
+      if (isBizException(error)) ctx.bizError(error.message);
+      throw error;
+    }
+  }
 }
 
 export default ScheduleController;
