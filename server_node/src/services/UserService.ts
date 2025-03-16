@@ -7,6 +7,7 @@ import { ILoginBody, ILoginResponse } from '../interfaces/ILogin';
 import { IAllUsersResponse, IChangeUserInfoBody, IChangeUserInfoResponse } from '../interfaces/IUser';
 import User from '../models/User';
 import { UserId } from '../types';
+import { validateUserAccess } from '../utils/user';
 
 class UserService {
   static async findUser(id: UserId): Promise<Omit<ILoginResponse, 'token'>> {
@@ -78,9 +79,7 @@ class UserService {
   }
 
   static async getAllUsers(userId: UserId): Promise<IAllUsersResponse> {
-    const user = await User.findOne({ _id: userId });
-    if (!user) throw new BizException('用户不存在');
-    if (user.is_admin === false) throw new BizException('没有权限');
+    await validateUserAccess(userId);
 
     const users = await User.find({}).lean();
 
@@ -95,9 +94,7 @@ class UserService {
   }
 
   static async resetPassword(userId: UserId, targetUserId: UserId, password: string): Promise<boolean> {
-    const user = await User.findOne({ _id: userId });
-    if (!user) throw new BizException('用户不存在');
-    if (user.is_admin === false) throw new BizException('没有权限');
+    await validateUserAccess(userId);
 
     const targetUser = await User.findOne({ _id: targetUserId });
     if (!targetUser) throw new BizException('目标用户不存在');
