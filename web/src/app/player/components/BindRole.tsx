@@ -43,7 +43,6 @@ const roleClassesNameMap: Record<RoleClasses, string> = {
   SM: "萨满",
   SS: "术士",
   ZS: "战士",
-  EMPTY: "空",
 };
 
 const roleClassesToTalentMap: Record<RoleClasses, TalentType[]> = {
@@ -57,7 +56,6 @@ const roleClassesToTalentMap: Record<RoleClasses, TalentType[]> = {
   SM: ["DS", "NS", "ZQS"],
   SS: ["EMS", "TKS", "HMS"],
   ZS: ["FZ", "KBZ", "WQZ"],
-  EMPTY: [],
 };
 
 const roleClassesOptions: CheckboxGroupProps<string>["options"] =
