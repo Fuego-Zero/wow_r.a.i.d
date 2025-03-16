@@ -54,8 +54,6 @@ enum RoleClassesMap {
   SM = "SM",
   SS = "SS",
   ZS = "ZS",
-
-  EMPTY = "EMPTY", //空, 用于占位
 }
 
 export type RoleClasses = keyof typeof RoleClassesMap;
@@ -71,5 +69,4 @@ export const ROLE_CLASSES_COLOR_MAP: Record<RoleClasses, string> = {
   SM: "#0070dd",
   SS: "#8788ee",
   ZS: "#c69b6d",
-  EMPTY: "red",
 };
