@@ -1,4 +1,4 @@
-import { RoleClasses, TalentType } from "../components/RaidContent/constant";
+import { RoleClasses, TalentType } from "../constant";
 
 export type UserInfo = {
   /**
