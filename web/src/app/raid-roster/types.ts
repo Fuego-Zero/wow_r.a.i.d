@@ -1,5 +1,5 @@
 import { InferArrayItem } from "@yfsdk/web-basic-library";
-import { RoleClasses, TalentType } from "../components/RaidContent/constant";
+import { RoleClasses, TalentType } from "../constant";
 
 /**
  * 团队成员数据

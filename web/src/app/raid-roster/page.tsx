@@ -11,15 +11,10 @@ import {
   removePlayerSchedule,
 } from "@/app/utils";
 
-import { StyleProvider } from "@ant-design/cssinjs";
-import { ConfigProvider, theme, Layout, App, message } from "antd";
-import zhCN from "antd/locale/zh_CN";
+import { Layout, App, message } from "antd";
 import "@ant-design/v5-patch-for-react-19";
-import { AuthProvider, useAuth } from "../player/context/authContext";
-import {
-  AppConfigProvider,
-  useAppConfig,
-} from "../player/context/appConfigContext";
+import { useAuth } from "../player/context/authContext";
+import { useAppConfig } from "../player/context/appConfigContext";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getRaidRoster, saveRaidRoster } from "./api";
@@ -35,6 +30,7 @@ import RaidContent from "./component/RaidContent";
 import usePlayerSelect from "./hooks/usePlayerSelect";
 import AppHeader from "./component/AppHeader";
 import useRaidChange from "./hooks/useRaidChange";
+import BaseProvider from "../components/common/BaseProvider";
 
 function ScheduleContent() {
   const { isAdmin } = useAuth();
@@ -261,16 +257,8 @@ function ScheduleContent() {
 
 export default function Schedule() {
   return (
-    <StyleProvider layer>
-      <ConfigProvider locale={zhCN} theme={{ algorithm: theme.darkAlgorithm }}>
-        <App>
-          <AuthProvider>
-            <AppConfigProvider>
-              <ScheduleContent />
-            </AppConfigProvider>
-          </AuthProvider>
-        </App>
-      </ConfigProvider>
-    </StyleProvider>
+    <BaseProvider>
+      <ScheduleContent />
+    </BaseProvider>
   );
 }
