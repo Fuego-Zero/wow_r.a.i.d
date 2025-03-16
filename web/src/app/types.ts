@@ -1,7 +1,5 @@
 import { TalentType } from "./components/RaidContent/constant";
 
-export type InferArrayItem<T> = T extends Array<infer P> ? P : never;
-
 /**
  * 团队成员数据
  */

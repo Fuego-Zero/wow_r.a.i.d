@@ -11,7 +11,7 @@ import { PlayersData, RaidData } from "./types";
 import storage from "@/app/classes/Storage";
 import { toPng } from "html-to-image";
 import classNames from "classnames";
-import { htmlToPngDownload, playersSort } from "./utils";
+import { htmlToPngDownload, playersSortByTalent } from "./utils";
 import { DAY_ORDER } from "./common";
 import usePlayerSelect from "./components/RaidContent/hooks/usePlayerSelect";
 import useRaidChange from "./components/RaidContent/hooks/useRaidChange";
@@ -135,7 +135,7 @@ export default function Home() {
       return prev;
     }, {} as Record<string, PlayersData>);
 
-    Object.values(groupedPlayers).forEach(playersSort);
+    Object.values(groupedPlayers).forEach(playersSortByTalent);
 
     const sortedKeys = Object.keys(groupedPlayers).sort((a, b) => {
       const [dayA, timeA] = JSON.parse(a) as [number, string];
