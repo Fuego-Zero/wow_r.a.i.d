@@ -1,4 +1,8 @@
-import { IGetScheduleResponse } from '../interfaces/ISchedule';
+import { BizException } from '@yfsdk/web-basic-library';
+
+import { IGetScheduleResponse, ISaveScheduleBody } from '../interfaces/ISchedule';
+import GroupInfo, { IGroupInfo } from '../models/GroupInfo';
+import RaidTime, { IRaidTime } from '../models/RaidTime';
 import Schedule from '../models/Schedule';
 import SignupRecord from '../models/SignupRecord';
 import { UserId } from '../types';
@@ -67,6 +71,69 @@ class ScheduleService {
     });
 
     return scheduleResponse;
+  }
+
+  static async saveSchedule(userId: UserId, body: ISaveScheduleBody): Promise<boolean> {
+    await validateUserAccess(userId);
+
+    //* 获取当前CD时间范围
+    const { startDate, endDate } = getRaidDateRange();
+
+    //* 先验证所有要添加的记录是否存在于报名表中
+    const recordIds = body.map((record) => record.role_id);
+    const existingRecords = await SignupRecord.find({
+      role_id: { $in: recordIds },
+      create_time: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+      delete_time: null,
+    }).lean();
+    if (existingRecords.length !== recordIds.length) throw new BizException('部分报名记录不存在');
+
+    //* 删除时间范围内的所有安排数据
+    await Schedule.deleteMany({ create_time: { $gte: startDate, $lte: endDate } });
+
+    const groupInfoMap = (
+      await GroupInfo.find()
+        .populate({
+          path: 'time_key',
+          model: RaidTime,
+          localField: 'time_key',
+          foreignField: 'time_key',
+          select: 'order',
+        })
+        .lean()
+    ).reduce(
+      (prev, item) => {
+        const timeKey = item.time_key as unknown as IRaidTime;
+        prev[timeKey.time_key] = { order: timeKey.order, title: item.title };
+        return prev;
+      },
+      {} as Record<string, Pick<IRaidTime, 'order'> & Pick<IGroupInfo, 'title'>>,
+    );
+
+    // TODO 该处理论上需要验证所有排班记录是否和报名表匹配，暂时不写
+
+    //* 准备要添加的数据
+    const scheduleItems = body.map((item) => ({
+      role_id: item.role_id,
+      talent: item.talent,
+      classes: item.classes,
+      role_name: item.role_name,
+      user_id: item.user_id,
+      play_time: item.play_time,
+      user_name: item.user_name,
+      group_time_key: item.group_time_key,
+      group_time_order: groupInfoMap[item.group_time_key].order,
+      group_title: groupInfoMap[item.group_time_key].title,
+      create_time: new Date(),
+    }));
+
+    //* 批量添加新数据
+    if (scheduleItems.length > 0) await Schedule.insertMany(scheduleItems);
+
+    return true;
   }
 }
 

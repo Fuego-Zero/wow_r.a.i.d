@@ -18,3 +18,6 @@ interface SchedulePlayer
 }
 
 export interface IGetScheduleResponse extends Array<SchedulePlayer> {}
+
+export interface ISaveScheduleBody
+  extends Array<Omit<SchedulePlayer, 'is_scheduled' | 'group_time_order' | 'group_title'>> {}

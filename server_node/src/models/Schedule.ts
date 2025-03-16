@@ -2,6 +2,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 import { RoleClassesMap, TalentMap } from '../common';
 import { RoleId, ScheduleId, UserId } from '../types';
+import RaidTime from './RaidTime';
 
 export interface ISchedule extends Document<ScheduleId> {
   /**
@@ -95,7 +96,18 @@ const schema = new Schema<ISchedule>(
     },
     play_time: [String],
 
-    group_time_key: String,
+    group_time_key: {
+      type: String,
+      required: true,
+      index: true,
+      validate: {
+        async validator(v: string) {
+          const raidTime = await RaidTime.findOne({ time_key: v }).lean();
+          return !!raidTime;
+        },
+        message: (props) => `${props.value} 不是有效的 time_key!`,
+      },
+    },
     group_time_order: Number,
     group_title: String,
 
