@@ -1,4 +1,5 @@
 import { IRaidTimeResponse } from '../interfaces/IRaidTime';
+import GroupInfo from '../models/GroupInfo';
 import RaidTime from '../models/RaidTime';
 
 const { NODE_ENV } = process.env;
@@ -19,6 +20,31 @@ class ConfigService {
     await RaidTime.insertMany(data.flat());
   }
 
+  static async initGroupInfo(): Promise<void> {
+    const titleMap = {
+      '4-1': '周四 - 19:30',
+      '4-2': '周四 - 20:30',
+      '4-3': '周四 - 21:30',
+      '5-1': '周五 - 19:30',
+      '5-2': '周五 - 20:30',
+      '5-3': '周五 - 21:30',
+      '6-1': '周六 - 19:30',
+      '6-2': '周六 - 20:30',
+      '7-1': '周日 - 19:30',
+      '7-2': '周日 - 20:30',
+      '1-1': '周一 - 19:30',
+      '1-2': '周一 - 20:30',
+    };
+
+    const data = Object.entries(titleMap).map(([time_key, title]) => ({
+      time_key,
+      title,
+    }));
+
+    await GroupInfo.deleteMany({});
+    await GroupInfo.insertMany(data);
+  }
+
   static async getRaidTime(): Promise<IRaidTimeResponse> {
     const raidTimes = await RaidTime.find({}).sort({ order: 1 }).lean();
 
@@ -30,5 +56,6 @@ class ConfigService {
 }
 
 if (NODE_ENV === 'development') ConfigService.initRaidTime();
+if (NODE_ENV === 'development') ConfigService.initGroupInfo();
 
 export default ConfigService;
