@@ -6,6 +6,7 @@ import config from './config';
 import login from './login';
 import raid from './raid';
 import role from './role';
+import schedule from './schedule';
 import user from './user';
 
 const router = new Router({ prefix: BASE_PREFIX });
@@ -18,5 +19,6 @@ router.use(user.routes());
 router.use(role.routes());
 router.use(config.routes());
 router.use(raid.routes());
+router.use(schedule.routes());
 
 export default router;

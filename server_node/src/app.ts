@@ -27,7 +27,7 @@ const options = NODE_ENV === 'development' ? {} : mongoDBConfig;
 mongoose
   .connect(DB_URI, options)
   .then(() => {
-    console.log('Connected to MongoDB');
+    console.log('Connected to MongoDB', options);
   })
   .catch((error) => {
     console.error('Error connecting to MongoDB:', error);
