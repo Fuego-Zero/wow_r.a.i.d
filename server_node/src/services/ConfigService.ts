@@ -56,6 +56,6 @@ class ConfigService {
 }
 
 if (NODE_ENV === 'development') ConfigService.initRaidTime();
-if (NODE_ENV === 'development') ConfigService.initGroupInfo();
+// if (NODE_ENV === 'development') ConfigService.initGroupInfo();
 
 export default ConfigService;
