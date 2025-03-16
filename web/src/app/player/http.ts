@@ -45,7 +45,10 @@ http.interceptors.request.use((config) => {
   if (config.url === "/login") return config;
 
   const token = UserStorage.getUser()?.token;
-  if (!token) throw new BizException("请先登录");
+  if (!token) {
+    window.location.href = "/player";
+    throw new BizException("请先登录");
+  }
 
   config.headers.Authorization = "Bearer " + token;
 
