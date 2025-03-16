@@ -1,12 +1,38 @@
 "use client";
 
 import { StyleProvider } from "@ant-design/cssinjs";
-import { ConfigProvider, theme, Layout, App } from "antd";
+import { ConfigProvider, theme, Layout, App, message } from "antd";
 import zhCN from "antd/locale/zh_CN";
 import "@ant-design/v5-patch-for-react-19";
 import classNames from "classnames";
+import RaidContent from "./raid-roster/component/RaidContent";
+import { useEffect, useMemo, useState } from "react";
+import { PlayersData, RaidData } from "./raid-roster/types";
+import { formatRaidDataData } from "./utils";
+import { getPublishedSchedule } from "./api";
+import { isBizException } from "@yfsdk/web-basic-library";
 
 export default function Home() {
+  const [playersData, setPlayersData] = useState<PlayersData>([]);
+
+  const raidData = useMemo<RaidData>(() => {
+    return formatRaidDataData(playersData);
+  }, [playersData]);
+
+  async function onLoadPlayersData() {
+    try {
+      const res = await getPublishedSchedule();
+      setPlayersData(res);
+    } catch (error) {
+      if (isBizException(error)) return message.error(error.message);
+      throw error;
+    }
+  }
+
+  useEffect(() => {
+    onLoadPlayersData();
+  }, []);
+
   return (
     <StyleProvider layer>
       <ConfigProvider locale={zhCN} theme={{ algorithm: theme.darkAlgorithm }}>
@@ -21,7 +47,9 @@ export default function Home() {
                 <span className="ml-2">(副本活动排班表)</span>
               </h1>
             </Layout.Header>
-            <Layout.Content>333</Layout.Content>
+            <Layout.Content>
+              <RaidContent data={raidData} displayMode={true} />
+            </Layout.Content>
           </Layout>
         </App>
       </ConfigProvider>

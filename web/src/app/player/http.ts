@@ -43,6 +43,7 @@ const http = axios.create({
 
 http.interceptors.request.use((config) => {
   if (config.url === "/login") return config;
+  if (config.url === "/schedule/published") return config;
 
   const token = UserStorage.getUser()?.token;
   if (!token) {
