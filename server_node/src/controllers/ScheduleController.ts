@@ -31,6 +31,16 @@ class ScheduleController {
       throw error;
     }
   }
+
+  static async getPublished(ctx: Context) {
+    try {
+      const res = await ScheduleService.getPublished();
+      ctx.success(res);
+    } catch (error) {
+      if (isBizException(error)) ctx.bizError(error.message);
+      throw error;
+    }
+  }
 }
 
 export default ScheduleController;

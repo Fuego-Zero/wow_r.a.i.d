@@ -138,6 +138,35 @@ class ScheduleService {
 
     return true;
   }
+
+  static async getPublished(): Promise<IGetScheduleResponse> {
+    const { startDate, endDate } = getRaidDateRange();
+
+    const players = await Schedule.find({
+      is_publish: true,
+      create_time: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    }).lean();
+
+    return players.map((player) => ({
+      role_id: player.role_id,
+      talent: player.talent,
+      classes: player.classes,
+      role_name: player.role_name,
+
+      user_id: player.user_id,
+      play_time: player.play_time,
+      user_name: player.user_name,
+
+      is_scheduled: true,
+
+      group_time_key: player.group_time_key,
+      group_time_order: player.group_time_order,
+      group_title: player.group_title,
+    }));
+  }
 }
 
 export default ScheduleService;
