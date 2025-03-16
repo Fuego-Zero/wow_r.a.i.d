@@ -1,4 +1,4 @@
-import { TalentType } from "./components/RaidContent/constant";
+import { TalentType } from "./constant";
 
 export const hiddenButtonClass = "[.hidden-button_&]:hidden";
 
