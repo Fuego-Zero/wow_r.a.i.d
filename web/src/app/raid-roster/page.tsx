@@ -7,8 +7,6 @@ import {
   addPlayerSchedule,
   formatRaidDataData,
   htmlToPngDownload,
-  playersSortByOrder,
-  playersSortByTalent,
   removePlayerSchedule,
 } from "@/app/utils";
 

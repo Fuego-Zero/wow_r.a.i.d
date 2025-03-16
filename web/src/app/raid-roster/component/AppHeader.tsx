@@ -7,6 +7,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/app/player/context/authContext";
 import axios from "axios";
+import { publishRaidRoster, unpublishRaidRoster } from "../api";
 
 function AppHeader(props: {
   reload: () => void;
@@ -15,7 +16,7 @@ function AppHeader(props: {
   showAdvancedBtn: boolean;
 }) {
   const { reload, onCopy, onDownload, showAdvancedBtn } = props;
-  const { notification } = App.useApp();
+  const { notification, message } = App.useApp();
   const [loading, setLoading] = useState(false);
   const { isAdmin } = useAuth();
 
@@ -23,6 +24,39 @@ function AppHeader(props: {
     try {
       setLoading(true);
       await axios.post("/api/roster");
+      reload();
+    } catch (error) {
+      console.log(error);
+
+      notification.error({
+        message: "自动分配失败",
+        description: (error as Error).message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function publish() {
+    try {
+      await publishRaidRoster();
+      message.success("发布成功");
+      reload();
+    } catch (error) {
+      console.log(error);
+      notification.error({
+        message: "自动分配失败",
+        description: (error as Error).message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function unpublish() {
+    try {
+      await unpublishRaidRoster();
+      message.success("撤销成功");
       reload();
     } catch (error) {
       console.log(error);
@@ -54,9 +88,17 @@ function AppHeader(props: {
           </>
         )}
         {isAdmin && (
-          <Button type="primary" onClick={submit} disabled={loading}>
-            自动分配
-          </Button>
+          <>
+            <Button type="primary" onClick={publish} disabled={loading}>
+              发布名单
+            </Button>
+            <Button type="primary" onClick={unpublish} disabled={loading}>
+              撤销名单
+            </Button>
+            <Button type="primary" onClick={submit} disabled={loading}>
+              自动分配
+            </Button>
+          </>
         )}
         <Link href="/player">
           <Button type="link">个人中心</Button>
