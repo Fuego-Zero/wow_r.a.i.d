@@ -45,6 +45,13 @@ export const Header = () => {
         router.push("/manage");
       },
     });
+    items.unshift({
+      key: "-1",
+      label: "团队编排",
+      onClick: () => {
+        router.push("/raid-roster");
+      },
+    });
   }
 
   return (
