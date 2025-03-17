@@ -41,9 +41,11 @@ const http = axios.create({
   timeout: 3000,
 });
 
+//* 排除url
+const EXCLUDE_URLS = ["/login", "/schedule/published", "/common/wcl_rankings"];
+
 http.interceptors.request.use((config) => {
-  if (config.url === "/login") return config;
-  if (config.url === "/schedule/published") return config;
+  if (EXCLUDE_URLS.includes(config.url ?? "")) return config;
 
   const token = UserStorage.getUser()?.token;
   if (!token) {
