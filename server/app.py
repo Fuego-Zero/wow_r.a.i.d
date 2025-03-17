@@ -7,4 +7,4 @@ CORS(app)
 app.register_blueprint(allocation_api)
 
 if __name__ == '__main__':
-    app.run(debug=False, port=7000)
+    app.run(debug=False, host="0.0.0.0", port=7000)

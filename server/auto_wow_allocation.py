@@ -178,7 +178,7 @@ def load_players_from_db():
             list(pdata["available_times"])
         )
         for pdata in players_dict.values()
-        if pdata["characters"]  # 至少有一个有效角色
+        if pdata["characters"] and pdata["available_times"]  # 至少一个有效角色且至少一个有效时段
     ]
 
     all_users_cursor = user_collection.find({})
