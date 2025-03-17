@@ -1,2 +1,8 @@
 @layer theme, base, antd, components, utilities;
 @import "tailwindcss";
+
+.wcl + .wcl::before {
+  content: "/";
+  margin: 0 2px;
+  color: gray;
+}
