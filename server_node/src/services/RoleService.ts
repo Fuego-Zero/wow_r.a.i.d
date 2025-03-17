@@ -50,6 +50,7 @@ class RoleService {
       role_name: updatedRole.role_name,
       talent: updatedRole.talent,
       id: updatedRole.id,
+      auto_signup: updatedRole.auto_signup,
     };
   }
 
@@ -57,8 +58,8 @@ class RoleService {
     const roles = await Role.find({ user_id: userId }).lean();
 
     return roles.map((role) => {
-      const { role_name, talent, classes, user_id, _id } = role;
-      return { role_name, talent, classes, user_id, id: _id };
+      const { role_name, talent, classes, user_id, _id, auto_signup } = role;
+      return { role_name, talent, classes, user_id, id: _id, auto_signup };
     });
   }
 }

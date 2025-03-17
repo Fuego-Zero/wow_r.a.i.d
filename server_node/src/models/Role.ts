@@ -18,6 +18,10 @@ export interface IRole extends Document<RoleId> {
    */
   talent: TalentMap[];
   /**
+   * 自动报名
+   */
+  auto_signup: boolean;
+  /**
    * 创建时间
    */
   create_time: Date;
@@ -51,6 +55,11 @@ const schema = new Schema<IRole>(
           enum: TalentMap,
         },
       ],
+    },
+    auto_signup: {
+      type: Boolean,
+      required: true,
+      default: true,
     },
     create_time: {
       type: Date,
