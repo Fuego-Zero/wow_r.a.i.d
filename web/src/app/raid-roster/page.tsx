@@ -147,6 +147,7 @@ function ScheduleContent() {
       const player = await openSelectModal(group_time_key, group_title);
 
       playersData.forEach((item) => {
+        if (player.user_id === item.user_id) removePlayerSchedule(item);
         if (item.role_id !== player.role_id) return;
 
         addPlayerSchedule(
