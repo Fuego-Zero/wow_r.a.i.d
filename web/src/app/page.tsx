@@ -11,6 +11,7 @@ import { getPublishedSchedule } from "./api";
 import { isBizException } from "@yfsdk/web-basic-library";
 import BaseProvider from "./components/common/BaseProvider";
 import { useRouter } from "next/navigation";
+import Welcome from "./components/Welcome";
 
 function HomeContent() {
   const [playersData, setPlayersData] = useState<PlayersData>([]);
@@ -55,6 +56,7 @@ function HomeContent() {
       <Layout.Content>
         <RaidContent data={raidData} displayMode={true} />
       </Layout.Content>
+      <Welcome />
     </Layout>
   );
 }
