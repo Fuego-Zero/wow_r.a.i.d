@@ -32,6 +32,7 @@ function Nameplate(props: Props) {
           <WCL
             key={item}
             rank={WCLRanksMap.get(role_name + item)?.average_rank_percent}
+            serverRank={WCLRanksMap.get(role_name + item)?.server_rank}
           />
         );
       })}

@@ -1,7 +1,8 @@
+import { Tooltip } from "antd";
 import React, { memo, useMemo } from "react";
 
-function WCL(props: { rank?: number }) {
-  const { rank } = props;
+function WCL(props: { rank?: number; serverRank?: number }) {
+  const { rank, serverRank } = props;
 
   const color = useMemo(() => {
     if (rank === undefined) return "";
@@ -16,9 +17,11 @@ function WCL(props: { rank?: number }) {
 
   return (
     rank && (
-      <span className="wcl" style={{ color }}>
-        {rank}
-      </span>
+      <Tooltip title={`服务器排名：${serverRank}`}>
+        <span className="wcl" style={{ color }}>
+          {rank}
+        </span>
+      </Tooltip>
     )
   );
 }
