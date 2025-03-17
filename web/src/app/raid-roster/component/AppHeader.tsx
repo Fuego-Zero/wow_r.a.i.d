@@ -23,7 +23,7 @@ function AppHeader(props: {
   async function submit() {
     try {
       setLoading(true);
-      await axios.post("/api/roster");
+      await axios.get("/api/roster");
       reload();
     } catch (error) {
       console.log(error);
