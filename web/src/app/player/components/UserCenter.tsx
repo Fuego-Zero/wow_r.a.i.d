@@ -10,6 +10,7 @@ import UnbindRole from "./UnbindRole";
 import { useAppConfig } from "../context/appConfigContext";
 import AddSignupRecord from "./AddSignupRecord";
 import DelSignupRecord from "./DelSignupRecord";
+import EditRole from "./EditRole";
 
 function UserCenter() {
   const { userInfo } = useAuth();
@@ -87,15 +88,13 @@ function UserCenter() {
               signupRecords={signupRecords}
             />
           </Col>
-          <Col span={12}>
+          <Col span={8}>
             <BindRole onReload={onReload} />
           </Col>
-          {/* <Col span={8}>
-            <Button block type="dashed">
-              修改角色
-            </Button>
-          </Col> */}
-          <Col span={12}>
+          <Col span={8}>
+            <EditRole roles={roles} onReload={onReload} />
+          </Col>
+          <Col span={8}>
             <UnbindRole roles={roles} onReload={onReload} />
           </Col>
         </Row>
