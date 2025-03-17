@@ -97,7 +97,7 @@ function EditRole(props: Props) {
 
   function selectRole(role: RoleInfo) {
     setIsDualTalents(role.talent.length === 2);
-    setSelectedTalent([role.talent[0]]);
+    setSelectedTalent(role.talent);
 
     form.setFieldsValue({
       id: role.id,
