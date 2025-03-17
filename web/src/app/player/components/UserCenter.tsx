@@ -1,8 +1,6 @@
 import { Card, Col, Row, Tag } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/authContext";
-import Actor from "@/app/components/Actor";
-import Players from "@/app/components/Players";
 import BindRole from "./BindRole";
 import { getAllRecord, getAllRole } from "../api";
 import { RoleInfo, SignupRecord } from "../types";
@@ -11,6 +9,7 @@ import { useAppConfig } from "../context/appConfigContext";
 import AddSignupRecord from "./AddSignupRecord";
 import DelSignupRecord from "./DelSignupRecord";
 import EditRole from "./EditRole";
+import Nameplate from "./Nameplate";
 
 function UserCenter() {
   const { userInfo } = useAuth();
@@ -61,8 +60,12 @@ function UserCenter() {
             return (
               <Card.Grid className="p-2 w-full" hoverable={false} key={role.id}>
                 <div className="flex relative items-center justify-start w-full text-left">
-                  <Actor actor={role.talent} />
-                  <Players classes={role.classes}>{role.role_name}</Players>
+                  <Nameplate
+                    classes={role.classes}
+                    name={role.role_name}
+                    talent={role.talent}
+                    className="flex-1"
+                  />
                   {signupRecordSet.has(role.id) && (
                     <Tag color="cyan">已报名</Tag>
                   )}
