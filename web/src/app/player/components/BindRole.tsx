@@ -144,9 +144,12 @@ function BindRole(props: { onReload: () => Promise<void> }) {
         onOk={onOk}
         destroyOnClose
       >
-        <Form form={form} initialValues={{ classes: "QS" }}>
+        <Form form={form} initialValues={{ classes: "QS", auto_signup: true }}>
           <Form.Item name="name" label="名称" rules={[{ required: true }]}>
             <Input />
+          </Form.Item>
+          <Form.Item name="auto_signup" label="自动报名">
+            <Switch />
           </Form.Item>
           <Form.Item label="职业" name="classes">
             <Radio.Group
