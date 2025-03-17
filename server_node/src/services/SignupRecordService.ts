@@ -6,6 +6,7 @@ import SignupRecord from '../models/SignupRecord';
 import User from '../models/User';
 import { RoleId, SignupRecordId, UserId } from '../types';
 import { getRaidDateRange } from '../utils';
+import { validateUserAccess } from '../utils/user';
 
 class SignupRecordService {
   static async addRecord(userId: UserId, roleIds: RoleId[]): Promise<IAddSignupRecordResponse> {
@@ -107,6 +108,62 @@ class SignupRecordService {
       play_time: record.play_time,
       user_name: record.user_name,
     }));
+  }
+
+  static async batchAddRecords(userId: UserId): Promise<number> {
+    await validateUserAccess(userId);
+
+    //* 查询所有自动报名的角色
+    const autoSignupRoles = await Role.find({ auto_signup: true }).lean();
+    const autoSignupRoleIds = autoSignupRoles.map((role) => role._id);
+
+    const { startDate, endDate } = getRaidDateRange();
+
+    //* 批量查询所有已报名的角色
+    const signupIds = (
+      await SignupRecord.find({
+        role_id: { $in: autoSignupRoleIds },
+        delete_time: null,
+        create_time: {
+          $gte: startDate,
+          $lte: endDate,
+        },
+      }).lean()
+    ).map((record) => record.role_id.toString());
+
+    //* 过滤掉已报名的角色
+    const unassignedRoles = autoSignupRoles.filter((role) => !signupIds.includes(role._id.toString()));
+
+    //* 所有需要报名的用户
+    const unassignedUserIds = Array.from(
+      unassignedRoles.reduce((acc, role) => {
+        acc.add(role.user_id.toString());
+        return acc;
+      }, new Set()),
+    );
+
+    const unassignedUser = await User.find({ _id: { $in: unassignedUserIds } }).lean();
+    const unassignedUserMap = unassignedUser.reduce((acc, user) => {
+      acc.set(user._id.toString(), user);
+      return acc;
+    }, new Map());
+
+    //* 创建批量报名记录
+    const recordsToCreate = unassignedRoles.map((role) => ({
+      role_id: role._id,
+      talent: role.talent,
+      classes: role.classes,
+      role_name: role.role_name,
+
+      user_id: unassignedUserMap.get(role.user_id.toString())?._id,
+      play_time: unassignedUserMap.get(role.user_id.toString())?.play_time,
+      user_name: unassignedUserMap.get(role.user_id.toString())?.user_name,
+    }));
+
+    // 批量创建记录
+    const createdRecords = await SignupRecord.insertMany(recordsToCreate);
+
+    return createdRecords.length;
   }
 }
 

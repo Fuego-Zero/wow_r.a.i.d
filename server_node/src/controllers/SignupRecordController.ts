@@ -48,6 +48,16 @@ class SignupRecordController {
       throw error;
     }
   }
+
+  static async batchAddRecords(ctx: Context) {
+    try {
+      const res = await SignupRecordService.batchAddRecords(ctx.state.user.id);
+      ctx.success(res);
+    } catch (error) {
+      if (isBizException(error)) ctx.bizError(error.message);
+      throw error;
+    }
+  }
 }
 
 export default SignupRecordController;
