@@ -8,15 +8,16 @@ import {
   PropsWithChildren,
 } from "react";
 
-import { RaidTime } from "../types";
+import { RaidTime, WCLRank } from "../types";
 import { BizException } from "@yfsdk/web-basic-library";
-import { getRaidTime } from "../api";
+import { getRaidTime, getWCLRanks } from "../api";
 import { useAuth } from "./authContext";
 
 type AppConfigContextType = {
   raidTime: RaidTime[];
   raidTimeOrderMap: Map<RaidTime["time_key"], number>;
   raidTimeNameMap: Map<RaidTime["time_key"], RaidTime["time_name"]>;
+  WCLRanksMap: Map<string, WCLRank>;
 };
 
 const AppConfigContext = createContext<AppConfigContextType | undefined>(
@@ -51,9 +52,25 @@ export function AppConfigProvider({ children }: PropsWithChildren) {
     if (isLogin) getData();
   }, [isLogin]);
 
+  const [WCLRanksMap, setWCLRanksMap] = useState(new Map());
+
+  async function getWCLData() {
+    const data = await getWCLRanks();
+    const map = data.reduce((acc, item) => {
+      acc.set(item.role_name + item.talent, item);
+      return acc;
+    }, new Map());
+
+    setWCLRanksMap(map);
+  }
+
+  useEffect(() => {
+    getWCLData();
+  }, []);
+
   return (
     <AppConfigContext.Provider
-      value={{ raidTime, raidTimeNameMap, raidTimeOrderMap }}
+      value={{ raidTime, raidTimeNameMap, raidTimeOrderMap, WCLRanksMap }}
     >
       {children}
     </AppConfigContext.Provider>
