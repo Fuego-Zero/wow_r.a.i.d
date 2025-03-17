@@ -31,7 +31,7 @@ class RoleService {
     if (!role) throw new BizException('角色不存在或不属于当前用户');
 
     role = await Role.findOne({ role_name });
-    if (role) throw new BizException('新名称已存在');
+    if (role?.user_id.toString() !== userId.toString()) throw new BizException('新名称已存在');
 
     const updatedRole = await Role.findOneAndUpdate(
       { _id: roleId, user_id: userId },
