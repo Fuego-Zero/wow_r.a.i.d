@@ -23,8 +23,8 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "轻风之语",
-  description: "轻风之语",
+  title: "轻风之语 WOW R.A.I.D",
+  description: "轻风之语 WOW R.A.I.D (Roster Auto-Integrated Deployment)",
 };
 
 export default function RootLayout({
