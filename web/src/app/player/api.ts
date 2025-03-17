@@ -29,6 +29,10 @@ export function unbindRole(roleId: RoleInfo["id"]): Promise<void> {
   return http.post("/role/unbind_role", { id: roleId });
 }
 
+export function updateRole(params: RoleInfo): Promise<RoleInfo> {
+  return http.post("/role/update_role", params);
+}
+
 export function changePassword(password: string): Promise<void> {
   return http.post("/change_password", { password });
 }
