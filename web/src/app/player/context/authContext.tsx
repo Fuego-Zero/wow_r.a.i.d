@@ -18,6 +18,7 @@ import { App } from "antd";
 import { hashPassword } from "../utils";
 
 type AuthContextType = {
+  isLoading: boolean;
   isLogin: boolean;
   isAdmin: boolean;
   userInfo: UserInfo | null;
@@ -29,6 +30,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: PropsWithChildren) {
+  const [isLoading, setIsLoading] = useState(true);
   const [isLogin, setIsLogin] = useState(false);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const { message } = App.useApp();
@@ -46,6 +48,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
         await reloadUserInfo();
         setIsLogin(true);
+        setIsLoading(false);
       } catch (error) {
         if (isBizException(error)) return message.error("获取用户信息失败");
         console.error(error);
@@ -74,7 +77,15 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   return (
     <AuthContext.Provider
-      value={{ isLogin, isAdmin, userInfo, login, logout, reloadUserInfo }}
+      value={{
+        isLoading,
+        isLogin,
+        isAdmin,
+        userInfo,
+        login,
+        logout,
+        reloadUserInfo,
+      }}
     >
       {children}
     </AuthContext.Provider>

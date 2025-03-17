@@ -7,10 +7,10 @@ import { useAuth } from "./context/authContext";
 import UserCenter from "./components/UserCenter";
 import { Header } from "./components/Header";
 import BaseProvider from "../components/common/BaseProvider";
-import { Layout } from "antd";
+import { Layout, Spin } from "antd";
 
 function PlayerContent() {
-  const { isLogin } = useAuth();
+  const { isLogin, isLoading } = useAuth();
 
   return (
     <Layout className={classNames("h-[100vh] flex overflow-auto")}>
@@ -18,7 +18,9 @@ function PlayerContent() {
         <Header />
       </Layout.Header>
       <Layout.Content className="min-w-0">
-        {isLogin ? <UserCenter /> : <Login />}
+        <Spin spinning={isLoading}>
+          {!isLoading && <>{isLogin ? <UserCenter /> : <Login />}</>}
+        </Spin>
       </Layout.Content>
     </Layout>
   );
