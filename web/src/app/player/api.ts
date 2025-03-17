@@ -1,5 +1,5 @@
 import http from "./http";
-import { RaidTime, RoleInfo, SignupRecord, UserInfo } from "./types";
+import { RaidTime, RoleInfo, SignupRecord, UserInfo, WCLRank } from "./types";
 
 export function getUserInfo(): Promise<UserInfo> {
   return http.get("/user_info");
@@ -61,4 +61,8 @@ export function delRecord(params: {
   ids: RoleInfo["id"][];
 }): Promise<SignupRecord[]> {
   return http.post("/raid/del_record", params);
+}
+
+export function getWCLRanks(): Promise<WCLRank[]> {
+  return http.get("/common/wcl_rankings");
 }
