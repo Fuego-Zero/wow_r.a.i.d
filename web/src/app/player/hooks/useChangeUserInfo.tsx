@@ -117,7 +117,7 @@ function useChangeUserinfo(): [() => void, React.ReactNode] {
             },
           ]}
         >
-          <Input />
+          <Input disabled />
         </Form.Item>
         <Form.Item
           name="wechat_name"
