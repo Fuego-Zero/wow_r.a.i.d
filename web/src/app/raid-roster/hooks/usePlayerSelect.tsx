@@ -24,12 +24,12 @@ const DPS: TalentType[] = [
 ];
 
 import { CalendarFilled, PushpinFilled } from "@ant-design/icons";
-import { TalentType } from "../component/RaidContent/constant";
 import { GroupTimeKey, GroupTitle, PlayerData, PlayersData } from "../types";
 import Actor from "@/app/components/Actor";
 import ScrollWrap from "@/app/components/common/ScrollWrap";
 import Players from "@/app/components/Players";
 import { useAppConfig } from "@/app/player/context/appConfigContext";
+import { TalentType } from "@/app/constant";
 
 function usePlayerSelect(
   players: PlayersData
