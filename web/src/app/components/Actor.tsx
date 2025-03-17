@@ -1,7 +1,6 @@
 import React, { CSSProperties } from "react";
 import { TalentType } from "../constant";
 
-import actors from "@/app/images/actors.jpg";
 import { isArray } from "@yfsdk/web-basic-library";
 
 function getOffset(actor: TalentType) {
@@ -127,7 +126,7 @@ function getOffset(actor: TalentType) {
 const style: CSSProperties = {
   position: "absolute",
   inset: 0,
-  backgroundImage: `url(${actors.src})`,
+  backgroundImage: `url("/images/actors.jpg")`,
 };
 
 function Actor(props: { actor: TalentType[] | TalentType }) {
