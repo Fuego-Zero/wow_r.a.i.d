@@ -7,7 +7,6 @@ const TANK: TalentType[] = ["FQ", "DKT"];
 const HEALER: TalentType[] = ["NS", "NQ", "JLM", "ND"];
 const DPS: TalentType[] = [
   "SCL",
-  "CSZ",
   "ZDZ",
   "AC",
   "YD",
@@ -21,6 +20,20 @@ const DPS: TalentType[] = [
   "CJQ",
   "XDK",
   "BDK",
+];
+
+const OTHER: TalentType[] = [
+  "FZ",
+  "XT",
+  "SJL",
+  "SWL",
+  "CSZ",
+  "MRZ",
+  "WQZ",
+  "AF",
+  "BF",
+  "SM",
+  "HMS",
 ];
 
 import { CalendarFilled, PushpinFilled } from "@ant-design/icons";
@@ -87,6 +100,8 @@ function usePlayerSelect(
     });
   }, [players, selectedActor, groupTimeKey]);
 
+  const [showAll, setShowAll] = useState(false);
+
   const Context = (
     <Modal
       title={
@@ -143,6 +158,27 @@ function usePlayerSelect(
             />
           );
         })}
+        <Button onClick={() => setShowAll((prev) => !prev)}>
+          {showAll ? "收起" : "展开"}
+        </Button>
+        {showAll && (
+          <>
+            <Divider type="horizontal" className="my-1" />
+            <span>其他</span>
+            {OTHER.map((item) => {
+              return (
+                <Button
+                  key={item}
+                  icon={<Actor actor={item} />}
+                  {...(selectedActor === item ? isSelectProps : {})}
+                  onClick={() => {
+                    onSelectActor(item);
+                  }}
+                />
+              );
+            })}
+          </>
+        )}
       </Row>
       <Divider className="my-4" />
       <div className="overflow-auto h-[60vh]">
