@@ -1,6 +1,6 @@
 import { IRole } from '../models/Role';
 
-interface Role extends Pick<IRole, 'role_name' | 'classes' | 'talent'> {
+interface Role extends Pick<IRole, 'role_name' | 'classes' | 'talent' | 'auto_signup'> {
   id: IRole['_id'];
 }
 
