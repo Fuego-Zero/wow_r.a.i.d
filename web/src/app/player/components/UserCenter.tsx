@@ -10,6 +10,7 @@ import AddSignupRecord from "./AddSignupRecord";
 import DelSignupRecord from "./DelSignupRecord";
 import EditRole from "./EditRole";
 import Nameplate from "./Nameplate";
+import { SolutionOutlined } from "@ant-design/icons";
 
 function UserCenter() {
   const { userInfo } = useAuth();
@@ -65,6 +66,14 @@ function UserCenter() {
                     role_name={role.role_name}
                     talent={role.talent}
                     className="flex-1"
+                  />
+                  <SolutionOutlined
+                    className="ml-2"
+                    onClick={() => {
+                      window.open(
+                        `https://cn.classic.warcraftlogs.com/character/cn/法琳娜/${role.role_name}`
+                      );
+                    }}
                   />
                   {signupRecordSet.has(role.id) && (
                     <Tag color="cyan" className="ml-2 mr-0">
