@@ -11,6 +11,7 @@ const JWTMiddleware: Middleware = koaJwt({ secret: secretKey }).unless({
     BASE_PREFIX + ROUTER_VERSION,
     `${BASE_PREFIX}/schedule/published`,
     `${BASE_PREFIX}/common/wcl_rankings`,
+    `${BASE_PREFIX}/config/raid_time`,
   ],
 });
 
