@@ -44,7 +44,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     (async () => {
       try {
         const storedUser = userStorage.getUser();
-        if (!storedUser) return;
+        if (!storedUser) return setIsLoading(false);
 
         await reloadUserInfo();
         setIsLogin(true);
