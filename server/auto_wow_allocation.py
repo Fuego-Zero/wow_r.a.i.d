@@ -357,7 +357,7 @@ def create_group(players, cd_role_pool, time_slot, required_players_levels):
             # 把单个的require_players改成多个level VIP分级
             for vip_level in required_players_levels:
                 shuffled_require_players = [p for p in vip_level if p in available_pool and p not in used_players]
-                random.shuffle(shuffled_require_players)  # ⭐随机玩家顺序⭐
+                random.shuffle(shuffled_require_players)  # 随机玩家顺序
                 for pname in shuffled_require_players:
                     if pick_role(pname, heal_cls):
                         healer_counts[heal_cls] += 1
@@ -375,13 +375,11 @@ def create_group(players, cd_role_pool, time_slot, required_players_levels):
     # 后续的坦克和DPS选择，保持原有剔除已选玩家逻辑
     # 改进为支持分级别VIP处理
     for vip_level in required_players_levels:
-        for pname in vip_level:
-            if pname not in available_pool or pname in used_players:
-                continue
+        shuffled_require_players = [p for p in vip_level if p in available_pool and p not in used_players]
+        random.shuffle(shuffled_require_players)  # 随机玩家顺序
+        for pname in shuffled_require_players:
             picked = False
-            shuffled_priority_classes = priority_classes[:]
-            random.shuffle(shuffled_priority_classes)
-            for cls in shuffled_priority_classes:
+            for cls in priority_classes:
                 role = ROLES.get(cls)
 
                 if role == '治疗':
@@ -427,7 +425,7 @@ def create_group(players, cd_role_pool, time_slot, required_players_levels):
                 selected_roles.append(("", "", tank_cls))
             count += 1
 
-    # 治疗选择完美优化版（易读+强制顺序明确版）
+    # 治疗选择
 
     items_healers = list(available_pool.items())
     random.shuffle(items_healers)
