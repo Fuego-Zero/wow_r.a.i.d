@@ -40,6 +40,10 @@ export type RoleInfo = {
    * 角色天赋
    */
   talent: TalentType[];
+  /**
+   * 是否自动报名
+   */
+  auto_signup: boolean;
   id: string;
 };
 
