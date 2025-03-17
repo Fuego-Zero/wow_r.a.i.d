@@ -2,6 +2,7 @@ import Router from 'koa-router';
 
 import packageJson from '../../package.json';
 import { BASE_PREFIX, ROUTER_HEALTH, ROUTER_VERSION } from '../config';
+import common from './common';
 import config from './config';
 import login from './login';
 import raid from './raid';
@@ -20,5 +21,6 @@ router.use(role.routes());
 router.use(config.routes());
 router.use(raid.routes());
 router.use(schedule.routes());
+router.use(common.routes());
 
 export default router;

@@ -1,5 +1,5 @@
 {
-  "cSpell.words": ["bodyparser", "Catched", "Cooldown", "Reduct", "Timespan", "unionid", "wechat", "yfsdk"],
+  "cSpell.words": ["bodyparser", "Catched", "Cooldown", "IWCL", "Reduct", "Timespan", "unionid", "wechat", "yfsdk"],
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
