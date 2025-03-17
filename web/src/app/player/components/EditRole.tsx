@@ -88,7 +88,7 @@ function EditRole(props: Props) {
       label: (
         <Nameplate
           classes={role.classes}
-          name={role.role_name}
+          role_name={role.role_name}
           talent={role.talent}
         />
       ),

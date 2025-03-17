@@ -62,12 +62,14 @@ function UserCenter() {
                 <div className="flex relative items-center justify-start w-full text-left">
                   <Nameplate
                     classes={role.classes}
-                    name={role.role_name}
+                    role_name={role.role_name}
                     talent={role.talent}
                     className="flex-1"
                   />
                   {signupRecordSet.has(role.id) && (
-                    <Tag color="cyan">已报名</Tag>
+                    <Tag color="cyan" className="ml-2 mr-0">
+                      已报名
+                    </Tag>
                   )}
                 </div>
               </Card.Grid>
