@@ -19,7 +19,7 @@ import React, { useEffect, useState } from "react";
 import { bindRole } from "../api";
 import { isBizException } from "@yfsdk/web-basic-library";
 
-const RolesClasses: RoleClasses[] = [
+export const RolesClasses: RoleClasses[] = [
   "QS",
   "DK",
   "XD",
@@ -32,7 +32,7 @@ const RolesClasses: RoleClasses[] = [
   "ZS",
 ];
 
-const roleClassesNameMap: Record<RoleClasses, string> = {
+export const roleClassesNameMap: Record<RoleClasses, string> = {
   QS: "骑士",
   DK: "死骑",
   XD: "小德",
@@ -45,7 +45,7 @@ const roleClassesNameMap: Record<RoleClasses, string> = {
   ZS: "战士",
 };
 
-const roleClassesToTalentMap: Record<RoleClasses, TalentType[]> = {
+export const roleClassesToTalentMap: Record<RoleClasses, TalentType[]> = {
   DK: ["BDK", "DKT", "XDK"],
   XD: ["AC", "ND", "XT", "YD"],
   LR: ["SWL", "SCL", "SJL"],
@@ -58,7 +58,7 @@ const roleClassesToTalentMap: Record<RoleClasses, TalentType[]> = {
   ZS: ["FZ", "KBZ", "WQZ"],
 };
 
-const roleClassesOptions: CheckboxGroupProps<string>["options"] =
+export const roleClassesOptions: CheckboxGroupProps<string>["options"] =
   RolesClasses.map((role) => {
     return {
       label: (
@@ -77,6 +77,7 @@ function BindRole(props: { onReload: () => Promise<void> }) {
     name: string;
     talent: TalentType[];
     classes: RoleClasses;
+    auto_signup: boolean;
   }>();
   const [isDualTalents, setIsDualTalents] = useState(false);
   const [selectedTalent, setSelectedTalent] = useState<TalentType[]>([]);
