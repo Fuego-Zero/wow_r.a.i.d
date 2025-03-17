@@ -1,5 +1,5 @@
 import { App, Button, Card } from "antd";
-import React, { memo, useMemo, useRef } from "react";
+import React, { memo, useMemo, useRef, useState } from "react";
 
 import { toPng } from "html-to-image";
 import { CloseOutlined } from "@ant-design/icons";
@@ -23,8 +23,11 @@ function RaidCard(
   const { notification } = App.useApp();
   const el = useRef(null);
 
+  const [hideBtn, setHideBtn] = useState(false);
+
   async function onCopy() {
     if (!el.current) return;
+    setHideBtn(true);
 
     const dataUrl = await toPng(el.current, { cacheBust: true });
     const res = await fetch(dataUrl);
@@ -41,10 +44,13 @@ function RaidCard(
       description: "已将图片复制到剪贴板",
       duration: 1,
     });
+
+    setHideBtn(false);
   }
 
   async function onDownload() {
     if (!el.current) return;
+    setHideBtn(true);
 
     await htmlToPngDownload(el.current, data.group_title);
 
@@ -53,6 +59,8 @@ function RaidCard(
       description: "图片已成功下载",
       duration: 1,
     });
+
+    setHideBtn(false);
   }
 
   const innerPlayers = useMemo(() => {
@@ -69,24 +77,26 @@ function RaidCard(
       title={data.group_title}
       className="group/RaidCard"
       extra={
-        <div className="group-hover/RaidCard:block hidden">
-          {!displayMode && (
-            <Button
-              type="link"
-              onClick={() => {
-                rosterPlayer?.(data.group_time_key, data.group_title);
-              }}
-            >
-              编辑
+        !hideBtn && (
+          <div className="group-hover/RaidCard:block hidden">
+            {!displayMode && (
+              <Button
+                type="link"
+                onClick={() => {
+                  rosterPlayer?.(data.group_time_key, data.group_title);
+                }}
+              >
+                编辑
+              </Button>
+            )}
+            <Button type="link" onClick={onDownload}>
+              下载
             </Button>
-          )}
-          <Button type="link" onClick={onDownload}>
-            下载
-          </Button>
-          <Button type="link" onClick={onCopy}>
-            复制
-          </Button>
-        </div>
+            <Button type="link" onClick={onCopy}>
+              复制
+            </Button>
+          </div>
+        )
       }
       ref={el}
     >
