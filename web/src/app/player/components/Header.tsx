@@ -1,5 +1,5 @@
 import { MenuOutlined } from "@ant-design/icons";
-import { Dropdown, MenuProps } from "antd";
+import { Button, Dropdown, MenuProps } from "antd";
 import React from "react";
 import { useAuth } from "../context/authContext";
 import useChangePassword from "../hooks/useChangePassword";
@@ -58,9 +58,19 @@ export const Header = () => {
     <div className="flex items-center h-full">
       <span className="flex-1 text-xl">个人中心</span>
       {isLogin && (
-        <Dropdown menu={{ items }} trigger={["click"]}>
-          <MenuOutlined />
-        </Dropdown>
+        <>
+          <Button
+            type="link"
+            onClick={() => {
+              router.push("/");
+            }}
+          >
+            首页
+          </Button>
+          <Dropdown menu={{ items }} trigger={["click"]}>
+            <MenuOutlined />
+          </Dropdown>
+        </>
       )}
       {changePasswordHolder}
       {changeUserinfoHolder}
