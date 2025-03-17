@@ -1,13 +1,20 @@
-from datetime import datetime
+from enum import Enum
 
-import pandas as pd
-from openpyxl import Workbook
-from openpyxl.styles import PatternFill
-from openpyxl.utils import get_column_letter
+from flask import Blueprint, json, Response
+from pymongo import MongoClient
+import copy
 from collections import defaultdict
 import random
+from bson import ObjectId
+import datetime
 
-import copy
+from config import MONGO_CONN_STRING
+
+allocation_api = Blueprint('allocation_api', __name__)
+
+# 连接mongoDB
+mongo_client = MongoClient(MONGO_CONN_STRING)
+db = mongo_client["wow_raid"]
 
 # 常量定义：
 TANK_NEED = {'防骑': 2, '血DK': 1}
@@ -20,7 +27,7 @@ DPS_LIMIT = {
     '惩戒骑': (1, 1), '暗牧': (1, 1), '痛苦术': (1, 2), '恶魔术': (1, 1), '鸟德': (1, 2),
     '猎人': (2, 3), '邪DK': (1, 2), '冰DK': (0, 1),
     '猫德': (0, 1), '电萨': (1, 1), '法师': (2, 3),
-    '战士': (1, 1),
+    '战士': (1, 2),
 }
 
 HEALER_LIMIT = {
@@ -57,12 +64,137 @@ CLASS_COLORS = {
 }
 
 
-# 数据结构
+class ActorMap(Enum):
+    FQ = "防骑"  # 防骑
+    CJQ = "惩戒骑"  # 惩戒骑
+    NQ = "奶骑"  # 奶骑
+
+    XDK = "邪DK"  # 邪DK
+    DKT = "血DK"  # 血DK
+    BDK = "冰DK"  # 冰DK
+
+    DS = "电萨"  # 电萨
+    NS = "奶萨"  # 奶萨
+    ZQS = "增强萨"  # 增强萨
+
+    AM = "暗牧"  # 暗牧
+    JLM = "戒律牧"  # 戒律牧
+
+    HF = "法师"  # 法师
+    BF = "BF"
+    AF = "AF"
+
+    EMS = "恶魔术"  # 恶魔术
+    TKS = "痛苦术"  # 痛苦术
+
+    SWL = "SWL"
+    SCL = "猎人"  # 猎人
+
+    CSZ = "CSZ"
+    ZDZ = "盗贼"  # 盗贼
+
+    AC = "鸟德"  # 鸟德
+    ND = "奶德"  # 奶德
+    XT = "XT"
+    YD = "猫德"  # 猫德
+
+    KBZ = "战士"  # 战士
+    FZ = "FZ"
+
+
 class Player:
     def __init__(self, player_name, characters, available_times):
         self.player_name = player_name
         self.characters = characters  # [{'name':角色名, 'class':职业名},...]
         self.available_times = available_times
+
+
+# 从mongoDB中加载用户和角色数据
+def load_players_from_db():
+    players_dict = defaultdict(lambda: {"characters": [], "available_times": set()})
+
+    signup_collection = db["signup_record"]
+    user_collection = db["user"]
+    group_info_collection = db["group_info"]
+
+    # Talent 英文缩写到中文职业名的映射
+    talent_enum_to_class = {e.name: e.value for e in ActorMap}
+
+    # group_info 的time_key到title的映射
+    time_key_map = {
+        record["time_key"]: record["title"]
+        for record in group_info_collection.find({})
+    }
+
+    # 一次批量查询所有有效报名记录
+    signup_records = signup_collection.find({"delete_time": None})
+
+    # 记录所有有效用户ID，之后一次性进行查询
+    user_ids_set = set()
+
+    for signup in signup_records:
+        user_id = signup.get("user_id")
+        user_name = signup.get("user_name")
+        role_name = signup.get("role_name")
+        talents = signup.get("talent", [])
+
+        # 解析有效职业（过滤无效天赋）
+        valid_classes = {
+            talent_enum_to_class.get(talent)
+            for talent in talents
+            if talent_enum_to_class.get(talent) in ROLES
+        }
+
+        if not valid_classes:
+            continue  # 无有效职业跳过此记录
+
+        character = {
+            "name": role_name,
+            "class": "+".join(sorted(valid_classes))
+        }
+
+        players_dict[user_id]["characters"].append(character)
+        players_dict[user_id]["user_name"] = user_name
+        user_ids_set.add(user_id)
+
+    # 批量查询所有用户的play_time
+    user_records = user_collection.find({"_id": {"$in": list(user_ids_set)}})
+
+    # 批量赋值每个用户的available_times信息
+    for user_record in user_records:
+        user_id = user_record["_id"]
+        play_times_raw = user_record.get("play_time", [])
+        available_slots = {
+            time_key_map[time_key]
+            for time_key in play_times_raw if time_key in time_key_map
+        }
+        players_dict[user_id]["available_times"] = available_slots
+
+    # 最终构造players对象列表返回
+    players = [
+        Player(
+            pdata["user_name"],
+            pdata["characters"],
+            list(pdata["available_times"])
+        )
+        for pdata in players_dict.values()
+        if pdata["characters"]  # 至少有一个有效角色
+    ]
+
+    all_users_cursor = user_collection.find({})
+    all_user_names = set(user_record['user_name'] for user_record in all_users_cursor)
+    # 已报名玩家的用户集合（从前面的players中提取即可）
+    signed_up_user_names = set(player.player_name for player in players)
+
+    # 计算未报名玩家（全部用户 - 已经报名玩家）
+    unsigned_users = all_user_names - signed_up_user_names
+
+    print("\n本次报名未参与排团的玩家有以下：")
+    for user_name in unsigned_users:
+        print(user_name)
+    print(f"共计 {len(unsigned_users)} 名\n")
+
+    return players
 
 
 # 在第一次排团开始前构建本次CD周期总角色池
@@ -73,31 +205,11 @@ def build_cd_role_pool(players):
     return role_pool
 
 
-def read_excel(file):
-    df = pd.read_excel(file)
-    players = []
-    for _, row in df.iterrows():
-        if pd.isna(row['玩家名称']) or pd.isna(row['角色名和职业']) or pd.isna(row['可以玩的时间']):
-            break
-        player_name = str(row['玩家名称']).strip()
-        char_data = row['角色名和职业'].split('\n')
-        characters = []
-        for char in char_data:
-            if "/" not in char:
-                continue  # 跳过格式不标准的角色信息
-            name, job = char.strip().split('/')
-            characters.append({'name': name.strip(), 'class': job.strip()})
-        available_times_raw = str(row['可以玩的时间']).strip()
-        available_times = parse_available_times(available_times_raw)
-        players.append(Player(player_name, characters, available_times))
-    return players
-
-
 def parse_available_times(available_str):
     slots = []
     time_map = {
-        '周四': ['周四-19:30', '周四-20:30'],
-        '周五': ['周五-19:30', '周五-20:30'],
+        '周四': ['周四-19:30', '周四-20:30', '周四-21:30'],
+        '周五': ['周五-19:30', '周五-20:30', '周五-21:30'],
         '周六': ['周六-19:30', '周六-20:30'],
         '周日': ['周日-19:30', '周日-20:30'],
         '周一': ['周一-19:30', '周一-20:30']
@@ -105,13 +217,23 @@ def parse_available_times(available_str):
     parts = available_str.split('、')
     for part in parts:
         part = part.strip()
-        if '第二车' in part:
+        if '第一车' in part:
+            day = part.replace('第一车', '').strip()
+            if day in time_map:
+                slots.append(time_map[day][0])  # 第一车（19:30）
+        elif '第二车' in part:
             day = part.replace('第二车', '').strip()
             if day in time_map:
-                slots.append(time_map[day][1])  # 第二车，只能参加20:30这一趟
+                slots.append(time_map[day][1])  # 第二车（20:30）
+        elif '第三车' in part:
+            day = part.replace('第三车', '').strip()
+            # 只有周四周五有第三车
+            if day in ['周四', '周五']:
+                slots.append(time_map[day][2])  # 第三车（21:30）
         else:
+            # 如果没有注明哪一车，就是当天所有车次可参加
             if part in time_map:
-                slots.extend(time_map[part])  # 当天两个档（第一车和第二车）都可以参加
+                slots.extend(time_map[part])
     return slots
 
 
@@ -161,7 +283,7 @@ def validate_roster(roster):
 
 
 # 排团函数
-def create_group(players, cd_role_pool, time_slot, all_time_slots, require_players):
+def create_group(players, cd_role_pool, time_slot, required_players_levels):
     available_pool = {}
     player_dict = {p.player_name: p for p in players}
     for pname, chars in cd_role_pool.items():
@@ -232,58 +354,63 @@ def create_group(players, cd_role_pool, time_slot, all_time_slots, require_playe
         current_cls_count = len([r for r in selected_roles if r[2] == heal_cls])
         while current_cls_count < required_number and total_healers < HEALER_MAX:
             found = False
-            # 每次都重新随机打乱玩家顺序，确保每次排团都有随机体验
-            shuffled_require_players = [p for p in require_players if p in available_pool and p not in used_players]
-            random.shuffle(shuffled_require_players)  # ⭐随机玩家顺序⭐
-            for pname in shuffled_require_players:
-                if pick_role(pname, heal_cls):
-                    healer_counts[heal_cls] += 1
-                    total_healers += 1
-                    used_players.add(pname)
-                    found = True
-                    break
+            # 把单个的require_players改成多个level VIP分级
+            for vip_level in required_players_levels:
+                shuffled_require_players = [p for p in vip_level if p in available_pool and p not in used_players]
+                random.shuffle(shuffled_require_players)  # ⭐随机玩家顺序⭐
+                for pname in shuffled_require_players:
+                    if pick_role(pname, heal_cls):
+                        healer_counts[heal_cls] += 1
+                        total_healers += 1
+                        used_players.add(pname)
+                        found = True
+                        break
+                if found:
+                    break  # 内层vip循环一旦找到，外层vip循环就直接跳出
             if not found:
                 # 若遍历全部玩家都没找到匹配的治疗，则终止当前治疗职业选择
                 break
             current_cls_count += 1
 
     # 后续的坦克和DPS选择，保持原有剔除已选玩家逻辑
-    for pname in require_players:
-        if pname not in available_pool or pname in used_players:
-            continue
-        picked = False
-        shuffled_priority_classes = priority_classes[:]
-        random.shuffle(shuffled_priority_classes)
-        for cls in shuffled_priority_classes:
-            role = ROLES.get(cls)
+    # 改进为支持分级别VIP处理
+    for vip_level in required_players_levels:
+        for pname in vip_level:
+            if pname not in available_pool or pname in used_players:
+                continue
+            picked = False
+            shuffled_priority_classes = priority_classes[:]
+            random.shuffle(shuffled_priority_classes)
+            for cls in shuffled_priority_classes:
+                role = ROLES.get(cls)
 
-            if role == '治疗':
-                continue  # 治疗前面已经明确地选完了，不再重复
+                if role == '治疗':
+                    continue  # 治疗前面已经明确地选完了，不再重复
 
-            elif role == '坦克':
-                current_tank_count = len([r for r in selected_roles if r[2] == cls])
-                if current_tank_count >= TANK_NEED.get(cls, 0):
-                    continue
-                if pick_role(pname, cls):
-                    picked = True
-                    used_players.add(pname)
-                    break
+                elif role == '坦克':
+                    current_tank_count = len([r for r in selected_roles if r[2] == cls])
+                    if current_tank_count >= TANK_NEED.get(cls, 0):
+                        continue
+                    if pick_role(pname, cls):
+                        picked = True
+                        used_players.add(pname)
+                        break
 
-            else:  # DPS选择严格检查数量 + 输出DK总数≤2
-                current_dps_count = len([r for r in selected_roles if r[2] == cls])
-                max_dps_limit = DPS_LIMIT.get(cls, (0, 99))[1]
-                if current_dps_count >= max_dps_limit:
-                    continue
-                if cls in dk_classes and sum(dps_selected[dk] for dk in dk_classes) >= 2:
-                    continue
-                if pick_role(pname, cls):
-                    dps_selected[cls] += 1
-                    picked = True
-                    used_players.add(pname)
-                    break
+                else:  # DPS选择严格检查数量 + 输出DK总数≤2
+                    current_dps_count = len([r for r in selected_roles if r[2] == cls])
+                    max_dps_limit = DPS_LIMIT.get(cls, (0, 99))[1]
+                    if current_dps_count >= max_dps_limit:
+                        continue
+                    if cls in dk_classes and sum(dps_selected[dk] for dk in dk_classes) >= 2:
+                        continue
+                    if pick_role(pname, cls):
+                        dps_selected[cls] += 1
+                        picked = True
+                        used_players.add(pname)
+                        break
 
-        if picked and pname in available_pool:
-            del available_pool[pname]
+            if picked and pname in available_pool:
+                del available_pool[pname]
 
     # 坦克选择
     for tank_cls, num in TANK_NEED.items():
@@ -327,9 +454,9 @@ def create_group(players, cd_role_pool, time_slot, all_time_slots, require_playe
             current_count += 1
 
     # 第二步：补充额外治疗直到满4人
-    additional_healers = ['戒律牧', '奶萨', '奶德']
+    additional_healers = ['奶德', '戒律牧', '奶萨']
     while total_healers < HEALER_MIN:
-        random.shuffle(additional_healers)
+        # random.shuffle(additional_healers)
         found = False
         for heal_cls in additional_healers:
             current_heal_cls_count = len([r for r in selected_roles if r[2] == heal_cls])
@@ -406,8 +533,9 @@ def create_group(players, cd_role_pool, time_slot, all_time_slots, require_playe
     vacancy_count = 25 - len(selected_roles)
     selected_players = set(pname for pname, _, _ in selected_roles if pname)
     dk_classes = ['邪DK', '冰DK']
+    exclude_classes = dk_classes + ['增强萨', '电萨']  # 增加排除增强萨和电萨
     available_dps_classes = [cls for cls, role in ROLES.items() if
-                             role in ['近战输出', '远程输出'] and cls not in dk_classes]
+                             role in ['近战输出', '远程输出'] and cls not in exclude_classes]
 
     available_dps_characters = []
     for pname, chars in available_pool.items():
@@ -453,132 +581,6 @@ def create_group(players, cd_role_pool, time_slot, all_time_slots, require_playe
     return selected_roles
 
 
-def export_schedule_to_excel(schedule_dict, players, cd_role_pool, filename):
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "团本安排汇总"
-
-    player_lookup = {p.player_name: p for p in players}
-
-    # 准备玩家时间简称显示规则
-    def simplify_player_times(player):
-        times = player.available_times
-        day_all_slots = {'周四': ['周四-19:30', '周四-20:30'],
-                         '周五': ['周五-19:30', '周五-20:30'],
-                         '周六': ['周六-19:30', '周六-20:30'],
-                         '周日': ['周日-19:30', '周日-20:30'],
-                         '周一': ['周一-19:30', '周一-20:30']}
-        simplified_days = []
-        for day, slots in day_all_slots.items():
-            if set(slots).issubset(set(times)):
-                simplified_days.append(day)
-            elif slots[1] in times and slots[0] not in times:
-                simplified_days.append(f"{day}第二车")
-            elif slots[0] in times and slots[1] not in times:
-                simplified_days.append(f"{day}第一车")
-        return "，".join(simplified_days)
-
-    player_time_disp = {p.player_name: simplify_player_times(p) for p in players}
-
-    time_slots_order = ["周四-19:30", "周四-20:30", "周五-19:30", "周五-20:30",
-                        "周六-19:30", "周六-20:30", "周日-19:30", "周日-20:30",
-                        "周一-19:30", "周一-20:30"]
-
-    result = []
-    row_cursor = 1
-
-    for slot in time_slots_order:
-        row_val = {
-            "time": slot,
-            "players": []
-        }
-        ws.cell(row=row_cursor, column=1, value=slot).font = ws.cell(row=row_cursor, column=1).font.copy(bold=True)
-        roster = schedule_dict[slot]
-
-        arranged = [r for role in ['坦克', '近战输出', '远程输出', '治疗']
-                    for r in roster if ROLES.get(r[2]) == role]
-
-        idx = 0
-        for col in range(1, 6):
-            for row in range(row_cursor + 1, row_cursor + 6):
-                if idx >= len(arranged):
-                    continue
-                pname, cname, cls = arranged[idx]
-                cell_text = f"{pname}-{cname}-{cls}" if pname else f"空缺\n\n{cls}"
-                ws.cell(row=row, column=col, value=cell_text).fill = PatternFill(
-                    "solid", fgColor=CLASS_COLORS.get(cls, 'FFFFFF') if cls else "FFFFFF"
-                )
-                idx += 1
-                row_val['players'].append({
-                    "pname": pname,
-                    "cname": cname,
-                    "cls": cls
-                })
-        row_cursor += 7
-        result.append(row_val)
-
-        # 未安排玩家
-        ws.cell(row=row_cursor, column=1, value=f"{slot} 未安排玩家及可用角色").font = ws.cell(row=row_cursor, column=1).font.copy(bold=True, color="FF0000")
-        row_cursor += 1
-        assigned_pnames = {pname for pname, _, _ in roster if pname}
-        has_unassigned = False
-
-        for player in players:
-            if slot not in player.available_times or player.player_name in assigned_pnames:
-                continue
-            available_chars = [char for char in cd_role_pool.get(player.player_name, [])
-                               if slot in player.available_times]
-            if available_chars:
-                has_unassigned = True
-                pname_display = f"{player.player_name}（{player_time_disp[player.player_name]}）"
-                ws.cell(row=row_cursor, column=1, value=pname_display)
-                col_cursor = 2
-                for char in available_chars:
-                    main_cls = get_classes(char['class'])[0]
-                    ws.cell(row=row_cursor, column=col_cursor, value=f"{char['name']}-{char['class']}").fill =\
-                        PatternFill("solid", fgColor=CLASS_COLORS.get(main_cls,'FFFFFF'))
-                    col_cursor += 1
-                row_cursor += 1
-        if not has_unassigned:
-            ws.cell(row=row_cursor, column=1, value="✅无")
-            row_cursor += 1
-        row_cursor += 1
-
-        # 已安排玩家和备用
-        ws.cell(row=row_cursor, column=1, value=f"{slot} 已安排玩家角色及其备用角色").font = ws.cell(row=row_cursor,column=1).font.copy(bold=True, color="0000FF")
-        row_cursor += 1
-        has_assigned_backup = False
-
-        for pname in assigned_pnames:
-            assigned_chars = [(cname, cls) for pname2, cname, cls in roster if pname2 == pname]
-            remaining_chars = cd_role_pool.get(pname, [])
-            available_backup_chars = [char for char in remaining_chars if slot in player_lookup[pname].available_times]
-
-            has_assigned_backup = True
-            pname_display = f"{pname}（{player_time_disp[pname]}）"
-            ws.cell(row=row_cursor, column=1, value=pname_display)
-            col_cursor = 2
-
-            for cname, cls in assigned_chars:
-                main_cls = get_classes(cls)[0]
-                ws.cell(row=row_cursor, column=col_cursor, value=f"已安排: {cname}-{cls}").fill = PatternFill("solid", fgColor=CLASS_COLORS.get(main_cls,'FFFFFF'))
-                col_cursor += 1
-            for char in available_backup_chars:
-                main_cls = get_classes(char['class'])[0]
-                ws.cell(row=row_cursor, column=col_cursor, value=f"备用: {char['name']}-{char['class']}").fill = PatternFill("solid", fgColor=CLASS_COLORS.get(main_cls,'FFFFFF'))
-                col_cursor += 1
-            row_cursor += 1
-        if not has_assigned_backup:
-            ws.cell(row=row_cursor, column=1, value="✅无")
-            row_cursor += 1
-        row_cursor += 2
-
-    for i in range(1, ws.max_column + 1):
-        ws.column_dimensions[get_column_letter(i)].width = 25
-    wb.save(filename)
-    print(f"✅团本排表导出成功: {filename}")
-    return result
-
 # 定义按ROLES顺序排序的辅助函数
 def sort_roles(roster):
     tanks = [r for r in roster if ROLES.get(r[2]) == '坦克']
@@ -588,41 +590,131 @@ def sort_roles(roster):
     return tanks + melee + ranged + heals
 
 
-def main(input_file, output_file):
-    players = read_excel(input_file)
+@allocation_api.route("/api/roster", methods=["GET"])
+def roster():
+    players = load_players_from_db()
     cd_role_pool = build_cd_role_pool(players)
-    time_slots = ["周四-19:30", "周四-20:30", "周五-19:30", "周五-20:30",
-                  "周六-19:30", "周六-20:30", "周日-19:30", "周日-20:30",
+
+    time_slots = ["周四-19:30", "周四-20:30", "周四-21:30",
+                  "周五-19:30", "周五-20:30", "周五-21:30",
+                  "周六-19:30", "周六-20:30",
+                  "周日-19:30", "周日-20:30",
                   "周一-19:30", "周一-20:30"]
 
-    result = {}
+    required_players_level = [
+        ["炸酱面", "薄荷", "古子哥", "戴森", "大力", "伊欧玟", "故事"],
+        ["大哥", "老四", "可美", "菲兹", "甜思思"],
+        ["白胖", "张三", "狗哥", "老K", "小K", "待雪", "羊掉", "外卡", "小元", "佛爷"]
+    ]
+
+    class_to_enum = {e.value: e.name for e in ActorMap}
+
+    # Weekday and time mapping
+    time_key_map = {
+        "周四-19:30": "4-1", "周四-20:30": "4-2", "周四-21:30": "4-3",
+        "周五-19:30": "5-1", "周五-20:30": "5-2", "周五-21:30": "5-3",
+        "周六-19:30": "6-1", "周六-20:30": "6-2",
+        "周日-19:30": "7-1", "周日-20:30": "7-2",
+        "周一-19:30": "1-1", "周一-20:30": "1-2",
+    }
+
+    # 计算order
+    day_order_map = {
+        "4-1": 0, "4-2": 1, "4-3": 2,
+        "5-1": 3, "5-2": 4, "5-3": 5,
+        "6-1": 6, "6-2": 7,
+        "7-1": 8, "7-2": 9,
+        "1-1": 10, "1-2": 11,
+    }
+
+    schedule_coll = db["schedule"]
+    schedule_coll.delete_many({})
+
+    signup_coll = db["signup_record"]
+    user_coll = db["user"]
+
+    # 一次性全量查询缓存数据，避免循环中逐条检索数据库
+    signup_records_cursor = signup_coll.find({"delete_time": None})
+    user_records_cursor = user_coll.find({})
+
+    # 缓存signup_record: (user_name, role_name) -> signup数据
+    signup_cache = {}
+    for signup in signup_records_cursor:
+        key = (signup["user_name"], signup["role_name"])
+        signup_cache[key] = signup
+
+    # 缓存user_record: user_name -> user数据
+    user_cache = {}
+    for user in user_records_cursor:
+        user_cache[user["user_name"]] = user
+
+    schedule_result = {}
+    insert_documents = []  # 统一批量插入用的列表
+
     for slot in time_slots:
-        print(f"\n排团时间: {slot}")
-        roster = create_group(players, cd_role_pool, slot, time_slots,
-                              ["大哥", "薄荷", "古子哥", "戴森", "大力", "可美", "老四", "菲兹", "炸酱面", "白胖", "甜思思", "张三", "狗哥", "故事", "老K", "小K"])
-        result[slot] = roster
+        roster = create_group(players, cd_role_pool, slot, required_players_level)
+        sorted_roster = sort_roles(roster)
 
-        # 按坦克->近战->远程->治疗 已经定义的顺序排序
-        roster_sorted = sort_roles(roster)
+        group_time_key = time_key_map[slot]
 
-        # 5*5 矩阵输出, 方便终端查看
-        print(f"【{slot}】团本名单(5x5展示)：")
-        for i in range(5):
-            row = roster_sorted[i * 5:(i + 1) * 5]
-            row_str = ""
-            for pname, char_name, cls in row:
-                display_name = f"{pname}-{char_name}-{cls}" if pname else f"空缺-{cls}"
-                row_str += f"{display_name:<20}"  # 每个位置占据20字符宽度，整齐美观
-            print(row_str)
+        roster_json = []
+        for idx, (user_name, role_name, cls) in enumerate(sorted_roster):
+            enum_class = class_to_enum.get(cls.strip()) if cls else ""
 
-    # suffix = datetime.now().strftime("%Y%m%d%H%M%S")
-    # out_path = '/Users/bytedance/Downloads/团本排表结果' + suffix + '.xlsx'
-    return export_schedule_to_excel(result, players, cd_role_pool, output_file)
+            if user_name:  # 有用户正常处理
+                signup_info = signup_cache.get((user_name, role_name))
+                user_info = user_cache.get(user_name)
 
+                if signup_info is None or user_info is None:
+                    continue
 
-if __name__ == "__main__":
-    suffix = datetime.now().strftime("%Y%m%d%H%M%S")
+                role_id = signup_info.get("role_id")
+                talent_list = signup_info.get("talent", [])
+                classes = signup_info.get("classes")
+                user_id = signup_info.get("user_id")
+                play_time = user_info.get("play_time", [])
 
-    input_file = '/Users/bytedance/Downloads/轻风成员.xlsx'
-    output_file = '/Users/bytedance/Downloads/团本排表结果' + suffix + '.xlsx'
-    main(input_file, output_file)
+                schedule_document = {
+                    "_id": ObjectId(),
+                    "role_id": role_id,
+                    "role_name": role_name,
+                    "classes": classes,
+                    "talent": talent_list,
+                    "user_id": user_id,
+                    "user_name": user_name,
+                    "play_time": play_time,
+                    "group_time_key": group_time_key,
+                    "group_time_order": day_order_map.get(group_time_key),
+                    "group_title": slot,
+                    "is_publish": False,
+                    "create_time": datetime.datetime.utcnow()
+                }
+
+                insert_documents.append(schedule_document)
+
+                roster_json.append({
+                    "user_name": user_name,
+                    "role_name": role_name,
+                    "class": enum_class
+                })
+            else:  # 没有用户则标记“空缺”
+                roster_json.append({
+                    "user_name": "空缺",
+                    "role_name": "空缺",
+                    "class": enum_class if enum_class else "空缺"
+                })
+
+        schedule_result[slot] = {
+            "roster": roster_json
+        }
+
+    # 批量DB插入
+    if insert_documents:
+        schedule_coll.insert_many(insert_documents)
+
+    result = {
+        "schedule": schedule_result
+    }
+
+    response_json = json.dumps(result, ensure_ascii=False)
+    return Response(response_json, mimetype='application/json; charset=utf-8')
