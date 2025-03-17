@@ -125,7 +125,7 @@ function useChangeUserinfo(): [() => void, React.ReactNode] {
           rules={[
             {
               required: true,
-              min: 2,
+              min: 1,
             },
           ]}
         >
