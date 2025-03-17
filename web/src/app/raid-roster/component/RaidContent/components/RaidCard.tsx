@@ -8,8 +8,7 @@ import Empty from "./Empty";
 import classNames from "classnames";
 import { InferArrayItem } from "@yfsdk/web-basic-library";
 import { Handler, RaidData } from "@/app/raid-roster/types";
-import Actor from "@/app/components/Actor";
-import Players from "@/app/components/Players";
+import Nameplate from "@/app/player/components/Nameplate";
 
 type Data = InferArrayItem<RaidData>;
 type Player = InferArrayItem<Data["players"]>;
@@ -96,7 +95,7 @@ function RaidCard(
           key={index}
           hoverable={false}
           className={classNames(
-            "flex relative items-center justify-start py-1 px-2 min-w-0 w-[20%] min-h-[44px] group/delPlayer"
+            "flex relative items-center justify-start py-1 px-1 min-w-0 w-[20%] min-h-[52px] group/delPlayer"
             // {
             //   "bg-amber-300/20": item.name === "空缺", //todo 未来针对暂缺情况的样式
             // }
@@ -104,13 +103,17 @@ function RaidCard(
         >
           {item.role_id ? (
             <>
-              <Actor actor={item.talent} />
-              <Players classes={item.classes}>
-                {item.role_name} ({item.user_name})
-              </Players>
+              <Nameplate
+                className="flex-1"
+                classes={item.classes}
+                role_name={item.role_name}
+                user_name={item.user_name}
+                talent={item.talent}
+              />
+
               {!displayMode && (
                 <Button
-                  className="hidden group-hover/delPlayer:block absolute right-0"
+                  className="hidden group-hover/delPlayer:block absolute right-0 top-0"
                   type="link"
                   size="small"
                   danger
