@@ -17,7 +17,7 @@ function WCL(props: { rank?: number; serverRank?: number }) {
 
   return (
     rank && (
-      <Tooltip title={`服务器排名：${serverRank}`}>
+      <Tooltip title={`服务器排名：${serverRank}`} placement="left">
         <span className="wcl" style={{ color }}>
           {rank}
         </span>
