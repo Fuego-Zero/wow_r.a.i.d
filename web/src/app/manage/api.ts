@@ -11,3 +11,7 @@ export function resetPassword(
 ): Promise<void> {
   return http.post("/reset_password", { password, targetUserId: userId });
 }
+
+export function batchAddRecords(): Promise<number> {
+  return http.post("/raid/batch_add_records");
+}
