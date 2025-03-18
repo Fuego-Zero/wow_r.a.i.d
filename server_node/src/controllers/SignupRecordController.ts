@@ -31,7 +31,7 @@ class SignupRecordController {
   static async delRecord(ctx: Context) {
     try {
       SignupRecordController.validateDelRoleParams(ctx.request.body);
-      const res = await SignupRecordService.delRecord(ctx.request.body.ids);
+      const res = await SignupRecordService.delRecord(ctx.state.user.id, ctx.request.body.ids);
       ctx.success(res);
     } catch (error) {
       if (isBizException(error)) ctx.bizError(error.message);

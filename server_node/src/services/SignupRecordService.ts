@@ -7,6 +7,7 @@ import User from '../models/User';
 import { RoleId, SignupRecordId, UserId } from '../types';
 import { getRaidDateRange } from '../utils';
 import { validateUserAccess } from '../utils/user';
+import ScheduleService from './ScheduleService';
 
 class SignupRecordService {
   static async addRecord(userId: UserId, roleIds: RoleId[]): Promise<IAddSignupRecordResponse> {
@@ -65,9 +66,10 @@ class SignupRecordService {
     }));
   }
 
-  static async delRecord(recordIds: SignupRecordId[]): Promise<boolean> {
+  static async delRecord(userId: UserId, recordIds: SignupRecordId[]): Promise<boolean> {
     // 检查是否已存在报名记录
     const existingRecords = await SignupRecord.find({
+      user_id: userId,
       _id: { $in: recordIds },
       delete_time: null,
     }).lean();
@@ -78,6 +80,9 @@ class SignupRecordService {
 
     // 检查是否所有记录都已更新
     if (result.modifiedCount !== recordIds.length) throw new BizException('部分记录删除失败');
+
+    const roleIds = existingRecords.map((r) => r.role_id);
+    await ScheduleService.delSchedules(userId, roleIds);
 
     return true;
   }

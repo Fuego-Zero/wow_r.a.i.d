@@ -222,6 +222,38 @@ class ScheduleService {
 
     return true;
   }
+
+  static async delSchedules(userId: UserId, roleIds: RoleId[]): Promise<boolean> {
+    const { startDate, endDate } = getRaidDateRange();
+
+    //* 查询所有符合条件的排班记录
+    const schedule = await Schedule.find({
+      user_id: userId,
+      role_id: {
+        $in: roleIds,
+      },
+      create_time: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    }).lean();
+
+    if (schedule.length === 0) return true;
+
+    //* 遍历删除所有记录
+    await Schedule.deleteMany({
+      user_id: userId,
+      role_id: {
+        $in: roleIds,
+      },
+      create_time: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    });
+
+    return true;
+  }
 }
 
 export default ScheduleService;
