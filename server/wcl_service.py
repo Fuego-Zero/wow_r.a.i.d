@@ -1,3 +1,4 @@
+import time
 import requests
 import datetime
 from pymongo import MongoClient
@@ -160,6 +161,8 @@ def query_and_save_rankings():
                 db.wcl_rankings.update_one(query, update_operation, upsert=True)
 
                 print(f"保存成功：{char_name}-{spec_name}-{metric}，平均分：{avg_rank_percent:.2f}")
+
+                time.sleep(3)
 
             except Exception as e:
                 print(f"查询 {char_name} ({spec_name}-{metric}) 时出错: {e}")
