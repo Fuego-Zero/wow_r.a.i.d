@@ -1,3 +1,4 @@
+import time
 import requests
 import datetime
 from pymongo import MongoClient
@@ -161,7 +162,7 @@ def query_and_save_rankings():
 
                 print(f"保存成功：{char_name}-{spec_name}-{metric}，平均分：{avg_rank_percent:.2f}")
 
-                sleep(3)
+                time.sleep(3)
 
             except Exception as e:
                 print(f"查询 {char_name} ({spec_name}-{metric}) 时出错: {e}")
