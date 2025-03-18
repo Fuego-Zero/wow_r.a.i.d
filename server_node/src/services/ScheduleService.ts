@@ -5,7 +5,7 @@ import GroupInfo, { IGroupInfo } from '../models/GroupInfo';
 import RaidTime, { IRaidTime } from '../models/RaidTime';
 import Schedule from '../models/Schedule';
 import SignupRecord from '../models/SignupRecord';
-import { UserId } from '../types';
+import { RoleId, UserId } from '../types';
 import { getRaidDateRange } from '../utils';
 import { validateUserAccess } from '../utils/user';
 
@@ -200,6 +200,25 @@ class ScheduleService {
       },
       { is_publish: false },
     );
+
+    return true;
+  }
+
+  static async delSchedule(userId: UserId, roleId: RoleId): Promise<boolean> {
+    const { startDate, endDate } = getRaidDateRange();
+
+    const schedule = await Schedule.findOne({
+      role_id: roleId,
+      create_time: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    }).lean();
+
+    if (!schedule) return true;
+    if (schedule?.user_id.toString() !== userId.toString()) throw new BizException('角色不存在或不属于当前用户');
+
+    await Schedule.deleteOne({ _id: schedule._id });
 
     return true;
   }
