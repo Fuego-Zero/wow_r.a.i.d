@@ -41,7 +41,7 @@ function WCLContent() {
   const WCLData = useMemo<Map<WCLRank["talent"], WCLRank[]>>(() => {
     const map = new Map<WCLRank["talent"], WCLRank[]>();
 
-    WCLRanksMap.values().forEach((rank) => {
+    Array.from(WCLRanksMap.values()).forEach((rank) => {
       if (map.has(rank.talent)) {
         map.get(rank.talent)!.push(rank);
       } else {
@@ -49,8 +49,8 @@ function WCLContent() {
       }
     });
 
-    map.values().forEach((rank) => {
-      rank.sort((a, b) => b.average_rank_percent - a.average_rank_percent);
+    Array.from(map.values()).forEach((rank) => {
+      rank.sort((a, b) => b.server_rank - a.server_rank);
     });
 
     return map;
