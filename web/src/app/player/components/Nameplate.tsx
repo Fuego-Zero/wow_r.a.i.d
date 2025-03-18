@@ -3,7 +3,6 @@ import Players from "@/app/components/Players";
 import { RoleClasses, TalentType } from "@/app/constant";
 import classNames from "classnames";
 import React, { useMemo } from "react";
-import { useAppConfig } from "../context/appConfigContext";
 import WCL from "./WCL";
 import { Tooltip } from "antd";
 
@@ -16,7 +15,6 @@ type Props = {
 };
 
 function Nameplate(props: Props) {
-  const { WCLRanksMap } = useAppConfig();
   const { classes, talent, role_name, user_name, className } = props;
 
   const innerName = useMemo(() => {
@@ -30,15 +28,7 @@ function Nameplate(props: Props) {
       <Players classes={classes}>
         <Tooltip title={innerName}>{innerName}</Tooltip>
       </Players>
-      {talent.map((item) => {
-        return (
-          <WCL
-            key={item}
-            rank={WCLRanksMap.get(role_name + item)?.average_rank_percent}
-            serverRank={WCLRanksMap.get(role_name + item)?.server_rank}
-          />
-        );
-      })}
+      <WCL role_name={role_name} talent={talent} />
     </div>
   );
 }

@@ -2,7 +2,11 @@
 @import "tailwindcss";
 
 .wcl + .wcl::before {
-  content: "/";
-  margin: 0 2px;
+  content: "";
+  width: 100%;
   color: gray;
+  border-top: 1px solid gray;
+  height: 1px;
+  margin: 1px 0;
+  display: block;
 }
