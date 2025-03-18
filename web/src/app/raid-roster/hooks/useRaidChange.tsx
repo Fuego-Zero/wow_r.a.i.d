@@ -23,6 +23,7 @@ import ScrollWrap from "@/app/components/common/ScrollWrap";
 import { useAppConfig } from "@/app/player/context/appConfigContext";
 import Actor from "@/app/components/Actor";
 import Players from "@/app/components/Players";
+import Nameplate from "@/app/player/components/Nameplate";
 
 type PlayerUserName = PlayerData["user_name"];
 
@@ -209,12 +210,13 @@ function useRaidChange(
 
               if (!reserves) {
                 el = (
-                  <div className="flex relative items-center justify-start w-full text-left pl-[11px]">
-                    <Actor actor={item.talent} />
-                    <Players classes={item.classes}>
-                      {item.user_name} ({item.role_name})
-                    </Players>
-                  </div>
+                  <Nameplate
+                    classes={item.classes}
+                    talent={item.talent}
+                    role_name={item.role_name}
+                    user_name={item.user_name}
+                    className="w-full text-left pl-[11px]"
+                  />
                 );
               } else {
                 const options = [item, ...reserves].map((item) => {
@@ -222,12 +224,13 @@ function useRaidChange(
                     value: JSON.stringify(item),
                     label: (
                       <>
-                        <div className="flex relative items-center justify-start w-full text-left">
-                          <Actor actor={item.talent} />
-                          <Players classes={item.classes}>
-                            {item.user_name} ({item.role_name})
-                          </Players>
-                        </div>
+                        <Nameplate
+                          classes={item.classes}
+                          talent={item.talent}
+                          role_name={item.role_name}
+                          user_name={item.user_name}
+                          className="w-full text-left"
+                        />
                       </>
                     ),
                   };
@@ -319,12 +322,13 @@ function useRaidChange(
                                       addPlayer(player);
                                     }}
                                   >
-                                    <div className="flex relative items-center justify-start w-full text-left">
-                                      <Actor actor={player.talent} />
-                                      <Players classes={player.classes}>
-                                        {player.role_name}
-                                      </Players>
-                                    </div>
+                                    <Nameplate
+                                      classes={player.classes}
+                                      talent={player.talent}
+                                      role_name={player.role_name}
+                                      user_name={player.user_name}
+                                      className="w-full text-left"
+                                    />
                                   </Button>
                                 </Col>
                               );
