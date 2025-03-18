@@ -123,7 +123,7 @@ function RaidCard(
 
               {!displayMode && (
                 <Button
-                  className="hidden group-hover/delPlayer:block absolute right-0 top-0"
+                  className="hidden group-hover/delPlayer:block absolute left-[-3px] top-[-3px]"
                   type="link"
                   size="small"
                   danger
