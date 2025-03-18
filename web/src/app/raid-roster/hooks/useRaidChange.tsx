@@ -114,8 +114,8 @@ function useRaidChange(
         );
       })
       .reduce((prev, item) => {
-        prev[item.user_name] ??= [];
-        prev[item.user_name].push(item);
+        prev[item.user_id] ??= [];
+        prev[item.user_id].push(item);
         return prev;
       }, {} as Record<PlayerUserName, PlayersData>);
 
@@ -204,7 +204,7 @@ function useRaidChange(
           <Row align="middle" className="!mx-0" gutter={[8, 8]}>
             {assignedPlayers.map((item) => {
               let el = null;
-              const reserves = reservesPlayers[item.role_id];
+              const reserves = reservesPlayers[item.user_id];
 
               if (!reserves) {
                 el = (
@@ -221,15 +221,13 @@ function useRaidChange(
                   return {
                     value: JSON.stringify(item),
                     label: (
-                      <>
-                        <Nameplate
-                          classes={item.classes}
-                          talent={item.talent}
-                          role_name={item.role_name}
-                          user_name={item.user_name}
-                          className="w-full text-left"
-                        />
-                      </>
+                      <Nameplate
+                        classes={item.classes}
+                        talent={item.talent}
+                        role_name={item.role_name}
+                        user_name={item.user_name}
+                        className="w-full text-left"
+                      />
                     ),
                   };
                 });
@@ -286,12 +284,12 @@ function useRaidChange(
           <ScrollWrap>
             <Row align="middle" className="!mx-0" gutter={[4, 4]}>
               {Object.entries(unassignedPlayers).map(
-                ([pname, players], index) => {
+                ([user_name, players], index) => {
                   return (
                     <Col span={24} key={index}>
                       <Row>
                         <Col span={2}>
-                          {pname}
+                          {user_name}
                           <Tooltip
                             title={
                               <>
