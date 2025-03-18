@@ -1,48 +1,15 @@
 "use client";
 
-import { Button, ButtonProps, Col, Divider, Modal, Row, Tooltip } from "antd";
+import { Button, Col, Divider, Modal, Row, Tooltip } from "antd";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-
-const TANK: TalentType[] = ["FQ", "DKT"];
-const HEALER: TalentType[] = ["NS", "NQ", "JLM", "ND"];
-const DPS: TalentType[] = [
-  "SCL",
-  "ZDZ",
-  "AC",
-  "YD",
-  "KBZ",
-  "HF",
-  "EMS",
-  "TKS",
-  "DS",
-  "ZQS",
-  "AM",
-  "CJQ",
-  "XDK",
-  "BDK",
-];
-
-const OTHER: TalentType[] = [
-  "FZ",
-  "XT",
-  "SJL",
-  "SWL",
-  "CSZ",
-  "MRZ",
-  "WQZ",
-  "AF",
-  "BF",
-  "SM",
-  "HMS",
-];
 
 import { CalendarFilled, PushpinFilled } from "@ant-design/icons";
 import { GroupTimeKey, GroupTitle, PlayerData, PlayersData } from "../types";
 import Actor from "@/app/components/Actor";
 import ScrollWrap from "@/app/components/common/ScrollWrap";
 import { useAppConfig } from "@/app/player/context/appConfigContext";
-import { TalentType } from "@/app/constant";
 import Nameplate from "@/app/player/components/Nameplate";
+import useTalentSelect from "@/app/hooks/useTalentSelect";
 
 function usePlayerSelect(
   players: PlayersData
@@ -54,17 +21,7 @@ function usePlayerSelect(
   React.ReactNode
 ] {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedActor, setSelectedActor] = useState<TalentType>("FQ");
   const { raidTimeNameMap } = useAppConfig();
-
-  const isSelectProps: ButtonProps = {
-    color: "primary",
-    variant: "outlined",
-  };
-
-  function onSelectActor(actor: TalentType) {
-    setSelectedActor(actor);
-  }
 
   function onSelectPlayer(player: PlayerData) {
     setIsOpen(false);
@@ -91,6 +48,8 @@ function usePlayerSelect(
     []
   );
 
+  const [selectedActor, contextHolder] = useTalentSelect();
+
   const innerPlayers = useMemo(() => {
     return players.filter((player) => {
       return (
@@ -99,8 +58,6 @@ function usePlayerSelect(
       );
     });
   }, [players, selectedActor, groupTimeKey]);
-
-  const [showAll, setShowAll] = useState(false);
 
   const Context = (
     <Modal
@@ -118,68 +75,7 @@ function usePlayerSelect(
         setIsOpen(false);
       }}
     >
-      <Row align="middle" className="space-x-2" gutter={[0, 8]}>
-        <span>坦克</span>
-        {TANK.map((item) => {
-          return (
-            <Button
-              key={item}
-              icon={<Actor actor={item} />}
-              {...(selectedActor === item ? isSelectProps : {})}
-              onClick={() => {
-                onSelectActor(item);
-              }}
-            />
-          );
-        })}
-        <span>治疗</span>
-        {HEALER.map((item) => {
-          return (
-            <Button
-              key={item}
-              icon={<Actor actor={item} />}
-              {...(selectedActor === item ? isSelectProps : {})}
-              onClick={() => {
-                onSelectActor(item);
-              }}
-            />
-          );
-        })}
-        <span>输出</span>
-        {DPS.map((item) => {
-          return (
-            <Button
-              key={item}
-              icon={<Actor actor={item} />}
-              {...(selectedActor === item ? isSelectProps : {})}
-              onClick={() => {
-                onSelectActor(item);
-              }}
-            />
-          );
-        })}
-        <Button onClick={() => setShowAll((prev) => !prev)}>
-          {showAll ? "收起" : "展开"}
-        </Button>
-        {showAll && (
-          <>
-            <Divider type="horizontal" className="my-1" />
-            <span>其他</span>
-            {OTHER.map((item) => {
-              return (
-                <Button
-                  key={item}
-                  icon={<Actor actor={item} />}
-                  {...(selectedActor === item ? isSelectProps : {})}
-                  onClick={() => {
-                    onSelectActor(item);
-                  }}
-                />
-              );
-            })}
-          </>
-        )}
-      </Row>
+      {contextHolder}
       <Divider className="my-4" />
       <div className="overflow-auto h-[60vh]">
         <ScrollWrap>
