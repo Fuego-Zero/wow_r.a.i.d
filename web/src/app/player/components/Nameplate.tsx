@@ -5,6 +5,7 @@ import classNames from "classnames";
 import React, { useMemo } from "react";
 import { useAppConfig } from "../context/appConfigContext";
 import WCL from "./WCL";
+import { Tooltip } from "antd";
 
 type Props = {
   classes: RoleClasses;
@@ -26,7 +27,9 @@ function Nameplate(props: Props) {
   return (
     <div className={classNames("flex items-center", className)}>
       <Actor actor={talent} />
-      <Players classes={classes}>{innerName}</Players>
+      <Players classes={classes}>
+        <Tooltip title={innerName}>{innerName}</Tooltip>
+      </Players>
       {talent.map((item) => {
         return (
           <WCL
