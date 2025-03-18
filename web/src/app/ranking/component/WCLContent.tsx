@@ -23,7 +23,7 @@ const columns: TableColumnsType<DataType> = [
     render: (talent) => <Actor actor={talent} />,
   },
   {
-    title: "全明星分数",
+    title: "最佳平均分",
     dataIndex: "average_rank_percent",
     render: (average_rank_percent) => (
       <span style={{ color: getWClColor(average_rank_percent) }}>
