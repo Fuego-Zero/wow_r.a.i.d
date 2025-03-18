@@ -25,13 +25,18 @@ const columns: TableColumnsType<DataType> = [
   {
     title: "最佳平均分",
     dataIndex: "average_rank_percent",
+    sorter: (a, b) => a.average_rank_percent - b.average_rank_percent,
     render: (average_rank_percent) => (
       <span style={{ color: getWClColor(average_rank_percent) }}>
         {average_rank_percent}
       </span>
     ),
   },
-  { title: "服务器排名", dataIndex: "server_rank" },
+  {
+    title: "服务器排名",
+    dataIndex: "server_rank",
+    sorter: (a, b) => a.server_rank - b.server_rank,
+  },
 ];
 
 function WCLContent() {
@@ -50,7 +55,7 @@ function WCLContent() {
     });
 
     Array.from(map.values()).forEach((rank) => {
-      rank.sort((a, b) => b.server_rank - a.server_rank);
+      rank.sort((a, b) => b.average_rank_percent - a.average_rank_percent);
     });
 
     return map;
