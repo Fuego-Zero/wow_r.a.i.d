@@ -40,9 +40,9 @@ import { CalendarFilled, PushpinFilled } from "@ant-design/icons";
 import { GroupTimeKey, GroupTitle, PlayerData, PlayersData } from "../types";
 import Actor from "@/app/components/Actor";
 import ScrollWrap from "@/app/components/common/ScrollWrap";
-import Players from "@/app/components/Players";
 import { useAppConfig } from "@/app/player/context/appConfigContext";
 import { TalentType } from "@/app/constant";
+import Nameplate from "@/app/player/components/Nameplate";
 
 function usePlayerSelect(
   players: PlayersData
@@ -113,7 +113,7 @@ function usePlayerSelect(
       maskClosable
       open={isOpen}
       footer={null}
-      width="70%"
+      width="90%"
       onCancel={() => {
         setIsOpen(false);
       }}
@@ -233,10 +233,14 @@ function usePlayerSelect(
                     }}
                   >
                     <div className="flex relative items-center justify-start w-full text-left">
-                      <Actor actor={player.talent} />
-                      <Players classes={player.classes}>
-                        {player.role_name}
-                      </Players>
+                      <Nameplate
+                        classes={player.classes}
+                        talent={player.talent}
+                        role_name={player.role_name}
+                        user_name={player.user_name}
+                        className="w-full min-w-0 mr-1"
+                      />
+
                       {el}
                       <Tooltip
                         title={
