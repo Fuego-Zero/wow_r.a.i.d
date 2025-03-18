@@ -35,10 +35,12 @@ function UserCenter() {
     setRoles(roles);
     setSignupRecordSet(new Set(set));
     setSignupRecords(records);
+    onLoadScheduleData();
   }
 
   useEffect(() => {
     onReload();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const playTime = useMemo(() => {
@@ -66,11 +68,6 @@ function UserCenter() {
       throw error;
     }
   }
-
-  useEffect(() => {
-    onLoadScheduleData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <Row justify="center" className="!mx-0 mt-5" gutter={[16, 16]}>
