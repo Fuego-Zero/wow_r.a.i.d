@@ -21,8 +21,6 @@ import {
 import { GroupTimeKey, PlayerData, PlayersData } from "../types";
 import ScrollWrap from "@/app/components/common/ScrollWrap";
 import { useAppConfig } from "@/app/player/context/appConfigContext";
-import Actor from "@/app/components/Actor";
-import Players from "@/app/components/Players";
 import Nameplate from "@/app/player/components/Nameplate";
 
 type PlayerUserName = PlayerData["user_name"];
