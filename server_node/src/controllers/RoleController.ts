@@ -37,9 +37,6 @@ class RoleController {
     try {
       RoleController.validateUnbindRoleParams(ctx.request.body);
       const res = await RoleService.unbindRole(ctx.state.user.id, ctx.request.body.id);
-      if (res === true) {
-        // TODO 需要去当前CD排班表中删除该角色
-      }
       ctx.success(res);
     } catch (error) {
       if (isBizException(error)) ctx.bizError(error.message);
