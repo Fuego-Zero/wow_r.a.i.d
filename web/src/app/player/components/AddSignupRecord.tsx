@@ -5,6 +5,8 @@ import { RoleInfo, SignupRecord } from "../types";
 import Actor from "@/app/components/Actor";
 import Players from "@/app/components/Players";
 import { addRecord } from "../api";
+import { useAuth } from "../context/authContext";
+import { MenuOutlined } from "@ant-design/icons";
 
 type Props = {
   roles: RoleInfo[];
@@ -13,9 +15,10 @@ type Props = {
 };
 
 function AddSignupRecord(props: Props) {
+  const { userInfo } = useAuth();
   const { roles, signupRecords, onReload } = props;
 
-  const { message } = App.useApp();
+  const { message, notification } = App.useApp();
   const [isOpen, setIsOpen] = useState(false);
 
   const [form] = Form.useForm<{
@@ -23,6 +26,19 @@ function AddSignupRecord(props: Props) {
   }>();
 
   function openAddSignupRecord() {
+    if (userInfo?.play_time.length === 0) {
+      return notification.error({
+        message: "报名失败，请先设置报名时间",
+        description: (
+          <span>
+            报名时间在【个人中心】右上角
+            <MenuOutlined className="mx-2" style={{ color: "red" }} />
+            按钮展开的【编辑账号】内操作设置。
+          </span>
+        ),
+      });
+    }
+
     form.setFieldsValue({
       ids: [],
     });
