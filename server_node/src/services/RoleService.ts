@@ -3,6 +3,8 @@ import { BizException } from '@yfsdk/web-basic-library';
 import { IBindRoleBody, IGetAllRoleResponse, IUpdateRoleBody, IUpdateRoleResponse } from '../interfaces/IRole';
 import Role from '../models/Role';
 import { RoleId, UserId } from '../types';
+import ScheduleService from './ScheduleService';
+import SignupRecordService from './SignupRecordService';
 
 class RoleService {
   static async bindRole(userId: UserId, body: IBindRoleBody): Promise<boolean> {
@@ -20,6 +22,9 @@ class RoleService {
 
     const result = await Role.deleteOne({ _id: roleId, user_id: userId });
     if (result.deletedCount === 0) throw new BizException('删除角色失败');
+
+    SignupRecordService.delRoleRecord(userId, [roleId]);
+    await ScheduleService.delSchedule(userId, roleId);
 
     return true;
   }
