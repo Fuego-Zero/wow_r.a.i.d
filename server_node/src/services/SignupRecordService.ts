@@ -165,6 +165,36 @@ class SignupRecordService {
 
     return createdRecords.length;
   }
+
+  static async delRoleRecord(userId: UserId, roleIds: RoleId[]): Promise<boolean> {
+    // 查询用户
+    const user = await User.findById(userId).lean();
+    if (!user) throw new BizException('用户不存在');
+
+    const { startDate, endDate } = getRaidDateRange();
+
+    // 检查是否已存在报名记录
+    const existingRecords = await SignupRecord.find({
+      user_id: userId,
+      role_id: { $in: roleIds },
+      delete_time: null,
+      create_time: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    }).lean();
+
+    if (existingRecords.length === 0) return true;
+    const existingIds = existingRecords.map((r) => r._id.toString());
+
+    // 批量修改多条记录
+    const result = await SignupRecord.updateMany({ _id: { $in: existingIds } }, { delete_time: new Date() });
+
+    // 检查是否所有记录都已更新
+    if (result.modifiedCount !== existingIds.length) throw new BizException('部分记录删除失败');
+
+    return true;
+  }
 }
 
 export default SignupRecordService;
