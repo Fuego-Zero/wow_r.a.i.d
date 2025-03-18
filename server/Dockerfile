@@ -1,7 +1,18 @@
 FROM python:latest
 
-RUN pip install --no-cache-dir pymongo flask flask-cors && \
+RUN pip install --no-cache-dir pymongo flask flask-cors requests && \
     apt-get update && apt-get -y install cron
+
+# 设置时区为上海
+RUN apt-get update && \
+apt-get install -y --no-install-recommends tzdata && \
+ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+echo "Asia/Shanghai" > /etc/timezone && \
+apt-get clean && \
+rm -rf /var/lib/apt/lists/*
+
+# 时区环境变量
+ENV TZ=Asia/Shanghai
 
 COPY auto_wow_allocation.py /usr/src/app/
 COPY app.py /usr/src/app/
