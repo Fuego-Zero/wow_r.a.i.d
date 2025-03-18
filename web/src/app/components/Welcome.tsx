@@ -9,10 +9,18 @@ extend();
 function Welcome() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const showIndex = Math.randomInt(1, 2);
-
   useEffect(() => {
     setIsOpen(true);
+  }, []);
+
+  const [imgIndex, setImgIndex] = useState(Math.randomInt(0, 9));
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setImgIndex((prev) => prev + 1);
+    }, 2000);
+
+    return () => clearInterval(timer);
   }, []);
 
   return (
@@ -22,16 +30,16 @@ function Welcome() {
       onCancel={() => setIsOpen(false)}
       closeIcon={null}
       centered
+      width={{
+        xl: "50%",
+      }}
     >
-      {showIndex === 1 ? (
-        <div className="video-container">
-          <video width="100%" height="auto" controls autoPlay muted>
-            <source src="/videos/welcome.mp4" type="video/mp4" />
-          </video>
-        </div>
-      ) : (
-        <Image width={1072} height={1158} src="/images/1.jpg" alt="welcome" />
-      )}
+      <Image
+        width={700}
+        height={700}
+        src={`/images/${imgIndex % 10}.jpg`}
+        alt="welcome"
+      />
     </Modal>
   );
 }
