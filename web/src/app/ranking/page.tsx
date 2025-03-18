@@ -11,8 +11,10 @@ function RankingContent() {
   return (
     <Layout className="h-[100vh] flex overflow-auto">
       <Layout.Header className="sticky top-0 z-10 w-full flex items-center">
-        <h1 className="flex-1">
-          <span className="text-2xl text-amber-50">轻风之语</span>
+        <h1 className="flex-1 truncate min-w-0">
+          <span className="text-base sm:text-lg md:text-xl lg:text-2xl text-amber-50">
+            轻风之语
+          </span>
           <span className="ml-2">WCL 排行榜</span>
         </h1>
         <AppMenu />
