@@ -1,4 +1,4 @@
-import { Card, Col, Row, Tag } from "antd";
+import { App, Card, Col, Row, Tag } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/authContext";
 import BindRole from "./BindRole";
@@ -11,8 +11,11 @@ import DelSignupRecord from "./DelSignupRecord";
 import EditRole from "./EditRole";
 import Nameplate from "./Nameplate";
 import { SolutionOutlined } from "@ant-design/icons";
+import { getPublishedSchedule } from "@/app/api";
+import { isBizException } from "@yfsdk/web-basic-library";
 
 function UserCenter() {
+  const { message } = App.useApp();
   const { userInfo } = useAuth();
   const { raidTimeNameMap } = useAppConfig();
   const [roles, setRoles] = useState<RoleInfo[]>([]);
@@ -46,6 +49,29 @@ function UserCenter() {
     );
   }, [raidTimeNameMap, userInfo?.play_time]);
 
+  const [schedule, setSchedule] = useState(new Map());
+
+  async function onLoadScheduleData() {
+    try {
+      const res = await getPublishedSchedule();
+
+      const map = res.reduce((map, record) => {
+        map.set(record.role_id, record);
+        return map;
+      }, new Map());
+
+      setSchedule(map);
+    } catch (error) {
+      if (isBizException(error)) return message.error(error.message);
+      throw error;
+    }
+  }
+
+  useEffect(() => {
+    onLoadScheduleData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Row justify="center" className="!mx-0 mt-5" gutter={[16, 16]}>
       <Col span={24}>
@@ -75,9 +101,14 @@ function UserCenter() {
                       );
                     }}
                   />
-                  {signupRecordSet.has(role.id) && (
+                  {signupRecordSet.has(role.id) && !schedule.get(role.id) && (
                     <Tag color="cyan" className="ml-2 mr-0">
                       已报名
+                    </Tag>
+                  )}
+                  {schedule.get(role.id) && (
+                    <Tag color="green" className="ml-2 mr-0">
+                      {schedule.get(role.id).group_title}
                     </Tag>
                   )}
                 </div>
