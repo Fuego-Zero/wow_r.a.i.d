@@ -94,7 +94,7 @@ export type SignupRecord = {
 
 export type WCLRank = {
   role_name: string;
-  talent: TalentType[];
+  talent: TalentType;
   average_rank_percent: number;
   server_rank: number;
 };

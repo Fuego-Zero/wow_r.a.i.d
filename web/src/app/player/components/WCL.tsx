@@ -2,6 +2,7 @@ import { TalentType } from "@/app/constant";
 import { Tooltip } from "antd";
 import React, { memo } from "react";
 import { useAppConfig } from "../context/appConfigContext";
+import { getWClColor } from "@/app/utils";
 
 type Props = {
   talent: TalentType[];
@@ -11,16 +12,6 @@ type Props = {
 function WCL(props: Props) {
   const { talent, role_name } = props;
   const { WCLRanksMap } = useAppConfig();
-
-  function color(rank: number) {
-    if (rank < 25) return "#666666";
-    if (rank < 50) return "#1eff00";
-    if (rank < 75) return "#0070ff";
-    if (rank < 95) return "#a335ee";
-    if (rank < 99) return "#ff8000";
-    if (rank < 100) return "#e268a8";
-    if (rank === 100) return "#e5cc80";
-  }
 
   return (
     <div className="flex flex-col">
@@ -38,7 +29,7 @@ function WCL(props: Props) {
           >
             <span
               className="wcl leading-none"
-              style={{ color: color(rank.average_rank_percent) }}
+              style={{ color: getWClColor(rank.average_rank_percent) }}
             >
               {rank.average_rank_percent}
             </span>
