@@ -5,6 +5,7 @@ import { useAuth } from "../context/authContext";
 import useChangePassword from "../hooks/useChangePassword";
 import useChangeUserinfo from "../hooks/useChangeUserInfo";
 import { useRouter } from "next/navigation";
+import AppMenu from "@/app/components/Menu";
 
 export const Header = () => {
   const { isLogin, isAdmin, logout } = useAuth();
@@ -57,7 +58,7 @@ export const Header = () => {
   return (
     <div className="flex items-center h-full">
       <span className="flex-1 text-xl">个人中心</span>
-      {isLogin && (
+      {isLogin ? (
         <>
           <Button
             type="link"
@@ -71,6 +72,8 @@ export const Header = () => {
             <MenuOutlined />
           </Dropdown>
         </>
+      ) : (
+        <AppMenu />
       )}
       {changePasswordHolder}
       {changeUserinfoHolder}
