@@ -26,7 +26,7 @@ class UserService {
     if (!isValid) throw new BizException('用户密码错误');
 
     const { user_name, wechat_name, play_time, id, account } = user;
-    const token = jwt.sign({ id }, secretKey, { expiresIn: '1h' });
+    const token = jwt.sign({ id }, secretKey, { expiresIn: '12h' });
     return { token, user_name, wechat_name, play_time, account, is_admin: user.is_admin };
   }
 
