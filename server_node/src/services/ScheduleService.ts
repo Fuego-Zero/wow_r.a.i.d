@@ -92,7 +92,15 @@ class ScheduleService {
       },
       delete_time: null,
     }).lean();
-    if (existingRecords.length !== recordIds.length) throw new BizException('部分报名记录不存在');
+    if (existingRecords.length !== recordIds.length) {
+      const missingRecordIds = recordIds.filter(
+        (recordId) => !existingRecords.some((record) => record.role_id.toString() === recordId.toString()),
+      );
+
+      throw new BizException(
+        `部分报名记录不存在，角色数（${recordIds.length}），报名数（${existingRecords.length}），缺失角色ID（${missingRecordIds.join(',')}）`,
+      );
+    }
 
     //* 删除时间范围内的所有安排数据
     await Schedule.deleteMany({ create_time: { $gte: startDate, $lte: endDate } });
