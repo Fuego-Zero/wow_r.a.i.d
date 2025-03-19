@@ -2,7 +2,7 @@ import { IRaidTimeResponse } from '../interfaces/IRaidTime';
 import GroupInfo from '../models/GroupInfo';
 import RaidTime from '../models/RaidTime';
 
-const { NODE_ENV } = process.env;
+// const { NODE_ENV } = process.env;
 
 class ConfigService {
   static async initRaidTime(): Promise<void> {
@@ -55,7 +55,7 @@ class ConfigService {
   }
 }
 
-if (NODE_ENV === 'development') ConfigService.initRaidTime();
+// if (NODE_ENV === 'development') ConfigService.initRaidTime();
 // if (NODE_ENV === 'development') ConfigService.initGroupInfo();
 
 export default ConfigService;
