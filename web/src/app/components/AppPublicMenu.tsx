@@ -10,7 +10,7 @@ const PATH_TO_KEY: Record<string, string> = {
   "/player": "player",
 };
 
-function AppMenu() {
+function AppPublicMenu() {
   const router = useRouter();
   const pathname = usePathname();
   const [current, setCurrent] = useState("");
@@ -57,4 +57,4 @@ function AppMenu() {
   );
 }
 
-export default AppMenu;
+export default AppPublicMenu;
