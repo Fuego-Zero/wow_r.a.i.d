@@ -54,13 +54,24 @@ function AppUserMenu() {
     });
   }
 
-  items.unshift({
-    key: "index",
-    label: "首页",
-    onClick: () => {
-      router.push("/");
-    },
-  });
+  items.unshift(
+    ...[
+      {
+        key: "index",
+        label: "官网首页",
+        onClick: () => {
+          router.push("/");
+        },
+      },
+      {
+        key: "player",
+        label: "个人中心",
+        onClick: () => {
+          router.push("/player");
+        },
+      },
+    ]
+  );
 
   if (!isLogin) return null;
   return (
