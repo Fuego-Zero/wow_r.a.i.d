@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 /**
  * 获取指定日期的CD范围
  *
- * @description 以周四为分界线，获取指定日期的CD范围，now 默认为当前时间
+ * @description 以周二为分界线，获取指定日期的CD范围，now 默认为当前时间
  */
 export const getRaidDateRange = (now?: Date) => {
   now ??= new Date();
