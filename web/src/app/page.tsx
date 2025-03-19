@@ -12,6 +12,8 @@ import { isBizException } from "@yfsdk/web-basic-library";
 import BaseProvider from "./components/common/BaseProvider";
 import Welcome from "./components/Welcome";
 import AppPublicMenu from "./components/AppPublicMenu";
+import Image from "next/image";
+import AppTitle from "./components/AppTitle";
 
 function HomeContent() {
   const [playersData, setPlayersData] = useState<PlayersData>([]);
@@ -37,12 +39,7 @@ function HomeContent() {
   return (
     <Layout className={classNames("h-[100vh] flex overflow-auto")}>
       <Layout.Header className="sticky top-0 z-10 w-full flex items-center">
-        <h1 className="flex-1 truncate min-w-0">
-          <span className="text-base sm:text-lg md:text-xl lg:text-2xl text-amber-50">
-            轻风之语
-          </span>
-          <span className="ml-2">副本活动排班表</span>
-        </h1>
+        <AppTitle title="轻风之语" subTitle="副本活动排班表" />
         <AppPublicMenu />
       </Layout.Header>
       <Layout.Content>

@@ -3,6 +3,7 @@ import AppUserMenu from "@/app/components/AppUserMenu";
 import { App, Button } from "antd";
 import { batchAddRecords } from "../api";
 import { isBizException } from "@yfsdk/web-basic-library";
+import AppTitle from "@/app/components/AppTitle";
 
 export const Header = () => {
   const { message } = App.useApp();
@@ -19,7 +20,7 @@ export const Header = () => {
 
   return (
     <div className="flex items-center h-full space-x-2">
-      <span className="flex-1 text-xl">管理后台</span>
+      <AppTitle title="管理后台" subTitle="" />
       <Button
         type="primary"
         onClick={() => {
