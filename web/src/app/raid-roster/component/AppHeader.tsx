@@ -4,10 +4,10 @@ import { hiddenButtonClass } from "@/app/common";
 import { App, Button } from "antd";
 import classNames from "classnames";
 import React, { useState } from "react";
-import Link from "next/link";
 import { useAuth } from "@/app/player/context/authContext";
 import axios from "axios";
 import { publishRaidRoster, unpublishRaidRoster } from "../api";
+import AppUserMenu from "@/app/components/AppUserMenu";
 
 function AppHeader(props: {
   reload: () => void;
@@ -72,11 +72,13 @@ function AppHeader(props: {
 
   return (
     <div className="flex">
-      <h1 className="flex-1">
-        <span className="text-2xl text-amber-50">WOW R.A.I.D</span>
+      <h1 className="flex-1 truncate min-w-0">
+        <span className="text-base sm:text-lg md:text-xl lg:text-2xl text-amber-50">
+          WOW R.A.I.D
+        </span>
         <span className="ml-2">(Roster Auto-Integrated Deployment)</span>
       </h1>
-      <div className={classNames(hiddenButtonClass, "space-x-5")}>
+      <div className={classNames(hiddenButtonClass, "space-x-2")}>
         {showAdvancedBtn && (
           <>
             <Button onClick={onDownload} disabled={loading}>
@@ -100,9 +102,7 @@ function AppHeader(props: {
             </Button>
           </>
         )}
-        <Link href="/player">
-          <Button type="link">个人中心</Button>
-        </Link>
+        <AppUserMenu />
       </div>
     </div>
   );
