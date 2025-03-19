@@ -13,7 +13,7 @@ function Welcome() {
     setIsOpen(true);
   }, []);
 
-  const [imgIndex, setImgIndex] = useState(Math.randomInt(0, 9));
+  const [imgIndex, setImgIndex] = useState(Math.randomInt(0, 12));
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -37,7 +37,7 @@ function Welcome() {
       <Image
         width={700}
         height={700}
-        src={`/images/${imgIndex % 10}.jpg`}
+        src={`/images/${imgIndex % 12}.jpg`}
         alt="welcome"
       />
     </Modal>
