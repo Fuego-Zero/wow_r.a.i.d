@@ -54,8 +54,13 @@ function ScheduleContent() {
   }, []);
 
   function setDataHandler(value: PlayersData) {
-    saveRaidRoster(value);
-    setPlayersData(value);
+    try {
+      saveRaidRoster(value);
+      setPlayersData(value);
+    } catch (error) {
+      if (isBizException(error)) return message.error(error.message);
+      throw error;
+    }
   }
 
   const el = useRef<HTMLElement>(null);
