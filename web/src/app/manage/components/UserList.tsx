@@ -1,10 +1,9 @@
 import { App, Button, Space, Table, TableProps, Tag } from "antd";
 import React, { useEffect, useState } from "react";
-import { batchAddRecords, getAllUsers, resetPassword } from "../api";
+import { getAllUsers, resetPassword } from "../api";
 import { UserInfo } from "../types";
 import { useAppConfig } from "@/app/player/context/appConfigContext";
 import { hashPassword } from "@/app/player/utils";
-import { isBizException } from "@yfsdk/web-basic-library";
 
 function UserList() {
   const [data, setData] = useState<UserInfo[]>([]);
@@ -87,31 +86,7 @@ function UserList() {
     getData();
   }, []);
 
-  async function addRecords() {
-    try {
-      const num = await batchAddRecords();
-      message.success(`成功报名 ${num} 人`);
-    } catch (error) {
-      if (isBizException(error)) return message.error(error.message);
-      console.error(error);
-    }
-  }
-
-  return (
-    <>
-      <div className="mb-2">
-        <Button
-          type="primary"
-          onClick={() => {
-            addRecords();
-          }}
-        >
-          一键报名
-        </Button>
-      </div>
-      <Table<UserInfo> rowKey="id" columns={columns} dataSource={data} />
-    </>
-  );
+  return <Table<UserInfo> rowKey="id" columns={columns} dataSource={data} />;
 }
 
 export default UserList;
