@@ -153,17 +153,19 @@ class SignupRecordService {
       return acc;
     }, new Map());
 
-    //* 创建批量报名记录
-    const recordsToCreate = unassignedRoles.map((role) => ({
-      role_id: role._id,
-      talent: role.talent,
-      classes: role.classes,
-      role_name: role.role_name,
+    //* 创建批量报名记录，只保留有 play_time 的记录
+    const recordsToCreate = unassignedRoles
+      .map((role) => ({
+        role_id: role._id,
+        talent: role.talent,
+        classes: role.classes,
+        role_name: role.role_name,
 
-      user_id: unassignedUserMap.get(role.user_id.toString())?._id,
-      play_time: unassignedUserMap.get(role.user_id.toString())?.play_time,
-      user_name: unassignedUserMap.get(role.user_id.toString())?.user_name,
-    }));
+        user_id: unassignedUserMap.get(role.user_id.toString())?._id,
+        play_time: unassignedUserMap.get(role.user_id.toString())?.play_time,
+        user_name: unassignedUserMap.get(role.user_id.toString())?.user_name,
+      }))
+      .filter((record) => record.play_time.length > 0);
 
     // 批量创建记录
     const createdRecords = await SignupRecord.insertMany(recordsToCreate);
