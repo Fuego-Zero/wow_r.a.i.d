@@ -5,7 +5,7 @@ function AppTitle(props: { title: string; subTitle: string }) {
   return (
     <>
       <Image
-        src="/images/logo.jpg"
+        src="/images/logo.png"
         alt="logo"
         width={50}
         height={50}
