@@ -1,39 +1,34 @@
-import { MenuOutlined } from "@ant-design/icons";
-import { Dropdown, MenuProps } from "antd";
 import React from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/app/player/context/authContext";
+import AppUserMenu from "@/app/components/AppUserMenu";
+import { App, Button } from "antd";
+import { batchAddRecords } from "../api";
+import { isBizException } from "@yfsdk/web-basic-library";
 
 export const Header = () => {
-  const { isLogin, logout } = useAuth();
-  const router = useRouter();
+  const { message } = App.useApp();
 
-  const items: MenuProps["items"] = [
-    {
-      key: "1",
-      label: "个人中心",
-      onClick: () => {
-        router.push("/player");
-      },
-    },
-    {
-      key: "2",
-      danger: true,
-      label: "退出登录",
-      onClick: () => {
-        logout();
-      },
-    },
-  ];
+  async function addRecords() {
+    try {
+      const num = await batchAddRecords();
+      message.success(`成功报名 ${num} 人`);
+    } catch (error) {
+      if (isBizException(error)) return message.error(error.message);
+      console.error(error);
+    }
+  }
 
   return (
-    <div className="flex items-center h-full">
+    <div className="flex items-center h-full space-x-2">
       <span className="flex-1 text-xl">管理后台</span>
-      {isLogin && (
-        <Dropdown menu={{ items }} trigger={["click"]}>
-          <MenuOutlined />
-        </Dropdown>
-      )}
+      <Button
+        type="primary"
+        onClick={() => {
+          addRecords();
+        }}
+      >
+        一键报名
+      </Button>
+      <AppUserMenu />
     </div>
   );
 };
