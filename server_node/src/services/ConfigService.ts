@@ -51,6 +51,7 @@ class ConfigService {
     return raidTimes.map((item) => ({
       time_name: item.time_name,
       time_key: item.time_key,
+      order: item.order,
     }));
   }
 }
