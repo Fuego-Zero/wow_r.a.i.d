@@ -12,7 +12,6 @@ import { isBizException } from "@yfsdk/web-basic-library";
 import BaseProvider from "./components/common/BaseProvider";
 import Welcome from "./components/Welcome";
 import AppPublicMenu from "./components/AppPublicMenu";
-import Image from "next/image";
 import AppTitle from "./components/AppTitle";
 
 function HomeContent() {
