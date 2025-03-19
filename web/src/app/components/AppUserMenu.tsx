@@ -76,7 +76,7 @@ function AppUserMenu() {
   if (!isLogin) return null;
   return (
     <>
-      <Dropdown menu={{ items }} trigger={["click"]}>
+      <Dropdown menu={{ items }} trigger={["click", "hover"]}>
         <MenuOutlined />
       </Dropdown>
       {changePasswordHolder}
