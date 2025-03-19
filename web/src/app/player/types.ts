@@ -56,6 +56,10 @@ export type RaidTime = {
    * 团本时间
    */
   time_key: string;
+  /**
+   * 团本时间排序
+   */
+  order: number;
 };
 
 export type SignupRecord = {

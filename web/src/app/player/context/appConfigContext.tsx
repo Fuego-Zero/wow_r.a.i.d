@@ -40,11 +40,13 @@ export function AppConfigProvider({ children }: PropsWithChildren) {
     const raidTime = await getRaidTime();
     setRaidTime(raidTime);
 
-    raidTime.forEach((value, index) => {
+    raidTime.forEach((value) => {
       setRaidTimeNameMap(
         (prev) => new Map(prev.set(value.time_key, value.time_name))
       );
-      setRaidTimeOrderMap((prev) => new Map(prev.set(value.time_key, index)));
+      setRaidTimeOrderMap(
+        (prev) => new Map(prev.set(value.time_key, value.order))
+      );
     });
   }
 
