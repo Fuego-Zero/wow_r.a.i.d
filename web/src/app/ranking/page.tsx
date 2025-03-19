@@ -4,7 +4,7 @@ import { Layout } from "antd";
 import "@ant-design/v5-patch-for-react-19";
 
 import BaseProvider from "../components/common/BaseProvider";
-import AppMenu from "../components/Menu";
+import AppPublicMenu from "../components/AppPublicMenu";
 import WCLContent from "./component/WCLContent";
 
 function RankingContent() {
@@ -17,7 +17,7 @@ function RankingContent() {
           </span>
           <span className="ml-2">WCL 排行榜</span>
         </h1>
-        <AppMenu />
+        <AppPublicMenu />
       </Layout.Header>
       <Layout.Content>
         <WCLContent />

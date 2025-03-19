@@ -11,7 +11,7 @@ import { getPublishedSchedule } from "./api";
 import { isBizException } from "@yfsdk/web-basic-library";
 import BaseProvider from "./components/common/BaseProvider";
 import Welcome from "./components/Welcome";
-import AppMenu from "./components/Menu";
+import AppPublicMenu from "./components/AppPublicMenu";
 
 function HomeContent() {
   const [playersData, setPlayersData] = useState<PlayersData>([]);
@@ -43,7 +43,7 @@ function HomeContent() {
           </span>
           <span className="ml-2">副本活动排班表</span>
         </h1>
-        <AppMenu />
+        <AppPublicMenu />
       </Layout.Header>
       <Layout.Content>
         <RaidContent data={raidData} displayMode={true} />
