@@ -40,6 +40,7 @@ function PhotoContent() {
     "/images/9.jpg",
     "/images/10.jpg",
     "/images/11.jpg",
+    "/images/12.jpg",
   ];
 
   return (
