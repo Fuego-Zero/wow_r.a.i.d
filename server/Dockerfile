@@ -1,4 +1,4 @@
-FROM python:latest
+FROM wow_r.a.i.d_server_base_image:latest
 
 RUN pip install --no-cache-dir pymongo flask flask-cors requests && \
     apt-get update && apt-get -y install cron
