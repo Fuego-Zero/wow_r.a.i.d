@@ -2,7 +2,10 @@ import { Col, Row } from "antd";
 import React, { memo } from "react";
 import RaidCard from "./components/RaidCard";
 import { Handler, RaidData } from "../../types";
-import ScrollWrap from "@/app/components/common/ScrollWrap";
+import dynamic from "next/dynamic";
+const ScrollWrap = dynamic(() => import("@/app/components/common/ScrollWrap"), {
+  ssr: false,
+});
 
 function RaidContent(
   props: {

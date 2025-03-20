@@ -19,9 +19,13 @@ import {
   removePlayerSchedule,
 } from "@/app/utils";
 import { GroupTimeKey, PlayerData, PlayersData } from "../types";
-import ScrollWrap from "@/app/components/common/ScrollWrap";
 import { useAppConfig } from "@/app/player/context/appConfigContext";
 import Nameplate from "@/app/player/components/Nameplate";
+
+import dynamic from "next/dynamic";
+const ScrollWrap = dynamic(() => import("@/app/components/common/ScrollWrap"), {
+  ssr: false,
+});
 
 type PlayerUserName = PlayerData["user_name"];
 

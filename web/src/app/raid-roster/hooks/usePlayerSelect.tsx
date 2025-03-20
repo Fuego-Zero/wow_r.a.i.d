@@ -6,10 +6,14 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 import { CalendarFilled, PushpinFilled } from "@ant-design/icons";
 import { GroupTimeKey, GroupTitle, PlayerData, PlayersData } from "../types";
 import Actor from "@/app/components/Actor";
-import ScrollWrap from "@/app/components/common/ScrollWrap";
 import { useAppConfig } from "@/app/player/context/appConfigContext";
 import Nameplate from "@/app/player/components/Nameplate";
 import useTalentSelect from "@/app/hooks/useTalentSelect";
+
+import dynamic from "next/dynamic";
+const ScrollWrap = dynamic(() => import("@/app/components/common/ScrollWrap"), {
+  ssr: false,
+});
 
 function usePlayerSelect(
   players: PlayersData

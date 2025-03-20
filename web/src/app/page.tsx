@@ -10,7 +10,6 @@ import { formatRaidDataData } from "./utils";
 import { getPublishedSchedule } from "./api";
 import { isBizException } from "@yfsdk/web-basic-library";
 import BaseProvider from "./components/common/BaseProvider";
-import Welcome from "./components/Welcome";
 import AppPublicMenu from "./components/AppPublicMenu";
 import AppTitle from "./components/AppTitle";
 
@@ -44,7 +43,6 @@ function HomeContent() {
       <Layout.Content>
         <RaidContent data={raidData} displayMode={true} />
       </Layout.Content>
-      <Welcome />
     </Layout>
   );
 }
