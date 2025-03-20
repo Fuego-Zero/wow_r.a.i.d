@@ -116,7 +116,7 @@ function RaidCard(
             order: convertToMatrixIndex(index),
           }}
           className={classNames(
-            "flex relative items-center justify-start py-1 px-1 min-w-0 w-[20%] min-h-[52px] group/delPlayer"
+            "flex relative items-center justify-start py-1 px-1 min-w-0 w-[100%] md:w-[20%] min-h-[52px] group/delPlayer"
             // {
             //   "bg-amber-300/20": item.name === "空缺", //todo 未来针对暂缺情况的样式
             // }
