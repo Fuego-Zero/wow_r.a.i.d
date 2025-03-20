@@ -8,6 +8,7 @@ const PATH_TO_KEY: Record<string, string> = {
   "/": "index",
   "/ranking": "ranking",
   "/player": "player",
+  "/game": "game",
 };
 
 function AppPublicMenu() {
@@ -33,6 +34,13 @@ function AppPublicMenu() {
       key: "ranking",
       onClick: () => {
         router.push("/ranking");
+      },
+    },
+    {
+      label: "小游戏",
+      key: "game",
+      onClick: () => {
+        router.push("/game");
       },
     },
     {
