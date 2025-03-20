@@ -2,6 +2,7 @@ import { Col, Row } from "antd";
 import React, { memo } from "react";
 import RaidCard from "./components/RaidCard";
 import { Handler, RaidData } from "../../types";
+import ScrollWrap from "@/app/components/common/ScrollWrap";
 
 function RaidContent(
   props: {
@@ -19,13 +20,15 @@ function RaidContent(
     );
   } else {
     return (
-      <Row gutter={[16, 8]} className="!mx-0 py-5">
-        {data.map((item, index) => (
-          <Col md={24} xxl={12} key={index}>
-            <RaidCard data={item} {...rest} />
-          </Col>
-        ))}
-      </Row>
+      <ScrollWrap>
+        <Row gutter={[16, 8]} className="!mx-0 py-5">
+          {data.map((item, index) => (
+            <Col md={24} xxl={12} key={index}>
+              <RaidCard data={item} {...rest} />
+            </Col>
+          ))}
+        </Row>
+      </ScrollWrap>
     );
   }
 }

@@ -13,6 +13,14 @@ import Nameplate from "@/app/player/components/Nameplate";
 type Data = InferArrayItem<RaidData>;
 type Player = InferArrayItem<Data["players"]>;
 
+// 矩阵转置
+function convertToMatrixIndex(i: number) {
+  const base = 5;
+  const row = Math.floor(i / base);
+  const col = i % base;
+  return col * base + row;
+}
+
 function RaidCard(
   props: {
     data: Data;
@@ -104,6 +112,9 @@ function RaidCard(
         <Card.Grid
           key={index}
           hoverable={false}
+          style={{
+            order: convertToMatrixIndex(index),
+          }}
           className={classNames(
             "flex relative items-center justify-start py-1 px-1 min-w-0 w-[20%] min-h-[52px] group/delPlayer"
             // {
