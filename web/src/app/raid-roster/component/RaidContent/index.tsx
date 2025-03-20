@@ -1,4 +1,4 @@
-import { Col, Row } from "antd";
+import { Col, Row, Spin } from "antd";
 import React, { memo } from "react";
 import RaidCard from "./components/RaidCard";
 import { Handler, RaidData } from "../../types";
@@ -9,11 +9,14 @@ const ScrollWrap = dynamic(() => import("@/app/components/common/ScrollWrap"), {
 
 function RaidContent(
   props: {
+    loading?: boolean;
     data: RaidData;
     displayMode?: boolean;
   } & Partial<Handler>
 ) {
-  const { data, ...rest } = props;
+  const { loading, data, ...rest } = props;
+
+  if (loading) return <Spin size="large" fullscreen tip="数据加载中..."></Spin>;
 
   if (data.length === 0) {
     return (

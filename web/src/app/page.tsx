@@ -15,6 +15,7 @@ import AppTitle from "./components/AppTitle";
 
 function HomeContent() {
   const [playersData, setPlayersData] = useState<PlayersData>([]);
+  const [loading, setLoading] = useState(true);
 
   const raidData = useMemo<RaidData>(() => {
     return formatRaidDataData(playersData);
@@ -22,11 +23,14 @@ function HomeContent() {
 
   async function onLoadPlayersData() {
     try {
+      setLoading(true);
       const res = await getPublishedSchedule();
       setPlayersData(res);
     } catch (error) {
       if (isBizException(error)) return message.error(error.message);
       throw error;
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -41,7 +45,7 @@ function HomeContent() {
         <AppPublicMenu />
       </Layout.Header>
       <Layout.Content>
-        <RaidContent data={raidData} displayMode={true} />
+        <RaidContent loading={loading} data={raidData} displayMode={true} />
       </Layout.Content>
     </Layout>
   );

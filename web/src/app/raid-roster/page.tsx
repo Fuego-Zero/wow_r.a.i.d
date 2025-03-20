@@ -38,14 +38,18 @@ function ScheduleContent() {
   const { notification } = App.useApp();
   const [playersData, setPlayersData] = useState<PlayersData>([]);
   const [isHiddenBtn, setIsHiddenBtn] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   async function onLoadPlayersData() {
     try {
+      setLoading(true);
       const res = await getRaidRoster();
       setPlayersData(res);
     } catch (error) {
       if (isBizException(error)) return message.error(error.message);
       throw error;
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -229,6 +233,7 @@ function ScheduleContent() {
         <Layout.Content>
           <RaidContent
             data={raidData}
+            loading={loading}
             delPlayer={delPlayer}
             selectPlayer={selectPlayer}
             rosterPlayer={rosterPlayer}
