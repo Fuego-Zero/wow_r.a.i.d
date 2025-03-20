@@ -1,4 +1,4 @@
-FROM node:lts-slim
+FROM wow_r.a.i.d_node_server_base_image:latest
 
 # 设置时区为上海
 RUN apt-get update && \
