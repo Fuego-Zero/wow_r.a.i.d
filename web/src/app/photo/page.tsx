@@ -45,7 +45,7 @@ function PhotoContent() {
   return (
     <Layout className="h-[100vh] flex overflow-auto">
       <Layout.Header className="sticky top-0 z-10 w-full flex items-center mb-2">
-        <AppTitle title="轻风之语" subTitle="休闲小游戏" />
+        <AppTitle title="轻风之语" subTitle="欢乐时光" />
         <AppPublicMenu />
       </Layout.Header>
       <Layout.Content>
