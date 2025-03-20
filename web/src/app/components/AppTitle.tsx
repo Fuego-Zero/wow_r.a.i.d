@@ -10,6 +10,7 @@ function AppTitle(props: { title: string; subTitle: string }) {
         width={50}
         height={50}
         className="mr-2"
+        priority
       />
       <h1 className="flex items-end flex-1 truncate min-w-0 space-x-2">
         <span className="text-base sm:text-lg md:text-xl lg:text-2xl text-amber-50">
