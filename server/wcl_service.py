@@ -1,6 +1,8 @@
 import time
+import logging
 import requests
 import datetime
+import log_config
 from pymongo import MongoClient
 
 from config import MONGO_CONN_STRING, ACCESS_TOKEN
@@ -16,6 +18,8 @@ query getCharacterRanking($name: String!, $serverSlug: String!, $serverRegion: S
   }
 }
 """
+
+wcl_api = Blueprint('wcl_api', __name__)
 
 mongo_client = MongoClient(MONGO_CONN_STRING)
 db = mongo_client["wow_raid"]
@@ -97,6 +101,7 @@ def calculate_average_ranking(rankings):
 
 
 # 主逻辑函数
+@wcl_api.route("/api/wcl_query", methods=["GET"])
 def query_and_save_rankings():
     roles = db.role.find({})
 
@@ -160,12 +165,12 @@ def query_and_save_rankings():
 
                 db.wcl_rankings.update_one(query, update_operation, upsert=True)
 
-                print(f"保存成功：{char_name}-{spec_name}-{metric}，平均分：{avg_rank_percent:.2f}")
+                logging.info(f"保存成功：{char_name}-{spec_name}-{metric}，平均分：{avg_rank_percent:.2f}")
 
                 time.sleep(3)
 
             except Exception as e:
-                print(f"查询 {char_name} ({spec_name}-{metric}) 时出错: {e}")
+                logging.error(f"查询 {char_name} ({spec_name}-{metric}) 时出错: {e}")
 
 
 if __name__ == "__main__":
