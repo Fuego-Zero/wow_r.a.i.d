@@ -4,6 +4,7 @@ import requests
 import datetime
 import log_config
 from pymongo import MongoClient
+from flask import Blueprint, request, Response, json
 
 from config import MONGO_CONN_STRING, ACCESS_TOKEN
 
@@ -101,76 +102,93 @@ def calculate_average_ranking(rankings):
 
 
 # 主逻辑函数
-@wcl_api.route("/api/wcl_query", methods=["GET"])
 def query_and_save_rankings():
     roles = db.role.find({})
 
     for role in roles:
-        char_name = role["role_name"]
-        server_slug = "法琳娜"
-        server_region = "CN"
-        zone_id = 1032  # 具体副本ID
+        role_name = role["role_name"]
 
         talents = role.get("talent", [])
-        for talent in talents:
-            spec_name = ACTOR_MAP_TO_SPEC.get(talent)
-            if not spec_name:
-                continue  # 跳过无效天赋
+        get_wcl_rankings(role_name, talents)
 
-            # 根据SPEC_TYPE确定查询指标
-            spec_role_type = SPEC_TYPE.get(talent, "dps")
-            metric = "hps" if spec_role_type == "healer" else "dps"
 
-            try:
-                result = query_wcl(char_name, server_slug, server_region, zone_id, metric, spec_name)
+@wcl_api.route("/api/wcl_query", methods=["POST"])
+def wcl_query():
+    data = request.json
+    role_name = data.get("role_name")
 
-                if talent == 'FQ':
-                    all_stars = result["data"]["characterData"]["character"]["zoneRankings"]["allStars"]
-                    if not all_stars:
-                        print(f"查询 {char_name} ({spec_name}-{metric}) 时出错: 没有allStars数据")
-                        continue
-                    avg_rank_percent = all_stars[0].get("rankPercent")
-                    avg_rank_percent = round(avg_rank_percent, 1)
-                    server_rank = all_stars[0].get("serverRank")
-                else:
-                    rankings = result["data"]["characterData"]["character"]["zoneRankings"]["rankings"]
-                    all_stars = result["data"]["characterData"]["character"]["zoneRankings"]["allStars"]
-                    if not all_stars:
-                        print(f"查询 {char_name} ({spec_name}-{metric}) 时出错: 没有allStars数据")
-                        continue
-                    avg_rank_percent = calculate_average_ranking(rankings)
-                    avg_rank_percent = round(avg_rank_percent, 1)
-                    all_stars = result["data"]["characterData"]["character"]["zoneRankings"]["allStars"]
-                    server_rank = all_stars[0].get("serverRank")
+    role_collection = db['role']
+    talents = role_collection.find_one({"role_name": role_name}).get("talent", [])
+    get_wcl_rankings(role_name, talents)
 
-                query = {
+    response_json = json.dumps({"status": "successful"}, ensure_ascii=False)
+    return Response(response_json, mimetype='application/json; charset=utf-8')
+
+
+def get_wcl_rankings(role_name, talents):
+    server_slug = "法琳娜"
+    server_region = "CN"
+    zone_id = 1032  # 具体副本ID
+
+    for talent in talents:
+        spec_name = ACTOR_MAP_TO_SPEC.get(talent)
+        if not spec_name:
+            continue  # 跳过无效天赋
+
+        # 根据SPEC_TYPE确定查询指标
+        spec_role_type = SPEC_TYPE.get(talent, "dps")
+        metric = "hps" if spec_role_type == "healer" else "dps"
+
+        try:
+            result = query_wcl(role_name, server_slug, server_region, zone_id, metric, spec_name)
+
+            if talent == 'FQ':
+                all_stars = result["data"]["characterData"]["character"]["zoneRankings"]["allStars"]
+                if not all_stars:
+                    print(f"查询 {role_name} ({spec_name}-{metric}) 时出错: 没有allStars数据")
+                    continue
+                avg_rank_percent = all_stars[0].get("rankPercent")
+                avg_rank_percent = round(avg_rank_percent, 1)
+                server_rank = all_stars[0].get("serverRank")
+            else:
+                rankings = result["data"]["characterData"]["character"]["zoneRankings"]["rankings"]
+                all_stars = result["data"]["characterData"]["character"]["zoneRankings"]["allStars"]
+                if not all_stars:
+                    print(f"查询 {role_name} ({spec_name}-{metric}) 时出错: 没有allStars数据")
+                    continue
+                avg_rank_percent = calculate_average_ranking(rankings)
+                avg_rank_percent = round(avg_rank_percent, 1)
+                all_stars = result["data"]["characterData"]["character"]["zoneRankings"]["allStars"]
+                server_rank = all_stars[0].get("serverRank")
+
+            query = {
+                "zone_id": zone_id,
+                "role_name": role_name,
+                "talent": talent
+            }
+
+            update_operation = {
+                "$set": {
+                    "average_rank_percent": avg_rank_percent,
+                    "server_rank": server_rank,
+                    "update_time": datetime.datetime.now()
+                },
+                "$setOnInsert": {
+                    "create_time": datetime.datetime.now(),
                     "zone_id": zone_id,
-                    "role_name": char_name,
+                    "role_name": role_name,
                     "talent": talent
                 }
+            }
 
-                update_operation = {
-                    "$set": {
-                        "average_rank_percent": avg_rank_percent,
-                        "server_rank": server_rank,
-                        "update_time": datetime.datetime.now()
-                    },
-                    "$setOnInsert": {
-                        "create_time": datetime.datetime.now(),
-                        "zone_id": zone_id,
-                        "role_name": char_name,
-                        "talent": talent
-                    }
-                }
+            db.wcl_rankings.update_one(query, update_operation, upsert=True)
 
-                db.wcl_rankings.update_one(query, update_operation, upsert=True)
+            logging.info(f"保存成功：{role_name}-{spec_name}-{metric}，平均分：{avg_rank_percent:.2f}")
 
-                logging.info(f"保存成功：{char_name}-{spec_name}-{metric}，平均分：{avg_rank_percent:.2f}")
+            time.sleep(3)
 
-                time.sleep(3)
-
-            except Exception as e:
-                logging.error(f"查询 {char_name} ({spec_name}-{metric}) 时出错: {e}")
+        except Exception as e:
+            logging.error(f"查询 {role_name} ({spec_name}-{metric}) 时出错: {e}")
 
 
 if __name__ == "__main__":
