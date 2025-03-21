@@ -1,7 +1,7 @@
 @layer theme, base, antd, components, utilities;
 @import "tailwindcss";
 
-.wcl + .wcl::before {
+.desktop .wcl + .wcl::before {
   content: "";
   width: 100%;
   color: gray;
@@ -9,4 +9,17 @@
   height: 1px;
   margin: 1px 0;
   display: block;
+}
+
+.mobile .wcl + .wcl::before {
+  content: "/";
+  color: gray;
+  margin: 0 1px;
+  display: inline-block;
+}
+
+@media screen and (max-width: 768px) {
+  .ant-layout-header {
+    padding: 0 16px;
+  }
 }
