@@ -2,6 +2,7 @@ import React, { CSSProperties } from "react";
 import { TalentType } from "../constant";
 
 import { isArray } from "@yfsdk/web-basic-library";
+import classNames from "classnames";
 
 function getOffset(actor: TalentType) {
   let offset = 0;
@@ -129,8 +130,13 @@ const style: CSSProperties = {
   backgroundImage: `url("/images/actors.jpg")`,
 };
 
-function Actor(props: { actor: TalentType[] | TalentType }) {
-  const { actor } = props;
+type Props = {
+  actor: TalentType[] | TalentType;
+  className?: string;
+};
+
+function Actor(props: Props) {
+  const { actor, className } = props;
 
   let actor1;
   let actor2;
@@ -147,7 +153,7 @@ function Actor(props: { actor: TalentType[] | TalentType }) {
 
   return (
     <div
-      className="relative"
+      className={classNames("relative", className)}
       style={{
         transform: "scale(0.5)",
         width: 36,
