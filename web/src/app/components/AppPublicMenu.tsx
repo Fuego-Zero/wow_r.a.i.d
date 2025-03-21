@@ -66,6 +66,7 @@ function AppPublicMenu() {
         backgroundColor: "transparent",
         border: "none",
       }}
+      className="min-w-0"
       selectedKeys={[current]}
       mode="horizontal"
       items={items}
