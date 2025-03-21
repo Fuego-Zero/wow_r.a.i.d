@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from auto_wow_allocation import allocation_api
+from wcl_service import wcl_api
 
 app = Flask(__name__)
 CORS(app)
