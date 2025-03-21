@@ -14,10 +14,11 @@ rm -rf /var/lib/apt/lists/*
 # 时区环境变量
 ENV TZ=Asia/Shanghai
 
-COPY auto_wow_allocation.py /usr/src/app/
 COPY app.py /usr/src/app/
-COPY wcl_service.py /usr/src/app/
+COPY auto_wow_allocation.py /usr/src/app/
 COPY config.py /usr/src/app/
+COPY log_config.py /usr/src/app/
+COPY wcl_service.py /usr/src/app/
 
 WORKDIR /usr/src/app
 
