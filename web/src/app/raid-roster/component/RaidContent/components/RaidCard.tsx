@@ -2,32 +2,13 @@ import { App, Button, Card } from "antd";
 import React, { memo, useMemo, useRef, useState } from "react";
 
 import { toPng } from "html-to-image";
-import { CloseOutlined } from "@ant-design/icons";
 import { htmlToPngDownload } from "@/app/utils";
-import Empty from "./Empty";
-import classNames from "classnames";
-import { InferArrayItem } from "@yfsdk/web-basic-library";
-import { Handler, RaidData } from "@/app/raid-roster/types";
-import Nameplate from "@/app/player/components/Nameplate";
+import { Player, RaidCardProps } from "./types";
+import DesktopRaidCard from "./components/DesktopRaidCard";
+import MobileRaidCard from "./components/MobileRaidCard";
 
-type Data = InferArrayItem<RaidData>;
-type Player = InferArrayItem<Data["players"]>;
-
-// 矩阵转置
-function convertToMatrixIndex(i: number) {
-  const base = 5;
-  const row = Math.floor(i / base);
-  const col = i % base;
-  return col * base + row;
-}
-
-function RaidCard(
-  props: {
-    data: Data;
-    displayMode?: boolean;
-  } & Partial<Handler>
-) {
-  const { data, displayMode, delPlayer, selectPlayer, rosterPlayer } = props;
+function RaidCard(props: RaidCardProps) {
+  const { data, displayMode, rosterPlayer } = props;
   const { notification } = App.useApp();
   const el = useRef(null);
 
@@ -108,51 +89,8 @@ function RaidCard(
       }
       ref={el}
     >
-      {innerPlayers.map((item, index) => (
-        <Card.Grid
-          key={index}
-          hoverable={false}
-          style={{
-            order: convertToMatrixIndex(index),
-          }}
-          className={classNames(
-            "flex relative items-center justify-start py-1 px-1 min-w-0 w-[100%] md:w-[20%] min-h-[52px] group/delPlayer"
-            // {
-            //   "bg-amber-300/20": item.name === "空缺", //todo 未来针对暂缺情况的样式
-            // }
-          )}
-        >
-          {item.role_id ? (
-            <>
-              <Nameplate
-                className="flex-1"
-                classes={item.classes}
-                role_name={item.role_name}
-                user_name={item.user_name}
-                talent={item.talent}
-              />
-
-              {!displayMode && (
-                <Button
-                  className="hidden group-hover/delPlayer:block absolute left-[-3px] top-[-3px]"
-                  type="link"
-                  size="small"
-                  danger
-                  icon={<CloseOutlined />}
-                  onClick={() => delPlayer?.(item.role_id)}
-                />
-              )}
-            </>
-          ) : (
-            <Empty
-              onClick={() => {
-                if (displayMode) return;
-                selectPlayer?.(data.group_time_key, data.group_title);
-              }}
-            />
-          )}
-        </Card.Grid>
-      ))}
+      <DesktopRaidCard players={innerPlayers} {...props} />
+      <MobileRaidCard players={innerPlayers} {...props} />
     </Card>
   );
 }

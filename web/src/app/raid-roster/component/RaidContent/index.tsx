@@ -1,8 +1,8 @@
 import { Col, Row, Spin } from "antd";
 import React, { memo } from "react";
-import RaidCard from "./components/RaidCard";
 import { Handler, RaidData } from "../../types";
 import dynamic from "next/dynamic";
+import RaidCard from "./components/RaidCard";
 const ScrollWrap = dynamic(() => import("@/app/components/common/ScrollWrap"), {
   ssr: false,
 });
