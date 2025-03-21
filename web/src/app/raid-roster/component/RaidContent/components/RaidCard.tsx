@@ -67,7 +67,7 @@ function RaidCard(props: RaidCardProps) {
       className="group/RaidCard"
       extra={
         !hideBtn && (
-          <div className="group-hover/RaidCard:block md:hidden">
+          <div className="group-hover/RaidCard:block hidden">
             {!displayMode && (
               <Button
                 type="link"
