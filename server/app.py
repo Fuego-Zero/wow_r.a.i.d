@@ -5,6 +5,7 @@ from auto_wow_allocation import allocation_api
 app = Flask(__name__)
 CORS(app)
 app.register_blueprint(allocation_api)
+app.register_blueprint(wcl_api)
 
 if __name__ == '__main__':
     app.run(debug=False, host="0.0.0.0", port=7000)
