@@ -1,9 +1,20 @@
-import { App, Button, Space, Table, TableProps, Tag } from "antd";
+import {
+  App,
+  Button,
+  Card,
+  Space,
+  Table,
+  TableProps,
+  Tag,
+  Tooltip,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import { getAllUsers, resetPassword } from "../api";
 import { UserInfo } from "../types";
 import { hashPassword } from "@/app/player/utils";
 import PlayTime from "@/app/components/PlayTime";
+import { IdcardFilled, StopOutlined } from "@ant-design/icons";
+import Nameplate from "@/app/player/components/Nameplate";
 
 const PW = "ly0uQlp7LMaMVhzh"; /* cspell: disable-line */
 
@@ -26,6 +37,64 @@ function UserList() {
       title: "账号",
       dataIndex: "account",
       key: "account",
+    },
+    {
+      title: "角色数量",
+      dataIndex: "roles",
+      key: "roles",
+      render: (_, { roles }) => {
+        const title = (
+          <div className="max-h-[500px] overflow-auto">
+            <Card size="small" title="角色列表">
+              {roles.map((role) => {
+                return (
+                  <Card.Grid
+                    key={role.id}
+                    hoverable={false}
+                    className="flex items-center justify-between w-full p-1 flex-1"
+                  >
+                    <Nameplate {...role} className="space-x-1" />
+                    <div className="space-x-2">
+                      {role.disable_schedule && (
+                        <StopOutlined
+                          title="禁止排班"
+                          style={{ color: "red" }}
+                        />
+                      )}
+                      {role.is_signup && (
+                        <Tag color="cyan" className="mx-0">
+                          已报名
+                        </Tag>
+                      )}
+                    </div>
+                  </Card.Grid>
+                );
+              })}
+            </Card>
+          </div>
+        );
+
+        const disableScheduleRoles = roles.filter(
+          (role) => role.disable_schedule
+        );
+
+        return (
+          <div className="space-x-1">
+            <span>
+              {roles.length}{" "}
+              {disableScheduleRoles.length > 0 && (
+                <span
+                  title="禁止排班"
+                  className="text-red-600"
+                >{`(${disableScheduleRoles.length})`}</span>
+              )}
+            </span>
+            <Tooltip title={title}>
+              <IdcardFilled />
+            </Tooltip>
+          </div>
+        );
+      },
     },
     {
       title: "报名时间",

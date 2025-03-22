@@ -1,3 +1,4 @@
+import { RoleClasses, TalentType } from "../constant";
 import * as types from "../player/types";
 
 /**
@@ -5,4 +6,14 @@ import * as types from "../player/types";
  *
  * @description 用于后台管理，和前台用户信息不同
  */
-export type UserInfo = Omit<types.UserInfo, "token"> & { id: string };
+export type UserInfo = Omit<types.UserInfo, "token"> & {
+  id: string;
+  roles: Array<{
+    id: string;
+    role_name: string;
+    classes: RoleClasses;
+    talent: TalentType[];
+    disable_schedule: boolean;
+    is_signup: boolean;
+  }>;
+};
