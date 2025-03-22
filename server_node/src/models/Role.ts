@@ -22,6 +22,10 @@ export interface IRole extends Document<RoleId> {
    */
   auto_signup: boolean;
   /**
+   * 是否禁用报名
+   */
+  disable_schedule: boolean;
+  /**
    * 创建时间
    */
   create_time: Date;
@@ -60,6 +64,11 @@ const schema = new Schema<IRole>(
       type: Boolean,
       required: true,
       default: true,
+    },
+    disable_schedule: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
     create_time: {
       type: Date,

@@ -1,8 +1,15 @@
 import { BizException } from '@yfsdk/web-basic-library';
 
-import { IBindRoleBody, IGetAllRoleResponse, IUpdateRoleBody, IUpdateRoleResponse } from '../interfaces/IRole';
+import {
+  IBindRoleBody,
+  IChangeRoleDisableScheduleBody,
+  IGetAllRoleResponse,
+  IUpdateRoleBody,
+  IUpdateRoleResponse,
+} from '../interfaces/IRole';
 import Role from '../models/Role';
 import { RoleId, UserId } from '../types';
+import { validateUserAccess } from '../utils/user';
 import ScheduleService from './ScheduleService';
 import SignupRecordService from './SignupRecordService';
 
@@ -66,6 +73,18 @@ class RoleService {
       const { role_name, talent, classes, user_id, _id, auto_signup } = role;
       return { role_name, talent, classes, user_id, id: _id, auto_signup };
     });
+  }
+
+  static async changeRoleDisableSchedule(userId: UserId, body: IChangeRoleDisableScheduleBody): Promise<boolean> {
+    await validateUserAccess(userId);
+
+    const { id, disable_schedule } = body;
+
+    const role = await Role.findOne({ _id: id });
+    if (!role) throw new BizException('角色不存在');
+
+    await Role.updateOne({ _id: id, disable_schedule });
+    return true;
   }
 }
 

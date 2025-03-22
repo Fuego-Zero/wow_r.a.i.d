@@ -9,3 +9,4 @@ export interface IUnbindRoleBody extends Pick<IRole, 'id'> {}
 export interface IUpdateRoleBody extends Role {}
 export interface IUpdateRoleResponse extends Role {}
 export interface IGetAllRoleResponse extends Array<Role> {}
+export interface IChangeRoleDisableScheduleBody extends Required<Pick<IRole, 'id' | 'disable_schedule'>> {}

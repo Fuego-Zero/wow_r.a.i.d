@@ -1,7 +1,7 @@
 import { BizException, isBizException } from '@yfsdk/web-basic-library';
 import { Context } from 'koa';
 
-import { IBindRoleBody, IUnbindRoleBody, IUpdateRoleBody } from '../interfaces/IRole';
+import { IBindRoleBody, IChangeRoleDisableScheduleBody, IUnbindRoleBody, IUpdateRoleBody } from '../interfaces/IRole';
 import RoleService from '../services/RoleService';
 
 class RoleController {
@@ -65,6 +65,24 @@ class RoleController {
   static async getAllRole(ctx: Context) {
     try {
       const res = await RoleService.getAllRole(ctx.state.user.id);
+      ctx.success(res);
+    } catch (error) {
+      if (isBizException(error)) ctx.bizError(error.message);
+      throw error;
+    }
+  }
+
+  private static validateChangeRoleDisableScheduleParams(body: any): asserts body is IChangeRoleDisableScheduleBody {
+    if (!body) throw new BizException('body is undefined');
+    const { id, disable_schedule } = body as IChangeRoleDisableScheduleBody;
+    if (id === undefined) throw new BizException(`body.id is undefined`);
+    if (disable_schedule === undefined) throw new BizException(`body.disable_schedule is undefined`);
+  }
+
+  static async changeRoleDisableSchedule(ctx: Context) {
+    try {
+      RoleController.validateChangeRoleDisableScheduleParams(ctx.request.body);
+      const res = await RoleService.changeRoleDisableSchedule(ctx.state.user.id, ctx.request.body);
       ctx.success(res);
     } catch (error) {
       if (isBizException(error)) ctx.bizError(error.message);
