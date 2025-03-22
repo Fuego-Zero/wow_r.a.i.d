@@ -2,12 +2,13 @@ import { App, Button, Space, Table, TableProps, Tag } from "antd";
 import React, { useEffect, useState } from "react";
 import { getAllUsers, resetPassword } from "../api";
 import { UserInfo } from "../types";
-import { useAppConfig } from "@/app/player/context/appConfigContext";
 import { hashPassword } from "@/app/player/utils";
+import PlayTime from "@/app/components/PlayTime";
+
+const PW = "ly0uQlp7LMaMVhzh"; /* cspell: disable-line */
 
 function UserList() {
   const [data, setData] = useState<UserInfo[]>([]);
-  const { raidTimeNameMap } = useAppConfig();
   const { message } = App.useApp();
 
   const columns: TableProps<UserInfo>["columns"] = [
@@ -30,15 +31,7 @@ function UserList() {
       title: "报名时间",
       dataIndex: "play_time",
       key: "play_time",
-      render: (_, { play_time }) => (
-        <>
-          {(
-            play_time
-              .map((time) => raidTimeNameMap.get(time))
-              .filter(Boolean) ?? []
-          ).join("、")}
-        </>
-      ),
+      render: (_, { play_time }) => <PlayTime play_time={play_time} />,
     },
     {
       title: "身份",
@@ -61,7 +54,7 @@ function UserList() {
         <Space size="middle">
           <Button
             onClick={() => {
-              onResetPassword(record.id, "ly0uQlp7LMaMVhzh");
+              onResetPassword(record.id, PW);
             }}
           >
             重设密码
@@ -79,7 +72,7 @@ function UserList() {
   async function onResetPassword(id: UserInfo["id"], pw: string) {
     const password = await hashPassword(pw);
     await resetPassword(id, password);
-    message.success("重设密码成功：ly0uQlp7LMaMVhzh");
+    message.success("重设密码成功：" + pw);
   }
 
   useEffect(() => {
