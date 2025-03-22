@@ -13,9 +13,11 @@ function AppHeader(props: {
   reload: () => void;
   onCopy: () => Promise<void>;
   onDownload: () => Promise<void>;
+  openUnassignedModal: () => void;
   showAdvancedBtn: boolean;
 }) {
-  const { reload, onCopy, onDownload, showAdvancedBtn } = props;
+  const { reload, onCopy, onDownload, openUnassignedModal, showAdvancedBtn } =
+    props;
   const { notification, message } = App.useApp();
   const [loading, setLoading] = useState(false);
   const { isAdmin } = useAuth();
@@ -91,6 +93,9 @@ function AppHeader(props: {
         )}
         {isAdmin && (
           <>
+            <Button type="dashed" onClick={openUnassignedModal}>
+              未分配名单
+            </Button>
             <Button type="primary" onClick={publish} disabled={loading}>
               发布名单
             </Button>

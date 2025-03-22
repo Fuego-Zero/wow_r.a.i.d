@@ -30,6 +30,7 @@ import usePlayerSelect from "./hooks/usePlayerSelect";
 import AppHeader from "./component/AppHeader";
 import useRaidChange from "./hooks/useRaidChange";
 import BaseProvider from "../components/common/BaseProvider";
+import useUnassignedPlayers from "./hooks/useUnassignedPlayers";
 
 function ScheduleContent() {
   const { isAdmin } = useAuth();
@@ -211,6 +212,9 @@ function ScheduleContent() {
     [openChangeModal, playersData, raidTimeOrderMap]
   );
 
+  const [openUnassignedModal, UnassignedModalContextHolder] =
+    useUnassignedPlayers(playersData);
+
   if (!isAdmin) return "再见";
 
   return (
@@ -227,6 +231,7 @@ function ScheduleContent() {
             onCopy={onCopy}
             onDownload={onDownload}
             showAdvancedBtn={showAdvancedBtn}
+            openUnassignedModal={openUnassignedModal}
             reload={onLoadPlayersData}
           />
         </Layout.Header>
@@ -242,6 +247,7 @@ function ScheduleContent() {
       </Layout>
       {selectModalContextHolder}
       {raidChangeModalContextHolder}
+      {UnassignedModalContextHolder}
     </>
   );
 }
