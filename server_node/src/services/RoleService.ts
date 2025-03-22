@@ -23,7 +23,7 @@ class RoleService {
     const result = await Role.deleteOne({ _id: roleId, user_id: userId });
     if (result.deletedCount === 0) throw new BizException('删除角色失败');
 
-    SignupRecordService.delRoleRecord(userId, [roleId]);
+    await SignupRecordService.delRoleRecord(userId, [roleId]);
     await ScheduleService.delSchedule(userId, roleId);
 
     return true;
