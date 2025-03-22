@@ -7,6 +7,7 @@ function AppTitle(props: { title: string; subTitle: string }) {
   useEffect(() => {
     if (!bgmEl.current) return;
     if (!bgmEl.current.muted) return;
+    if (localStorage.getItem("BGM") === "0") return;
 
     document.addEventListener(
       "click",
