@@ -83,7 +83,7 @@ class RoleService {
     const role = await Role.findOne({ _id: id });
     if (!role) throw new BizException('角色不存在');
 
-    await Role.updateOne({ _id: id, disable_schedule });
+    await Role.updateOne({ _id: id }, { disable_schedule });
     return true;
   }
 }
