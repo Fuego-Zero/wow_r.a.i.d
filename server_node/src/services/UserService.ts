@@ -1,12 +1,15 @@
-import { BizException } from '@yfsdk/web-basic-library';
+import { BizException, InferArrayItem } from '@yfsdk/web-basic-library';
 import bcrypt from 'bcrypt'; // eslint-disable-line
 import jwt from 'jsonwebtoken';
 
 import { secretKey } from '../config';
 import { ILoginBody, ILoginResponse } from '../interfaces/ILogin';
 import { IAllUsersResponse, IChangeUserInfoBody, IChangeUserInfoResponse } from '../interfaces/IUser';
+import Role from '../models/Role';
+import SignupRecord from '../models/SignupRecord';
 import User from '../models/User';
 import { UserId } from '../types';
+import { getRaidDateRange } from '../utils';
 import { validateUserAccess } from '../utils/user';
 
 class UserService {
@@ -81,15 +84,43 @@ class UserService {
   static async getAllUsers(userId: UserId): Promise<IAllUsersResponse> {
     await validateUserAccess(userId);
 
+    const date = getRaidDateRange();
     const users = await User.find({}).lean();
+    const roles = await Role.find({}, { user_id: 1, role_name: 1, classes: 1, talent: 1, disable_schedule: 1 }).lean();
+    const records = await SignupRecord.find(
+      {
+        delete_time: null,
+        create_time: { $gte: date.startDate, $lte: date.endDate },
+      },
+      { role_id: 1 },
+    ).lean();
 
-    return users.map((u) => ({
-      id: u._id,
-      account: u.account,
-      play_time: u.play_time,
-      user_name: u.user_name,
-      wechat_name: u.wechat_name,
-      is_admin: u.is_admin,
+    const recordsSet = new Set(records.map((record) => record.role_id.toString()));
+    const rolesMap = roles.reduce(
+      (acc, role) => {
+        const key = role.user_id.toString();
+        acc[key] ??= [];
+        acc[key].push({
+          id: role._id,
+          role_name: role.role_name,
+          classes: role.classes,
+          talent: role.talent,
+          disable_schedule: role.disable_schedule,
+          is_signup: recordsSet.has(String(role._id)),
+        });
+        return acc;
+      },
+      {} as Record<string, InferArrayItem<IAllUsersResponse>['roles']>,
+    );
+
+    return users.map((user) => ({
+      id: user._id,
+      account: user.account,
+      play_time: user.play_time,
+      user_name: user.user_name,
+      wechat_name: user.wechat_name,
+      is_admin: user.is_admin,
+      roles: rolesMap[user._id.toString()] ?? [],
     }));
   }
 
