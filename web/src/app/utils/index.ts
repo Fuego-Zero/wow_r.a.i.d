@@ -53,7 +53,7 @@ export function addPlayerSchedule(
   item.is_scheduled = true;
 }
 
-export function formatRaidDataData(playersData: PlayersData): RaidData {
+export function formatRaidData(playersData: PlayersData): RaidData {
   const data: RaidData = [];
 
   playersSortByOrder(playersData);

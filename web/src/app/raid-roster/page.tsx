@@ -5,7 +5,7 @@ import classNames from "classnames";
 import { toPng } from "html-to-image";
 import {
   addPlayerSchedule,
-  formatRaidDataData,
+  formatRaidData,
   htmlToPngDownload,
   removePlayerSchedule,
 } from "@/app/utils";
@@ -146,7 +146,7 @@ function ScheduleContent() {
   );
 
   const raidData = useMemo<RaidData>(() => {
-    return formatRaidDataData(playersData);
+    return formatRaidData(playersData);
   }, [playersData]);
 
   const [openSelectModal, selectModalContextHolder] =

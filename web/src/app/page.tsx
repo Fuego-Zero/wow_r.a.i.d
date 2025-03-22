@@ -6,7 +6,7 @@ import classNames from "classnames";
 import RaidContent from "./raid-roster/component/RaidContent";
 import { useEffect, useMemo, useState } from "react";
 import { PlayersData, RaidData } from "./raid-roster/types";
-import { formatRaidDataData } from "./utils";
+import { formatRaidData } from "./utils";
 import { getPublishedSchedule } from "./api";
 import { isBizException } from "@yfsdk/web-basic-library";
 import BaseProvider from "./components/common/BaseProvider";
@@ -18,7 +18,7 @@ function HomeContent() {
   const [loading, setLoading] = useState(true);
 
   const raidData = useMemo<RaidData>(() => {
-    return formatRaidDataData(playersData);
+    return formatRaidData(playersData);
   }, [playersData]);
 
   async function onLoadPlayersData() {
