@@ -10,12 +10,13 @@ import AddSignupRecord from "./AddSignupRecord";
 import DelSignupRecord from "./DelSignupRecord";
 import EditRole from "./EditRole";
 import Nameplate from "./Nameplate";
-import { SolutionOutlined } from "@ant-design/icons";
+import { SolutionOutlined, SyncOutlined } from "@ant-design/icons";
 import { getPublishedSchedule } from "@/app/api";
 import { isBizException } from "@yfsdk/web-basic-library";
+import axios from "axios";
 
 function UserCenter() {
-  const { message } = App.useApp();
+  const { message, notification } = App.useApp();
   const { userInfo } = useAuth();
   const { raidTimeNameMap } = useAppConfig();
   const [roles, setRoles] = useState<RoleInfo[]>([]);
@@ -69,6 +70,21 @@ function UserCenter() {
     }
   }
 
+  async function syncWCL(roleName: RoleInfo["role_name"]) {
+    try {
+      await axios.post("/api/wcl_query", { role_name: roleName });
+      message.success("同步 WCL 成功");
+      onReload();
+    } catch (error) {
+      console.log(error);
+
+      notification.error({
+        message: "同步 WCL 失败",
+        description: (error as Error).message,
+      });
+    }
+  }
+
   return (
     <Row justify="center" className="!mx-0 mt-5" gutter={[16, 16]}>
       <Col span={24}>
@@ -90,24 +106,31 @@ function UserCenter() {
                     talent={role.talent}
                     className="flex-1"
                   />
-                  <SolutionOutlined
-                    className="ml-2"
-                    onClick={() => {
-                      window.open(
-                        `https://cn.classic.warcraftlogs.com/character/cn/法琳娜/${role.role_name}`
-                      );
-                    }}
-                  />
-                  {signupRecordSet.has(role.id) && !schedule.get(role.id) && (
-                    <Tag color="cyan" className="ml-2 mr-0">
-                      已报名
-                    </Tag>
-                  )}
-                  {schedule.get(role.id) && (
-                    <Tag color="green" className="ml-2 mr-0">
-                      {schedule.get(role.id).group_title}
-                    </Tag>
-                  )}
+                  <div className="space-x-2 ml-2">
+                    <SyncOutlined
+                      onClick={() => {
+                        syncWCL(role.role_name);
+                      }}
+                    />
+                    <SolutionOutlined
+                      className=""
+                      onClick={() => {
+                        window.open(
+                          `https://cn.classic.warcraftlogs.com/character/cn/法琳娜/${role.role_name}`
+                        );
+                      }}
+                    />
+                    {signupRecordSet.has(role.id) && !schedule.get(role.id) && (
+                      <Tag color="cyan" className="mr-0">
+                        已报名
+                      </Tag>
+                    )}
+                    {schedule.get(role.id) && (
+                      <Tag color="green" className="mr-0">
+                        {schedule.get(role.id).group_title}
+                      </Tag>
+                    )}
+                  </div>
                 </div>
               </Card.Grid>
             );
