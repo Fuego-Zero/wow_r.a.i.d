@@ -3,7 +3,7 @@
 import { Button, Col, Divider, Modal, Row, Tooltip } from "antd";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 
-import { CalendarFilled, PushpinFilled } from "@ant-design/icons";
+import { PushpinFilled } from "@ant-design/icons";
 import { GroupTimeKey, GroupTitle, PlayerData, PlayersData } from "../types";
 import Actor from "@/app/components/Actor";
 import { useAppConfig } from "@/app/player/context/appConfigContext";
@@ -11,6 +11,7 @@ import Nameplate from "@/app/player/components/Nameplate";
 import useTalentSelect from "@/app/hooks/useTalentSelect";
 
 import dynamic from "next/dynamic";
+import PlayTime from "@/app/components/PlayTime";
 const ScrollWrap = dynamic(() => import("@/app/components/common/ScrollWrap"), {
   ssr: false,
 });
@@ -140,22 +141,8 @@ function usePlayerSelect(
                         user_name={player.user_name}
                         className="w-full min-w-0 mr-1"
                       />
-
                       {el}
-                      <Tooltip
-                        title={
-                          <>
-                            <div>报名时间：</div>
-                            {player.play_time
-                              .map((time) => raidTimeNameMap.get(time))
-                              .map((time) => {
-                                return <div key={time}>{time}</div>;
-                              })}
-                          </>
-                        }
-                      >
-                        <CalendarFilled />
-                      </Tooltip>
+                      <PlayTime play_time={player.play_time} />
                     </div>
                   </Button>
                 </Col>

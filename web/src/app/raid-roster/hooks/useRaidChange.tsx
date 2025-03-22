@@ -1,18 +1,9 @@
 "use client";
 
-import {
-  Button,
-  Col,
-  Divider,
-  message,
-  Modal,
-  Row,
-  Select,
-  Tooltip,
-} from "antd";
+import { Button, Col, Divider, message, Modal, Row, Select } from "antd";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import { CalendarFilled, CloseOutlined } from "@ant-design/icons";
+import { CloseOutlined } from "@ant-design/icons";
 import {
   addPlayerSchedule,
   playersSortByTalent,
@@ -23,6 +14,7 @@ import { useAppConfig } from "@/app/player/context/appConfigContext";
 import Nameplate from "@/app/player/components/Nameplate";
 
 import dynamic from "next/dynamic";
+import PlayTime from "@/app/components/PlayTime";
 const ScrollWrap = dynamic(() => import("@/app/components/common/ScrollWrap"), {
   ssr: false,
 });
@@ -41,8 +33,6 @@ function useRaidChange(
   const [groupTitle, setGroupTitle] = useState("");
   const { raidTimeOrderMap } = useAppConfig();
   const promise = useRef<(player: PlayersData) => void | null>(null);
-
-  const { raidTimeNameMap } = useAppConfig();
 
   const openChangeModal = useCallback(
     (groupTimeKey: GroupTimeKey, groupTitle: string): Promise<PlayersData> => {
@@ -256,20 +246,7 @@ function useRaidChange(
                 >
                   <Button block className="min-w-0">
                     {el}
-                    <Tooltip
-                      title={
-                        <>
-                          <div>报名时间：</div>
-                          {item.play_time.map((time) => {
-                            return (
-                              <div key={time}>{raidTimeNameMap.get(time)}</div>
-                            );
-                          })}
-                        </>
-                      }
-                    >
-                      <CalendarFilled className="mx-1" />
-                    </Tooltip>
+                    <PlayTime play_time={item.play_time} />
                   </Button>
                   <Button
                     type="link"
@@ -294,22 +271,10 @@ function useRaidChange(
                       <Row>
                         <Col span={2}>
                           {user_name}
-                          <Tooltip
-                            title={
-                              <>
-                                <div>报名时间：</div>
-                                {players[0].play_time.map((time) => {
-                                  return (
-                                    <div key={time}>
-                                      {raidTimeNameMap.get(time)}
-                                    </div>
-                                  );
-                                })}
-                              </>
-                            }
-                          >
-                            <CalendarFilled className="ml-1 cursor-pointer" />
-                          </Tooltip>
+                          <PlayTime
+                            play_time={players[0].play_time}
+                            className="ml-1"
+                          />
                         </Col>
                         <Col span={22}>
                           <Row gutter={[4, 4]}>

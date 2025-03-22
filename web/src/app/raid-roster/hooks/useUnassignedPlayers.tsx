@@ -1,16 +1,15 @@
 "use client";
 
-import { Button, Col, Divider, Modal, Row, Switch, Tooltip } from "antd";
+import { Button, Col, Divider, Modal, Row, Switch } from "antd";
 import React, { useCallback, useMemo, useState } from "react";
 
-import { CalendarFilled } from "@ant-design/icons";
 import { PlayerData, PlayersData } from "../types";
-import { useAppConfig } from "@/app/player/context/appConfigContext";
 import Nameplate from "@/app/player/components/Nameplate";
 
 import dynamic from "next/dynamic";
 import useTalentSelect from "@/app/hooks/useTalentSelect";
 import { playersSortByTalent } from "@/app/utils";
+import PlayTime from "@/app/components/PlayTime";
 const ScrollWrap = dynamic(() => import("@/app/components/common/ScrollWrap"), {
   ssr: false,
 });
@@ -21,7 +20,6 @@ function useUnassignedPlayers(
   players: PlayersData
 ): [() => void, React.ReactNode] {
   const [isOpen, setIsOpen] = useState(false);
-  const { raidTimeNameMap } = useAppConfig();
 
   const open = useCallback((): void => {
     setIsOpen(true);
@@ -94,22 +92,10 @@ function useUnassignedPlayers(
                       <Row>
                         <Col span={2}>
                           {user_name}
-                          <Tooltip
-                            title={
-                              <>
-                                <div>报名时间：</div>
-                                {players[0].play_time.map((time) => {
-                                  return (
-                                    <div key={time}>
-                                      {raidTimeNameMap.get(time)}
-                                    </div>
-                                  );
-                                })}
-                              </>
-                            }
-                          >
-                            <CalendarFilled className="ml-1 cursor-pointer" />
-                          </Tooltip>
+                          <PlayTime
+                            play_time={players[0].play_time}
+                            className="ml-1"
+                          />
                         </Col>
                         <Col span={22}>
                           <Row gutter={[4, 4]}>
