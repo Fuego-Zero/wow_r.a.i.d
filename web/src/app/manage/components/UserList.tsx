@@ -57,7 +57,7 @@ function UserList() {
               onResetPassword(record.id, PW);
             }}
           >
-            重设密码
+            重置密码
           </Button>
         </Space>
       ),
