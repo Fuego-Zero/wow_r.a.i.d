@@ -3,6 +3,7 @@ import { BizException } from '@yfsdk/web-basic-library';
 import { IGetScheduleResponse, ISaveScheduleBody } from '../interfaces/ISchedule';
 import GroupInfo, { IGroupInfo } from '../models/GroupInfo';
 import RaidTime, { IRaidTime } from '../models/RaidTime';
+import Role from '../models/Role';
 import Schedule from '../models/Schedule';
 import SignupRecord from '../models/SignupRecord';
 import { RoleId, UserId } from '../types';
@@ -34,6 +35,9 @@ class ScheduleService {
       },
       role_id: { $nin: Array.from(scheduledRoleIds) },
     }).lean();
+
+    const disableRoles = await Role.find({ disable_schedule: true }).lean();
+    const disableRoleIds = new Set(disableRoles.map((role) => role._id.toString()));
 
     players.forEach((player) => {
       scheduleResponse.push({
@@ -73,7 +77,7 @@ class ScheduleService {
       });
     });
 
-    return scheduleResponse;
+    return scheduleResponse.filter((item) => !disableRoleIds.has(item.role_id.toString()));
   }
 
   static async saveSchedule(userId: UserId, body: ISaveScheduleBody): Promise<boolean> {
