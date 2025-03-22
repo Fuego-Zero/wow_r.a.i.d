@@ -26,11 +26,7 @@ function WCL(props: Props) {
         if (!rank) return null;
 
         return (
-          <Tooltip
-            key={key}
-            title={`服务器排名：${rank.server_rank}`}
-            placement="left"
-          >
+          <Tooltip key={key} title={`服务器排名：${rank.server_rank}`}>
             <span
               className="wcl leading-none"
               style={{ color: getWClColor(rank.average_rank_percent) }}
