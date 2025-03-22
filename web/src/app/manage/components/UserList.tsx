@@ -9,12 +9,13 @@ import {
   Tooltip,
 } from "antd";
 import React, { useEffect, useState } from "react";
-import { getAllUsers, resetPassword } from "../api";
+import { changeRoleDisableSchedule, getAllUsers, resetPassword } from "../api";
 import { UserInfo } from "../types";
 import { hashPassword } from "@/app/player/utils";
 import PlayTime from "@/app/components/PlayTime";
-import { IdcardFilled, StopOutlined } from "@ant-design/icons";
+import { CheckOutlined, IdcardFilled, StopOutlined } from "@ant-design/icons";
 import Nameplate from "@/app/player/components/Nameplate";
+import { isBizException } from "@yfsdk/web-basic-library";
 
 const PW = "ly0uQlp7LMaMVhzh"; /* cspell: disable-line */
 
@@ -51,14 +52,46 @@ function UserList() {
                   <Card.Grid
                     key={role.id}
                     hoverable={false}
-                    className="flex items-center justify-between w-full p-1 flex-1"
+                    className="flex items-center justify-between w-full p-0"
                   >
-                    <Nameplate {...role} className="space-x-1" />
-                    <div className="space-x-2">
-                      {role.disable_schedule && (
+                    <Nameplate
+                      {...role}
+                      className="space-x-1 min-w-0 flex-1 truncate"
+                    />
+                    <div className="ml-2 space-x-2">
+                      {role.disable_schedule ? (
                         <StopOutlined
                           title="禁止排班"
                           style={{ color: "red" }}
+                          onClick={async () => {
+                            try {
+                              await changeRoleDisableSchedule(role.id, false);
+                              getData();
+                              message.success("允许排班成功");
+                            } catch (error) {
+                              if (isBizException(error)) {
+                                return message.error(error.message);
+                              }
+                              throw error;
+                            }
+                          }}
+                        />
+                      ) : (
+                        <CheckOutlined
+                          title="允许排班"
+                          style={{ color: "green" }}
+                          onClick={async () => {
+                            try {
+                              await changeRoleDisableSchedule(role.id, true);
+                              getData();
+                              message.success("禁止排班成功");
+                            } catch (error) {
+                              if (isBizException(error)) {
+                                return message.error(error.message);
+                              }
+                              throw error;
+                            }
+                          }}
                         />
                       )}
                       {role.is_signup && (
@@ -81,11 +114,11 @@ function UserList() {
         return (
           <div className="space-x-1">
             <span>
-              {roles.length}{" "}
+              {roles.length}
               {disableScheduleRoles.length > 0 && (
                 <span
-                  title="禁止排班"
-                  className="text-red-600"
+                  title="禁用数量"
+                  className="text-red-600 ml-1"
                 >{`(${disableScheduleRoles.length})`}</span>
               )}
             </span>
@@ -119,6 +152,7 @@ function UserList() {
     {
       title: "操作",
       key: "action",
+      width: 120,
       render: (_, record) => (
         <Space size="middle">
           <Button

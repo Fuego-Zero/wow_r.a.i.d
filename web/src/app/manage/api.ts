@@ -1,3 +1,4 @@
+import { InferArrayItem } from "@yfsdk/web-basic-library";
 import http from "../player/http";
 import { UserInfo } from "./types";
 
@@ -14,4 +15,14 @@ export function resetPassword(
 
 export function batchAddRecords(): Promise<number> {
   return http.post("/raid/batch_add_records");
+}
+
+export function changeRoleDisableSchedule(
+  roleId: InferArrayItem<UserInfo["roles"]>["id"],
+  disableSchedule: boolean
+): Promise<void> {
+  return http.post("/role/change_role_disable_schedule", {
+    id: roleId,
+    disable_schedule: disableSchedule,
+  });
 }
