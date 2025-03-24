@@ -7,6 +7,7 @@ import { RaidPlayerCardsProps } from "../types";
 import Players from "@/app/components/Players";
 import Actor from "@/app/components/Actor";
 import WCL from "@/app/player/components/WCL";
+import Role from "@/app/components/Role";
 
 function MobileRaidCard(props: RaidPlayerCardsProps) {
   const { displayMode, players } = props;
@@ -31,10 +32,13 @@ function MobileRaidCard(props: RaidPlayerCardsProps) {
             >
               {item.role_id ? (
                 <div className="flex flex-col items-center justify-center w-full h-full space-y-1">
-                  <div className="h-[18px] w-full">
-                    <Actor
-                      className="left-[-9px] top-[-9px]"
-                      actor={item.talent}
+                  <div className="h-[18px] w-full flex items-center justify-between">
+                    <Actor className="left-[-9px]" actor={item.talent} />
+                    <Role
+                      className=""
+                      width={18}
+                      height={18}
+                      role={item.assignment}
                     />
                   </div>
                   <Players classes={item.classes}>
