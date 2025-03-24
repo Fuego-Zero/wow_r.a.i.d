@@ -6,6 +6,7 @@ import Nameplate from "@/app/player/components/Nameplate";
 import classNames from "classnames";
 import { convertToMatrixIndex } from "../utils";
 import { RaidPlayerCardsProps } from "../types";
+import Role from "@/app/components/Role";
 
 function DesktopRaidCard(props: RaidPlayerCardsProps) {
   const { data, displayMode, delPlayer, selectPlayer, players } = props;
@@ -34,6 +35,10 @@ function DesktopRaidCard(props: RaidPlayerCardsProps) {
                 role_name={item.role_name}
                 user_name={item.user_name}
                 talent={item.talent}
+              />
+              <Role
+                className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/3"
+                role={item.assignment}
               />
 
               {!displayMode && (
