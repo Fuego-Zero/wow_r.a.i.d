@@ -46,6 +46,13 @@ ROLES = {
     "奶萨": "治疗", "奶骑": "治疗", "戒律牧": "治疗", "奶德": "治疗"
 }
 
+ASSIGNMENT_MAP = {
+    "坦克": "TANK",
+    "近战输出": "DPS",
+    "远程输出": "DPS",
+    "治疗": "HEALER"
+}
+
 # 稀缺职业
 SCARCE_ROLES = []
 
@@ -678,6 +685,7 @@ def roster():
                     "role_name": role_name,
                     "classes": classes,
                     "talent": talent_list,
+                    "assignment": ASSIGNMENT_MAP.get(ROLES.get(cls)),
                     "user_id": user_id,
                     "user_name": user_name,
                     "play_time": play_time,
