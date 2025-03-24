@@ -7,14 +7,14 @@ function Players(props: React.PropsWithChildren<{ classes: RoleClasses }>) {
   const style = useMemo<CSSProperties>(() => {
     return {
       color: ROLE_CLASSES_COLOR_MAP[classes],
-      flex: 1,
-      minWidth: 0,
-      overflow: "hidden",
-      textOverflow: "ellipsis",
     };
   }, [classes]);
 
-  return <div style={style}>{children}</div>;
+  return (
+    <div style={style} className="truncate min-w-0 flex-1">
+      {children}
+    </div>
+  );
 }
 
 export default Players;

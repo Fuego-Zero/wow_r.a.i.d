@@ -7,8 +7,10 @@ enum RoleMap {
   HEAL = "HEAL",
 }
 
+export type RoleType = keyof typeof RoleMap;
+
 type Props = {
-  role: keyof typeof RoleMap;
+  role: RoleType;
   className?: string;
   width?: number;
   height?: number;
