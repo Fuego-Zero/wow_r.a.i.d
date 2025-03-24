@@ -34,7 +34,7 @@ function useUnassignedPlayers(
 
   const unassignedPlayers = useMemo(() => {
     const grouped = players
-      .filter((player) => player.group_time_key === "")
+      .filter((player) => !player.is_scheduled)
       .filter((player) => {
         if (enableTalentSelect) return player.talent.includes(selectedActor);
         return true;
