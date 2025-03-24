@@ -14,6 +14,11 @@ interface SchedulePlayer
     | 'group_time_order'
     | 'group_title'
   > {
+  /**
+   * 是否已安排
+   *
+   * @description 因为排班表返回的数据包含了未安排的角色，所以前端需要根据这个字段来判断是否已安排
+   */
   is_scheduled: boolean;
 }
 
