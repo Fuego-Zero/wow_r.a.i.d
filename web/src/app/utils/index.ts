@@ -1,5 +1,5 @@
 import { toPng } from "html-to-image";
-import { ACTOR_ORDER } from "../common";
+import { ACTOR_ORDER, ROLE_ORDER } from "../common";
 import {
   GroupTimeKey,
   PlayerData,
@@ -20,11 +20,16 @@ export async function htmlToPngDownload(el: HTMLElement, name: string) {
   document.body.removeChild(link);
 }
 
-export function playersSortByTalent(players: PlayersData) {
+export function playersSortByRoleAndTalent(players: PlayersData) {
   players.sort((a, b) => {
-    const actorA = ACTOR_ORDER.indexOf(a.talent[0]);
-    const actorB = ACTOR_ORDER.indexOf(b.talent[0]);
-    return actorA - actorB;
+    const roleA = ROLE_ORDER.indexOf(a.assignment);
+    const roleB = ROLE_ORDER.indexOf(b.assignment);
+
+    if (roleA !== roleB) return roleA - roleB;
+
+    const talentA = ACTOR_ORDER.indexOf(a.talent[0]);
+    const talentB = ACTOR_ORDER.indexOf(b.talent[0]);
+    return talentA - talentB;
   });
 }
 
@@ -68,7 +73,7 @@ export function formatRaidData(playersData: PlayersData): RaidData {
     return prev;
   }, {} as Record<GroupTimeKey, PlayersData>);
 
-  Object.values(groupedPlayers).forEach(playersSortByTalent);
+  Object.values(groupedPlayers).forEach(playersSortByRoleAndTalent);
 
   Object.entries(groupedPlayers).forEach(([key, value]) => {
     data.push({

@@ -8,7 +8,7 @@ import Nameplate from "@/app/player/components/Nameplate";
 
 import dynamic from "next/dynamic";
 import useTalentSelect from "@/app/hooks/useTalentSelect";
-import { playersSortByTalent } from "@/app/utils";
+import { playersSortByRoleAndTalent } from "@/app/utils";
 import PlayTime from "@/app/components/PlayTime";
 const ScrollWrap = dynamic(() => import("@/app/components/common/ScrollWrap"), {
   ssr: false,
@@ -46,7 +46,7 @@ function useUnassignedPlayers(
         return acc;
       }, {} as Record<PlayerUserName, PlayerData[]>);
 
-    Object.values(grouped).forEach(playersSortByTalent);
+    Object.values(grouped).forEach(playersSortByRoleAndTalent);
 
     return grouped;
   }, [enableTalentSelect, players, selectedActor]);

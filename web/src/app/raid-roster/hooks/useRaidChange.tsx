@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { CloseOutlined } from "@ant-design/icons";
 import {
   addPlayerSchedule,
-  playersSortByTalent,
+  playersSortByRoleAndTalent,
   removePlayerSchedule,
 } from "@/app/utils";
 import { GroupTimeKey, PlayerData, PlayersData } from "../types";
@@ -75,7 +75,7 @@ function useRaidChange(
     const assigned = innerPlayers.filter((player) => {
       return player.group_time_key === groupTimeKey;
     });
-    playersSortByTalent(assigned);
+    playersSortByRoleAndTalent(assigned);
     setAssignedPlayers(assigned);
 
     const unassigned = innerPlayers
@@ -94,7 +94,7 @@ function useRaidChange(
       }, {} as Record<PlayerUserName, PlayersData>);
 
     Object.values(unassigned).forEach((players) => {
-      playersSortByTalent(players);
+      playersSortByRoleAndTalent(players);
     });
     setUnassignedPlayers(unassigned);
 
@@ -114,7 +114,7 @@ function useRaidChange(
       }, {} as Record<PlayerUserName, PlayersData>);
 
     Object.values(reserves).forEach((players) => {
-      playersSortByTalent(players);
+      playersSortByRoleAndTalent(players);
     });
     setReservesPlayers(reserves);
   }, [innerPlayers, groupTimeKey]);

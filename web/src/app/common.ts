@@ -1,3 +1,4 @@
+import { RoleType } from "./components/Role";
 import { TalentType } from "./constant";
 
 export const hiddenButtonClass = "[.hidden-button_&]:hidden";
@@ -49,3 +50,5 @@ export const ACTOR_ORDER: TalentType[] = [
   "SM",
   "ND",
 ];
+
+export const ROLE_ORDER: RoleType[] = ["TANK", "DPS", "HEALER"];
