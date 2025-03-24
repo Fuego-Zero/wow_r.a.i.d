@@ -52,5 +52,5 @@ export enum TalentMap {
 export enum AssignmentMap {
   TANK = 'TANK',
   DPS = 'DPS',
-  HEAL = 'HEAL',
+  HEALER = 'HEALER',
 }
