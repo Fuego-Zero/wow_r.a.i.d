@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-import { RoleClassesMap, TalentMap } from '../common';
+import { AssignmentMap, RoleClassesMap, TalentMap } from '../common';
 import { RoleId, ScheduleId, UserId } from '../types';
 import RaidTime from './RaidTime';
 
@@ -52,6 +52,10 @@ export interface ISchedule extends Document<ScheduleId> {
    * 是否发布
    */
   is_publish: boolean;
+  /**
+   * 分配职责
+   */
+  assignment: AssignmentMap;
 
   /**
    * 创建时间
@@ -114,6 +118,11 @@ const schema = new Schema<ISchedule>(
     is_publish: {
       type: Boolean,
       default: false,
+    },
+    assignment: {
+      type: String,
+      required: true,
+      enum: AssignmentMap,
     },
 
     create_time: {

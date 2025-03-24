@@ -13,6 +13,7 @@ interface SchedulePlayer
     | 'group_time_key'
     | 'group_time_order'
     | 'group_title'
+    | 'assignment'
   > {
   /**
    * 是否已安排

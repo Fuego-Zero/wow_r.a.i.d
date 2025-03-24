@@ -48,3 +48,9 @@ export enum TalentMap {
   KBZ = 'KBZ', // 狂暴战
   FZ = 'FZ', // 防战
 }
+
+export enum AssignmentMap {
+  TANK = 'TANK',
+  DPS = 'DPS',
+  HEAL = 'HEAL',
+}

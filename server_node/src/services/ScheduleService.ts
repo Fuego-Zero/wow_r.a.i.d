@@ -1,5 +1,6 @@
 import { BizException } from '@yfsdk/web-basic-library';
 
+import { AssignmentMap } from '../common';
 import { IGetScheduleResponse, ISaveScheduleBody } from '../interfaces/ISchedule';
 import GroupInfo, { IGroupInfo } from '../models/GroupInfo';
 import RaidTime, { IRaidTime } from '../models/RaidTime';
@@ -51,6 +52,7 @@ class ScheduleService {
         user_name: player.user_name,
 
         is_scheduled: true,
+        assignment: player.assignment,
 
         group_time_key: player.group_time_key,
         group_time_order: player.group_time_order,
@@ -70,6 +72,7 @@ class ScheduleService {
         user_name: record.user_name,
 
         is_scheduled: false,
+        assignment: AssignmentMap.DPS, //* 默认职责全部是DPS
 
         group_time_key: '',
         group_time_order: -1,
@@ -142,6 +145,7 @@ class ScheduleService {
       group_time_key: item.group_time_key,
       group_time_order: groupInfoMap[item.group_time_key].order,
       group_title: groupInfoMap[item.group_time_key].title,
+      assignment: item.assignment,
       create_time: new Date(),
     }));
 
@@ -173,6 +177,7 @@ class ScheduleService {
       user_name: player.user_name,
 
       is_scheduled: true,
+      assignment: player.assignment,
 
       group_time_key: player.group_time_key,
       group_time_order: player.group_time_order,
