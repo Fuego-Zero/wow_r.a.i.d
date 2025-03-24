@@ -23,7 +23,7 @@ function Nameplate(props: Props) {
   }, [role_name, user_name]);
 
   return (
-    <div className={classNames("flex items-center", className)}>
+    <div className={classNames("flex items-center min-w-0", className)}>
       <Actor actor={talent} />
       <Players classes={classes}>
         <Tooltip title={innerName}>{innerName}</Tooltip>
