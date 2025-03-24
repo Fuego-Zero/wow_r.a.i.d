@@ -85,4 +85,5 @@ export type Handler = {
     group_time_key: GroupTimeKey,
     group_title: GroupTitle
   ) => Promise<void>;
+  changeCharacterRole: (roleId: GroupTimeKey, role: RoleType) => Promise<void>;
 };

@@ -1,15 +1,52 @@
 import { CloseOutlined } from "@ant-design/icons";
-import { Button, Card } from "antd";
+import { Button, Card, Dropdown, MenuProps } from "antd";
 import React from "react";
 import Empty from "./Empty";
 import Nameplate from "@/app/player/components/Nameplate";
 import classNames from "classnames";
 import { convertToMatrixIndex } from "../utils";
 import { RaidPlayerCardsProps } from "../types";
-import Role from "@/app/components/Role";
+import Role, { RoleType } from "@/app/components/Role";
+
+const items: MenuProps["items"] = [
+  {
+    label: (
+      <div className="flex items-center space-x-2">
+        <Role role="TANK" />
+        <span>坦克</span>
+      </div>
+    ),
+    key: "TANK",
+  },
+  {
+    label: (
+      <div className="flex items-center space-x-2">
+        <Role role="DPS" />
+        <span>输出</span>
+      </div>
+    ),
+    key: "DPS",
+  },
+  {
+    label: (
+      <div className="flex items-center space-x-2">
+        <Role role="HEALER" />
+        <span>治疗</span>
+      </div>
+    ),
+    key: "HEALER",
+  },
+];
 
 function DesktopRaidCard(props: RaidPlayerCardsProps) {
-  const { data, displayMode, delPlayer, selectPlayer, players } = props;
+  const {
+    data,
+    displayMode,
+    delPlayer,
+    selectPlayer,
+    changeCharacterRole,
+    players,
+  } = props;
 
   return (
     <div className="hidden md:flex md:flex-wrap">
@@ -36,10 +73,26 @@ function DesktopRaidCard(props: RaidPlayerCardsProps) {
                 user_name={item.user_name}
                 talent={item.talent}
               />
-              <Role
-                className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/3"
-                role={item.assignment}
-              />
+
+              <Dropdown
+                menu={{
+                  items,
+                  selectable: true,
+                  defaultSelectedKeys: [item.assignment],
+                  onClick: ({ key }) => {
+                    changeCharacterRole?.(item.role_id, key as RoleType);
+                  },
+                }}
+                destroyPopupOnHide
+                trigger={["contextMenu"]}
+              >
+                <div>
+                  <Role
+                    className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/3"
+                    role={item.assignment}
+                  />
+                </div>
+              </Dropdown>
 
               {!displayMode && (
                 <Button

@@ -31,6 +31,7 @@ import AppHeader from "./component/AppHeader";
 import useRaidChange from "./hooks/useRaidChange";
 import BaseProvider from "../components/common/BaseProvider";
 import useUnassignedPlayers from "./hooks/useUnassignedPlayers";
+import { RoleType } from "../components/Role";
 
 function ScheduleContent() {
   const { isAdmin } = useAuth();
@@ -178,6 +179,17 @@ function ScheduleContent() {
     [openSelectModal, playersData, raidTimeOrderMap]
   );
 
+  const changeCharacterRole = useCallback(
+    async (roleId: PlayerData["role_id"], role: RoleType) => {
+      playersData.forEach((item) => {
+        if (item.role_id !== roleId) return;
+        item.assignment = role;
+      });
+      setDataHandler([...playersData]);
+    },
+    [playersData]
+  );
+
   const showAdvancedBtn = useMemo(() => {
     return raidData.length > 0;
   }, [raidData]);
@@ -242,6 +254,7 @@ function ScheduleContent() {
             delPlayer={delPlayer}
             selectPlayer={selectPlayer}
             rosterPlayer={rosterPlayer}
+            changeCharacterRole={changeCharacterRole}
           />
         </Layout.Content>
       </Layout>
