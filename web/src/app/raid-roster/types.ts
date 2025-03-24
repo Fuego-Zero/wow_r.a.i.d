@@ -1,5 +1,6 @@
 import { InferArrayItem } from "@yfsdk/web-basic-library";
 import { RoleClasses, TalentType } from "../constant";
+import { RoleType } from "../components/Role";
 
 /**
  * 团队成员数据
@@ -54,6 +55,7 @@ export type PlayersData = {
    * 是否已经安排
    */
   is_scheduled: boolean;
+  assignment: RoleType;
 
   /**
    * 安排的参团时间的key
