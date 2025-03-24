@@ -4,7 +4,7 @@ import React, { memo, useMemo } from "react";
 enum RoleMap {
   TANK = "TANK",
   DPS = "DPS",
-  HEAL = "HEAL",
+  HEALER = "HEALER",
 }
 
 export type RoleType = keyof typeof RoleMap;
@@ -19,7 +19,7 @@ type Props = {
 const IMAGES = {
   TANK: "/images/roles/TANK.png",
   DPS: "/images/roles/DPS.png",
-  HEAL: "/images/roles/HEAL.png",
+  HEALER: "/images/roles/HEAL.png",
 };
 
 function Role(props: Props) {
