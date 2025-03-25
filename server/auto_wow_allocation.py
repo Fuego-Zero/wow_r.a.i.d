@@ -134,7 +134,14 @@ def load_players_from_db():
     }
 
     # 一次批量查询所有有效报名记录
-    signup_records = signup_collection.find({"delete_time": None})
+    # signup_records = signup_collection.find({"delete_time": None})
+    cycle_start, cycle_end = get_cycle_start_end()
+    signup_records = signup_collection.find({
+        "$and": [
+            {"delete_time": None},
+            {"create_time": {"$gte": cycle_start, "$lte": cycle_end}}
+        ]
+    })
 
     # 记录所有有效用户ID，之后一次性进行查询
     user_ids_set = set()
@@ -204,6 +211,27 @@ def load_players_from_db():
     return players
 
 
+# 计算当前时间所在的周期的开始时间和结束时间
+def get_cycle_start_end():
+    now = datetime.datetime.now()
+    # 获取当前时间是星期几（星期一为0，星期二为1，...星期日为6）
+    weekday = now.weekday()
+
+    # 计算周期的开始时间（周期以周二开始）
+    if weekday >= 1:  # 当前时间是周二及以后的日子
+        cycle_start = now - datetime.timedelta(days=weekday - 1)
+    else:  # 当前时间是周一
+        cycle_start = now - datetime.timedelta(days=6)
+
+    # 周二 00:00:00
+    cycle_start = cycle_start.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    # 计算周期的结束时间（下周一 23:59:59）
+    cycle_end = cycle_start + datetime.timedelta(days=6, hours=23, minutes=59, seconds=59)
+
+    return cycle_start, cycle_end
+
+
 # 在第一次排团开始前构建本次CD周期总角色池
 def build_cd_role_pool(players):
     role_pool = dict()
@@ -217,7 +245,7 @@ def parse_available_times(available_str):
     time_map = {
         '周四': ['周四-19:30', '周四-20:30', '周四-21:30'],
         '周五': ['周五-19:30', '周五-20:30', '周五-21:30'],
-        '周六': ['周六-19:30', '周六-20:30'],
+        '周六': ['周六-19:30', '周六-20:30', '周六-21:30'],
         '周日': ['周日-19:30', '周日-20:30'],
         '周一': ['周一-19:30', '周一-20:30']
     }
@@ -600,11 +628,11 @@ def roster():
     players = load_players_from_db()
     cd_role_pool = build_cd_role_pool(players)
 
-    time_slots = ["周四-19:30", "周四-20:30", "周四-21:30",
+    time_slots = ["周一-19:30", "周一-20:30",
+                  "周四-19:30", "周四-20:30", "周四-21:30",
                   "周五-19:30", "周五-20:30", "周五-21:30",
-                  "周六-19:30", "周六-20:30",
-                  "周日-19:30", "周日-20:30",
-                  "周一-19:30", "周一-20:30"]
+                  "周六-19:30", "周六-20:30", "周六-21:30",
+                  "周日-19:30", "周日-20:30"]
 
     required_players_level = [
         ["炸酱面", "薄荷", "古子哥", "戴森", "大力", "伊欧玟", "故事", "悠妮"],
@@ -618,7 +646,7 @@ def roster():
     time_key_map = {
         "周四-19:30": "4-1", "周四-20:30": "4-2", "周四-21:30": "4-3",
         "周五-19:30": "5-1", "周五-20:30": "5-2", "周五-21:30": "5-3",
-        "周六-19:30": "6-1", "周六-20:30": "6-2",
+        "周六-19:30": "6-1", "周六-20:30": "6-2", "周六-21:30": "6-3",
         "周日-19:30": "7-1", "周日-20:30": "7-2",
         "周一-19:30": "1-1", "周一-20:30": "1-2",
     }
@@ -627,9 +655,9 @@ def roster():
     day_order_map = {
         "4-1": 0, "4-2": 1, "4-3": 2,
         "5-1": 3, "5-2": 4, "5-3": 5,
-        "6-1": 6, "6-2": 7,
-        "7-1": 8, "7-2": 9,
-        "1-1": 10, "1-2": 11,
+        "6-1": 6, "6-2": 7, "6-3": 8,
+        "7-1": 9, "7-2": 10,
+        "1-1": 11, "1-2": 12,
     }
 
     schedule_coll = db["schedule"]
@@ -639,7 +667,14 @@ def roster():
     user_coll = db["user"]
 
     # 一次性全量查询缓存数据，避免循环中逐条检索数据库
-    signup_records_cursor = signup_coll.find({"delete_time": None})
+    # signup_records_cursor = signup_coll.find({"delete_time": None})
+    cycle_start, cycle_end = get_cycle_start_end()
+    signup_records_cursor = signup_coll.find({
+        "$and": [
+            {"delete_time": None},
+            {"create_time": {"$gte": cycle_start, "$lte": cycle_end}}
+        ]
+    })
     user_records_cursor = user_coll.find({})
 
     # 缓存signup_record: (user_name, role_name) -> signup数据
