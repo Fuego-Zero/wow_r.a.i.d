@@ -24,22 +24,17 @@ function MobileRaidCard(props: RaidPlayerCardsProps) {
                 order: convertToMatrixIndex(index),
               }}
               className={classNames(
-                "flex relative items-center justify-start py-1 px-1 min-w-0 w-[20%] min-h-[70px]"
-                // {
-                //   "bg-amber-300/20": item.name === "空缺", //todo 未来针对暂缺情况的样式
-                // }
+                "flex relative items-center justify-start py-1 px-1 min-w-0 w-[20%] min-h-[70px]",
+                {
+                  "bg-amber-300/20": !item.role_id,
+                }
               )}
             >
               {item.role_id ? (
                 <div className="flex flex-col items-center justify-center w-full h-full space-y-1">
                   <div className="h-[18px] w-full flex items-center justify-between">
                     <Actor className="left-[-9px]" actor={item.talent} />
-                    <Role
-                      className=""
-                      width={18}
-                      height={18}
-                      role={item.assignment}
-                    />
+                    <Role width={18} height={18} role={item.assignment} />
                   </div>
                   <Players classes={item.classes}>
                     <span className="truncate text-[12px]">
