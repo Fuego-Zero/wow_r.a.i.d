@@ -167,7 +167,7 @@ class SignupRecordService {
       }))
       .filter((record) => record.play_time.length > 0);
 
-    // 批量创建记录
+    //* 批量创建记录
     const createdRecords = await SignupRecord.insertMany(recordsToCreate);
 
     return createdRecords.length;
