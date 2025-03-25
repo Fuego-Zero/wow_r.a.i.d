@@ -21,6 +21,20 @@ function AppTitle(props: { title: string; subTitle: string }) {
     );
   }, []);
 
+  function onToggleBGM() {
+    if (!bgmEl.current) return;
+
+    if (localStorage.getItem("BGM") === "0") {
+      localStorage.setItem("BGM", "1");
+      bgmEl.current.muted = false;
+      bgmEl.current.play();
+    } else {
+      localStorage.setItem("BGM", "0");
+      bgmEl.current.muted = true;
+      bgmEl.current.pause();
+    }
+  }
+
   return (
     <>
       <Image
@@ -30,6 +44,7 @@ function AppTitle(props: { title: string; subTitle: string }) {
         height={50}
         className="mr-2"
         priority
+        onClick={onToggleBGM}
       />
       <h1 className="flex items-end flex-1 truncate min-w-[160px] space-x-2">
         <span className="text-base sm:text-lg md:text-xl lg:text-2xl text-amber-50">
