@@ -95,24 +95,28 @@ function RaidCard(props: RaidCardProps) {
     return (
       <div className="flex items-center space-x-2">
         <span>{data.group_title}</span>
-        <Role role="TANK" />
-        <span>坦克</span>
-        <span>{roleMap.get("TANK")?.length}</span>
-        <span className="text-neutral-400">
-          (<span style={{ color: getWClColor(TANK_AVG) }}>{TANK_AVG}</span>)
-        </span>
-        <Role role="DPS" />
-        <span>输出</span>
-        <span>{roleMap.get("DPS")?.length}</span>
-        <span className="text-neutral-400">
-          (<span style={{ color: getWClColor(DPS_AVG) }}>{DPS_AVG}</span>)
-        </span>
-        <Role role="HEALER" />
-        <span>治疗</span>
-        <span>{roleMap.get("HEALER")?.length}</span>
-        <span className="text-neutral-400">
-          (<span style={{ color: getWClColor(HEALER_AVG) }}>{HEALER_AVG}</span>)
-        </span>
+        <div className="flex items-center space-x-0.5 md:space-x-2 text-[12px] md:text-[14px]">
+          <Role role="TANK" />
+          <span>坦克</span>
+          <span>{roleMap.get("TANK")?.length}</span>
+          <span className="text-neutral-400">
+            (<span style={{ color: getWClColor(TANK_AVG) }}>{TANK_AVG}</span>)
+          </span>
+          <Role role="DPS" />
+          <span>输出</span>
+          <span>{roleMap.get("DPS")?.length}</span>
+          <span className="text-neutral-400">
+            (<span style={{ color: getWClColor(DPS_AVG) }}>{DPS_AVG}</span>)
+          </span>
+          <Role role="HEALER" />
+          <span>治疗</span>
+          <span>{roleMap.get("HEALER")?.length}</span>
+          <span className="text-neutral-400">
+            (
+            <span style={{ color: getWClColor(HEALER_AVG) }}>{HEALER_AVG}</span>
+            )
+          </span>
+        </div>
       </div>
     );
   }
