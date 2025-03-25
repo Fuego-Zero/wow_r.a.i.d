@@ -1,8 +1,9 @@
 import { Col, Row, Spin } from "antd";
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { Handler, RaidData } from "../../types";
 import dynamic from "next/dynamic";
 import RaidCard from "./components/RaidCard";
+import { usePathname } from "next/navigation";
 const ScrollWrap = dynamic(() => import("@/app/components/common/ScrollWrap"), {
   ssr: false,
 });
@@ -15,13 +16,22 @@ function RaidContent(
   } & Partial<Handler>
 ) {
   const { loading, data, ...rest } = props;
+  const pathname = usePathname();
+
+  const text = useMemo(
+    () =>
+      pathname === "/raid-roster"
+        ? "当前 CD 还未排班，请尽快编排！"
+        : "当前 CD 排班表还未发布，尽情期待！",
+    [pathname]
+  );
 
   if (loading) return <Spin size="large" fullscreen tip="数据加载中..."></Spin>;
 
   if (data.length === 0) {
     return (
-      <div className="text-center text-amber-50 mt-[30vh] text-4xl">
-        当前CD排班表还未发布，尽情期待！
+      <div className="text-center text-amber-50 mt-[30vh] text-4xl p-x-5">
+        {text}
       </div>
     );
   } else {
