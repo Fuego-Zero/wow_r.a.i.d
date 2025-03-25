@@ -40,7 +40,7 @@ function AppTitle(props: { title: string; subTitle: string }) {
       <audio
         hidden
         ref={bgmEl}
-        src="/audio/曹万江 - 你要结婚了(正式版).mp3"
+        src="/audio/曹万江 - 你要结婚了.mp3"
         autoPlay
         loop
         muted
