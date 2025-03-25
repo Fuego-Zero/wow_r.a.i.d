@@ -5,7 +5,8 @@
     "serve": "set NODE_ENV=production&& node ./dist/server.js",
     "dev": "nodemon ./src/server.ts",
     "debug": "set NODE_ENV=development&& set SIGN_CHECK_TIME=false&& set SIGN_CHECK=false&& nodemon --inspect=5858 -e ts --exec node -r ts-node/register ./src/server.ts",
-    "build": "tsc",
+    "build": "rimraf dist && tsc",
+    "bp": "yarn build && cd ../deploy && yarn run p-s-node",
     "test-ts": "ts-node ./src/server.ts",
     "lint": "eslint . --fix --ignore-path .gitignore"
   },
@@ -37,6 +38,7 @@
     "@types/node": "22.13.10",
     "@yfsdk/configs": "0.9.2",
     "nodemon": "3.1.9",
+    "rimraf": "6.0.1",
     "ts-node": "10.9.2",
     "typescript": "5.8.2"
   }
