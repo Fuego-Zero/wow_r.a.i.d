@@ -2,10 +2,13 @@ import { App, Button, Card } from "antd";
 import React, { memo, useMemo, useRef, useState } from "react";
 
 import { toPng } from "html-to-image";
-import { htmlToPngDownload } from "@/app/utils";
-import { Player, RaidCardProps } from "./types";
+import { getWClColor, htmlToPngDownload } from "@/app/utils";
+import { RaidCardProps } from "./types";
 import DesktopRaidCard from "./components/DesktopRaidCard";
 import MobileRaidCard from "./components/MobileRaidCard";
+import Role, { RoleType } from "@/app/components/Role";
+import { PlayerData, PlayersData } from "@/app/raid-roster/types";
+import useWCLRanks from "@/app/raid-roster/hooks/useWCLRanks";
 
 function RaidCard(props: RaidCardProps) {
   const { data, displayMode, rosterPlayer } = props;
@@ -55,15 +58,69 @@ function RaidCard(props: RaidCardProps) {
   const innerPlayers = useMemo(() => {
     const empty = Array.from({
       length: 25,
-    }).fill({}) as Player[];
+    }).fill({}) as PlayersData;
 
     return data.players.concat(empty).slice(0, 25);
   }, [data.players]);
 
+  const { getWCLRank } = useWCLRanks();
+
+  function calcAvg(players: PlayerData[]) {
+    const total = players.reduce((acc, player) => {
+      const rank = getWCLRank(player.role_name, player.talent[0]);
+      if (!rank) return acc;
+
+      return acc + rank.average_rank_percent;
+    }, 0);
+    return total / players.length;
+  }
+
+  function Title() {
+    const roleMap = innerPlayers.reduce(
+      (acc, player) => {
+        acc.get(player.assignment)?.push(player);
+        return acc;
+      },
+      new Map<RoleType, PlayersData>([
+        ["TANK", []],
+        ["DPS", []],
+        ["HEALER", []],
+      ])
+    );
+
+    const TANK_AVG = Number(calcAvg(roleMap.get("TANK")!).toFixed(2));
+    const DPS_AVG = Number(calcAvg(roleMap.get("DPS")!).toFixed(2));
+    const HEALER_AVG = Number(calcAvg(roleMap.get("HEALER")!).toFixed(2));
+
+    return (
+      <div className="flex items-center space-x-2">
+        <span>{data.group_title}</span>
+        <Role role="TANK" />
+        <span>坦克</span>
+        <span>{roleMap.get("TANK")?.length}</span>
+        <span className="text-neutral-400">
+          (<span style={{ color: getWClColor(TANK_AVG) }}>{TANK_AVG}</span>)
+        </span>
+        <Role role="DPS" />
+        <span>输出</span>
+        <span>{roleMap.get("DPS")?.length}</span>
+        <span className="text-neutral-400">
+          (<span style={{ color: getWClColor(DPS_AVG) }}>{DPS_AVG}</span>)
+        </span>
+        <Role role="HEALER" />
+        <span>治疗</span>
+        <span>{roleMap.get("HEALER")?.length}</span>
+        <span className="text-neutral-400">
+          (<span style={{ color: getWClColor(HEALER_AVG) }}>{HEALER_AVG}</span>)
+        </span>
+      </div>
+    );
+  }
+
   return (
     <Card
       size="small"
-      title={data.group_title}
+      title={<Title />}
       className="group/RaidCard [&_.ant-card-body]:p-[6px] md:[&_.ant-card-body]:p-[12px]"
       extra={
         !hideBtn && (
