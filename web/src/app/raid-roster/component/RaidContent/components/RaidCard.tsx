@@ -64,7 +64,7 @@ function RaidCard(props: RaidCardProps) {
     <Card
       size="small"
       title={data.group_title}
-      className="group/RaidCard"
+      className="group/RaidCard [&_.ant-card-body]:p-[6px] md:[&_.ant-card-body]:p-[12px]"
       extra={
         !hideBtn && (
           <div className="group-hover/RaidCard:block hidden">
