@@ -214,20 +214,20 @@ def load_players_from_db():
 # 计算当前时间所在的周期的开始时间和结束时间
 def get_cycle_start_end():
     now = datetime.datetime.utcnow()
-    # 获取当前时间是星期几（星期一为0，星期二为1，...星期日为6）
+
+    # 当前时间是星期几（星期一为0，星期二为1，...星期日为6）
     weekday = now.weekday()
 
-    # 计算周期的开始时间（周期以周二开始）
-    if weekday >= 1:  # 当前时间是周二及以后的日子
-        cycle_start = now - datetime.timedelta(days=weekday - 1)
-    else:  # 当前时间是周一
-        cycle_start = now - datetime.timedelta(days=6)
-
-    # 周二 00:00:00
-    cycle_start = cycle_start.replace(hour=0, minute=0, second=0, microsecond=0)
-
-    # 计算周期的结束时间（下周一 23:59:59）
-    cycle_end = cycle_start + datetime.timedelta(days=6, hours=23, minutes=59, seconds=59)
+    # 计算周期的开始时间（周期以周一 16:00 开始）
+    if weekday == 0 and now.hour >= 16:  # 当前时间是周一 16:00及以后
+        cycle_start = now.replace(hour=16, minute=0, second=0, microsecond=0)
+    else:  # 当前时间是其他时间
+        # 计算最近的周一 16:00
+        days_to_monday = (weekday + 7 - 0) % 7  # 距离最近周一的天数
+        cycle_start = (now - datetime.timedelta(days=days_to_monday)).replace(hour=16, minute=0, second=0,
+                                                                              microsecond=0)
+    # 计算周期的结束时间（下周一 15:59:59）
+    cycle_end = cycle_start + datetime.timedelta(days=7) - datetime.timedelta(seconds=1)
 
     return cycle_start, cycle_end
 
