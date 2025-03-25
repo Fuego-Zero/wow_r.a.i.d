@@ -11,8 +11,8 @@ export const getRaidDateRange = (now?: Date) => {
 
   const perv = (currentDay - 2 + 7) % 7;
 
-  const startDate = dayjs(now).subtract(perv, 'd').startOf('d');
-  const endDate = dayjs(startDate).add(6, 'd').endOf('d');
+  const startDate = dayjs(now).subtract(perv, 'd').startOf('d').add(8, 'hour');
+  const endDate = dayjs(startDate).add(6, 'd').endOf('d').add(8, 'hour');
 
   return {
     startDate: startDate.toDate(),
