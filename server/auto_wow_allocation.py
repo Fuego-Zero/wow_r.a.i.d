@@ -213,7 +213,7 @@ def load_players_from_db():
 
 # 计算当前时间所在的周期的开始时间和结束时间
 def get_cycle_start_end():
-    now = datetime.datetime.now()
+    now = datetime.datetime.utcnow()
     # 获取当前时间是星期几（星期一为0，星期二为1，...星期日为6）
     weekday = now.weekday()
 
