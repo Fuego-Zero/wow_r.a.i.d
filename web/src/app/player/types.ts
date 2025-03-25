@@ -97,8 +97,20 @@ export type SignupRecord = {
 };
 
 export type WCLRank = {
+  /**
+   * 角色名
+   */
   role_name: string;
+  /**
+   * 天赋
+   */
   talent: TalentType;
+  /**
+   * 平均排名百分比
+   */
   average_rank_percent: number;
+  /**
+   * 服务器排名
+   */
   server_rank: number;
 };
