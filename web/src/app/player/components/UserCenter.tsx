@@ -1,4 +1,4 @@
-import { App, Card, Col, Row, Tag } from "antd";
+import { App, Card, Col, Row, Tag, Tooltip } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/authContext";
 import BindRole from "./BindRole";
@@ -107,19 +107,23 @@ function UserCenter() {
                     className="flex-1"
                   />
                   <div className="space-x-2 ml-2">
-                    <SyncOutlined
-                      onClick={() => {
-                        syncWCL(role.role_name);
-                      }}
-                    />
-                    <SolutionOutlined
-                      className=""
-                      onClick={() => {
-                        window.open(
-                          `https://cn.classic.warcraftlogs.com/character/cn/法琳娜/${role.role_name}`
-                        );
-                      }}
-                    />
+                    <Tooltip title="同步WCL">
+                      <SyncOutlined
+                        onClick={() => {
+                          syncWCL(role.role_name);
+                        }}
+                      />
+                    </Tooltip>
+                    <Tooltip title="查看WCL">
+                      <SolutionOutlined
+                        className=""
+                        onClick={() => {
+                          window.open(
+                            `https://cn.classic.warcraftlogs.com/character/cn/法琳娜/${role.role_name}`
+                          );
+                        }}
+                      />
+                    </Tooltip>
                     {signupRecordSet.has(role.id) && !schedule.get(role.id) && (
                       <Tag color="cyan" className="mr-0">
                         已报名
