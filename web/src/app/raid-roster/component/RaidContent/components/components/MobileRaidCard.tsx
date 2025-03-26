@@ -37,7 +37,7 @@ function MobileRaidCard(props: RaidPlayerCardsProps) {
                     <Role width={18} height={18} role={item.assignment} />
                   </div>
                   <Players classes={item.classes}>
-                    <span className="truncate text-[12px]">
+                    <span className="truncate text-[12px] w-full">
                       {item.role_name}
                     </span>
                   </Players>
