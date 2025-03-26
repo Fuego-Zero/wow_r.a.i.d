@@ -101,11 +101,14 @@ function useUnassignedPlayers(
               {Object.entries(unassignedPlayers).map(
                 ([user_name, players], index) => {
                   const assigned = assignedPlayers[user_name] ?? [];
+                  const assignedTime = assigned.map(
+                    (player) => player.group_time_key
+                  );
 
                   return (
                     <Col span={24} key={index}>
                       <Row>
-                        <Col span={2}>
+                        <Col span={3}>
                           {user_name}
                           <span
                             className="mx-1 text-blue-400"
@@ -117,9 +120,10 @@ function useUnassignedPlayers(
                           <PlayTime
                             play_time={players[0].play_time}
                             className="ml-1"
+                            highlightTime={assignedTime}
                           />
                         </Col>
-                        <Col span={22}>
+                        <Col span={21}>
                           <Row gutter={[4, 4]}>
                             {players.map((player, index) => {
                               return (
