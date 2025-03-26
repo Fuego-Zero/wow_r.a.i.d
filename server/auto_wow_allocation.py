@@ -123,6 +123,9 @@ def load_players_from_db():
     signup_collection = db["signup_record"]
     user_collection = db["user"]
     group_info_collection = db["group_info"]
+    role_collection = db["role"]
+
+    banned_roles_set = {role["role_name"] for role in role_collection.find({"disable_schedule": True})}
 
     # Talent 英文缩写到中文职业名的映射
     talent_enum_to_class = {e.name: e.value for e in ActorMap}
@@ -151,6 +154,9 @@ def load_players_from_db():
         user_name = signup.get("user_name")
         role_name = signup.get("role_name")
         talents = signup.get("talent", [])
+
+        if role_name in banned_roles_set:
+            continue  # 跳过禁用的角色
 
         # 解析有效职业（过滤无效天赋）
         valid_classes = {
@@ -665,6 +671,8 @@ def roster():
 
     signup_coll = db["signup_record"]
     user_coll = db["user"]
+    role_coll = db["role"]
+    banned_roles_set = {role["role_name"] for role in role_coll.find({"disable_schedule": True})}
 
     # 一次性全量查询缓存数据，避免循环中逐条检索数据库
     # signup_records_cursor = signup_coll.find({"delete_time": None})
@@ -680,6 +688,9 @@ def roster():
     # 缓存signup_record: (user_name, role_name) -> signup数据
     signup_cache = {}
     for signup in signup_records_cursor:
+        role_name = signup.get("role_name")
+        if role_name in banned_roles_set:
+            continue
         key = (signup["user_name"], signup["role_name"])
         signup_cache[key] = signup
 
