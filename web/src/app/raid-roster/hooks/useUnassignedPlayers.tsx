@@ -51,6 +51,19 @@ function useUnassignedPlayers(
     return grouped;
   }, [enableTalentSelect, players, selectedActor]);
 
+  const assignedPlayers = useMemo(() => {
+    const grouped = players
+      .filter((player) => player.is_scheduled)
+      .reduce((acc, player) => {
+        const { user_name } = player;
+        acc[user_name] ??= [];
+        acc[user_name].push(player);
+        return acc;
+      }, {} as Record<PlayerUserName, PlayerData[]>);
+
+    return grouped;
+  }, [players]);
+
   const Holder = (
     <Modal
       title={
@@ -87,11 +100,20 @@ function useUnassignedPlayers(
             <Row align="middle" className="!mx-0" gutter={[4, 4]}>
               {Object.entries(unassignedPlayers).map(
                 ([user_name, players], index) => {
+                  const assigned = assignedPlayers[user_name] ?? [];
+
                   return (
                     <Col span={24} key={index}>
                       <Row>
                         <Col span={2}>
                           {user_name}
+                          <span
+                            className="mx-1 text-blue-400"
+                            title="已安排/总数"
+                          >
+                            ({assigned.length}/
+                            {assigned.length + players.length})
+                          </span>
                           <PlayTime
                             play_time={players[0].play_time}
                             className="ml-1"
