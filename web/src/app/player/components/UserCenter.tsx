@@ -86,7 +86,7 @@ function UserCenter() {
   }
 
   return (
-    <Row justify="center" className="!mx-0 mt-5" gutter={[16, 16]}>
+    <Row justify="center" className="max-md:!mx-0 mt-5" gutter={[16, 16]}>
       <Col span={24}>
         <Card
           title={`用户名：${userInfo?.user_name}`}

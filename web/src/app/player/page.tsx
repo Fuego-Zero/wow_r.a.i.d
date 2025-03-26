@@ -17,7 +17,7 @@ function PlayerContent() {
       <Layout.Header>
         <Header />
       </Layout.Header>
-      <Layout.Content className="min-w-0">
+      <Layout.Content className="min-w-0 max-w-[600px] mx-auto">
         <Spin spinning={isLoading}>
           {!isLoading && <>{isLogin ? <UserCenter /> : <Login />}</>}
         </Spin>

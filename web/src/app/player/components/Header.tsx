@@ -8,7 +8,7 @@ export const Header = () => {
   const { isLogin } = useAuth();
 
   return (
-    <div className="flex items-center h-full">
+    <div className="flex items-center h-full max-w-[600px] mx-auto">
       <AppTitle title="个人中心" subTitle="" />
       {isLogin ? <AppUserMenu /> : <AppPublicMenu />}
     </div>
