@@ -13,7 +13,7 @@ import RaidCard from "./components/RaidCard";
 import { usePathname } from "next/navigation";
 import { TalentType } from "@/app/constant";
 
-import "./style.module.scss";
+import style from "./style.module.scss";
 import classNames from "classnames";
 
 const ScrollWrap = dynamic(() => import("@/app/components/common/ScrollWrap"), {
@@ -89,7 +89,7 @@ function RaidContent(
   } else {
     return (
       <ScrollWrap
-        className={classNames({
+        className={classNames(style.RaidContent, {
           [highlightTalent.map((item) => `highlight-${item}`).join(" ")]:
             isShowHighlight,
         })}
