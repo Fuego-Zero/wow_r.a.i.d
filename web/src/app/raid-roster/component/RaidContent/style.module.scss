@@ -1,0 +1,37 @@
+$talent: "FQ", "CJQ", "NQ", "XDK", "DKT", "BDK", "DS", "NS", "ZQS", "AM", "JLM",
+  "SM", "HF", "BF", "AF", "EMS", "TKS", "HMS", "SWL", "SCL", "SJL", "CSZ", "ZDZ",
+  "MRZ", "AC", "ND", "XT", "YD", "WQZ", "KBZ", "FZ";
+
+@function get-class-color($spec) {
+  @if $spec == "FQ" or $spec == "CJQ" or $spec == "NQ" {
+    @return #f48cba;
+  } @else if $spec == "DKT" or $spec == "XDK" or $spec == "BDK" {
+    @return #c41e3a;
+  } @else if $spec == "DS" or $spec == "NS" or $spec == "ZQS" {
+    @return #0070dd;
+  } @else if $spec == "AM" or $spec == "JLM" or $spec == "SM" {
+    @return #ffffff;
+  } @else if $spec == "HF" or $spec == "BF" or $spec == "AF" {
+    @return #3fc7eb;
+  } @else if $spec == "EMS" or $spec == "TKS" or $spec == "HMS" {
+    @return #8788ee;
+  } @else if $spec == "SWL" or $spec == "SCL" or $spec == "SJL" {
+    @return #aad372;
+  } @else if $spec == "CSZ" or $spec == "ZDZ" or $spec == "MRZ" {
+    @return #fff468;
+  } @else if $spec == "AC" or $spec == "ND" or $spec == "XT" or $spec == "YD" {
+    @return #ff7c0a;
+  } @else if $spec == "WQZ" or $spec == "KBZ" or $spec == "FZ" {
+    @return #c69b6d;
+  } @else {
+    @return rgb(128, 128, 128);
+  }
+}
+
+@each $class in $talent {
+  $color: get-class-color($class);
+
+  :global(.highlight-#{$class}) :global(.#{$class}) {
+    box-shadow: inset 0 0 15px 0px #{$color};
+  }
+}

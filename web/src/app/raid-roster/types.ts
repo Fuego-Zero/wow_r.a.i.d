@@ -86,4 +86,5 @@ export type Handler = {
     group_title: GroupTitle
   ) => Promise<void>;
   changeCharacterRole: (roleId: GroupTimeKey, role: RoleType) => Promise<void>;
+  hoverTalent: (talent: TalentType[]) => void;
 };

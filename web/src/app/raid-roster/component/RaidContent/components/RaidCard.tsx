@@ -55,10 +55,12 @@ function RaidCard(props: RaidCardProps) {
     setHideBtn(false);
   }
 
-  const innerPlayers = useMemo(() => {
+  const innerPlayers = useMemo<PlayersData>(() => {
     const empty = Array.from({
       length: 25,
-    }).fill({}) as PlayersData;
+    }).fill({
+      talent: [],
+    }) as PlayersData;
 
     return data.players.concat(empty).slice(0, 25);
   }, [data.players]);
