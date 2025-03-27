@@ -2,7 +2,7 @@ import Actor from "@/app/components/Actor";
 import Players from "@/app/components/Players";
 import { RoleClasses, TalentType } from "@/app/constant";
 import classNames from "classnames";
-import React, { useMemo } from "react";
+import React, { memo, useMemo } from "react";
 import WCL from "./WCL";
 import { Tooltip } from "antd";
 
@@ -33,4 +33,4 @@ function Nameplate(props: Props) {
   );
 }
 
-export default Nameplate;
+export default memo(Nameplate);
