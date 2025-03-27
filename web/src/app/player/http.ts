@@ -38,7 +38,7 @@ const baseURL =
 
 const http = axios.create({
   baseURL,
-  timeout: 3000,
+  timeout: 30000,
 });
 
 //* 排除url
