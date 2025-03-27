@@ -46,6 +46,7 @@ function DesktopRaidCard(props: RaidPlayerCardsProps) {
     selectPlayer,
     changeCharacterRole,
     players,
+    hoverTalent,
   } = props;
 
   return (
@@ -61,8 +62,15 @@ function DesktopRaidCard(props: RaidPlayerCardsProps) {
             "flex relative items-center justify-start py-1 px-1 min-w-0 w-[20%] min-h-[52px] group/delPlayer",
             {
               "bg-amber-300/20": !item.role_id,
-            }
+            },
+            item.talent.join(" ")
           )}
+          onMouseEnter={() => {
+            hoverTalent(item.talent);
+          }}
+          onMouseLeave={() => {
+            hoverTalent([]);
+          }}
         >
           {item.role_id ? (
             <>
