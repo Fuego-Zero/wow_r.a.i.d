@@ -59,9 +59,9 @@ function ScheduleContent() {
     onLoadPlayersData();
   }, []);
 
-  function setDataHandler(value: PlayersData) {
+  async function setDataHandler(value: PlayersData) {
     try {
-      saveRaidRoster(value);
+      await saveRaidRoster(value);
       setPlayersData(value);
     } catch (error) {
       if (isBizException(error)) return message.error(error.message);
