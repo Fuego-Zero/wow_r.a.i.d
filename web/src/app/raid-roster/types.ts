@@ -17,7 +17,7 @@ export type RaidData = {
   /**
    * 是否自动排班
    */
-  auto: boolean;
+  auto?: boolean;
   players: PlayersData;
 }[];
 
