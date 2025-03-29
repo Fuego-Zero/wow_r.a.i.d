@@ -14,10 +14,17 @@ function AppHeader(props: {
   onCopy: () => Promise<void>;
   onDownload: () => Promise<void>;
   openUnassignedModal: () => void;
+  openGroupManage: () => void;
   showAdvancedBtn: boolean;
 }) {
-  const { reload, onCopy, onDownload, openUnassignedModal, showAdvancedBtn } =
-    props;
+  const {
+    reload,
+    onCopy,
+    onDownload,
+    openUnassignedModal,
+    openGroupManage,
+    showAdvancedBtn,
+  } = props;
   const { notification, message } = App.useApp();
   const [loading, setLoading] = useState(false);
   const { isAdmin } = useAuth();
@@ -93,6 +100,9 @@ function AppHeader(props: {
         )}
         {isAdmin && (
           <>
+            <Button type="dashed" onClick={openGroupManage}>
+              档期管理
+            </Button>
             <Button type="dashed" onClick={openUnassignedModal}>
               未分配名单
             </Button>
