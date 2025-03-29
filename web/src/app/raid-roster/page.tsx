@@ -10,7 +10,7 @@ import {
   removePlayerSchedule,
 } from "@/app/utils";
 
-import { Layout, App, message } from "antd";
+import { Layout, App } from "antd";
 import "@ant-design/v5-patch-for-react-19";
 import { useAuth } from "../player/context/authContext";
 import { useAppConfig } from "../player/context/appConfigContext";
@@ -32,8 +32,10 @@ import useRaidChange from "./hooks/useRaidChange";
 import BaseProvider from "../components/common/BaseProvider";
 import useUnassignedPlayers from "./hooks/useUnassignedPlayers";
 import { RoleType } from "../components/Role";
+import useGroupManage from "./hooks/useGroupManage";
 
 function ScheduleContent() {
+  const { message } = App.useApp();
   const { isAdmin } = useAuth();
   const { raidTimeOrderMap } = useAppConfig();
 
@@ -57,6 +59,7 @@ function ScheduleContent() {
 
   useEffect(() => {
     onLoadPlayersData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function setDataHandler(value: PlayersData) {
@@ -146,9 +149,29 @@ function ScheduleContent() {
     [playersData]
   );
 
+  const [openGroupManage, groupManageHolder, groupInfo] = useGroupManage();
+
   const raidData = useMemo<RaidData>(() => {
-    return formatRaidData(playersData);
-  }, [playersData]);
+    const raidDataMap = formatRaidData(playersData).reduce((acc, item) => {
+      acc.set(item.group_time_key, item.players);
+      return acc;
+    }, new Map<GroupTitle, PlayersData>());
+
+    return groupInfo
+      .filter((item) => item.enable)
+      .map((item) => {
+        const players = raidDataMap.has(item.time_key)
+          ? raidDataMap.get(item.time_key)!
+          : [];
+
+        return {
+          group_title: item.title,
+          group_time_key: item.time_key,
+          auto: item.auto,
+          players,
+        };
+      });
+  }, [groupInfo, playersData]);
 
   const [openSelectModal, selectModalContextHolder] =
     usePlayerSelect(playersData);
@@ -224,7 +247,7 @@ function ScheduleContent() {
     [openChangeModal, playersData, raidTimeOrderMap]
   );
 
-  const [openUnassignedModal, UnassignedModalContextHolder] =
+  const [openUnassignedModal, unassignedModalContextHolder] =
     useUnassignedPlayers(playersData);
 
   if (!isAdmin) return "再见";
@@ -244,6 +267,7 @@ function ScheduleContent() {
             onDownload={onDownload}
             showAdvancedBtn={showAdvancedBtn}
             openUnassignedModal={openUnassignedModal}
+            openGroupManage={openGroupManage}
             reload={onLoadPlayersData}
           />
         </Layout.Header>
@@ -260,7 +284,8 @@ function ScheduleContent() {
       </Layout>
       {selectModalContextHolder}
       {raidChangeModalContextHolder}
-      {UnassignedModalContextHolder}
+      {unassignedModalContextHolder}
+      {groupManageHolder}
     </>
   );
 }
