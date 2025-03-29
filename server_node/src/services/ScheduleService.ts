@@ -271,6 +271,28 @@ class ScheduleService {
 
     return true;
   }
+
+  static async delSchedulesByTimeKey(userId: UserId, TimeKeys: IRaidTime['time_key'][]): Promise<boolean> {
+    await validateUserAccess(userId);
+
+    const { startDate, endDate } = getRaidDateRange();
+
+    const params = {
+      group_time_key: {
+        $in: TimeKeys,
+      },
+      create_time: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    };
+
+    const schedule = await Schedule.find(params).lean();
+    if (schedule.length === 0) return true;
+
+    await Schedule.deleteMany(params);
+    return true;
+  }
 }
 
 export default ScheduleService;

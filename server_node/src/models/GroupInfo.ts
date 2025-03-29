@@ -12,6 +12,14 @@ export interface IGroupInfo extends Document {
    */
   title: string;
   /**
+   * 是否启用
+   */
+  enable?: boolean;
+  /**
+   * 是否自动编排
+   */
+  auto?: boolean;
+  /**
    * 创建时间
    */
   create_time: Date;
@@ -38,6 +46,14 @@ const schema = new Schema<IGroupInfo>(
     title: {
       type: String,
       required: true,
+    },
+    enable: {
+      type: Boolean,
+      default: true,
+    },
+    auto: {
+      type: Boolean,
+      default: true,
     },
     create_time: {
       type: Date,
