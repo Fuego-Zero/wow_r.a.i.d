@@ -59,6 +59,9 @@ export type PlayersData = {
    * 是否已经安排
    */
   is_scheduled: boolean;
+  /**
+   * 团队职责
+   */
   assignment: RoleType;
 
   /**
