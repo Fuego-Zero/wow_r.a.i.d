@@ -1,5 +1,5 @@
 import http from "../player/http";
-import { PlayersData } from "./types";
+import { GroupInfo, PlayersData } from "./types";
 
 export function getRaidRoster(): Promise<PlayersData> {
   return http.get("/schedule/now");
@@ -16,4 +16,12 @@ export function publishRaidRoster(): Promise<boolean> {
 
 export function unpublishRaidRoster(): Promise<boolean> {
   return http.post("/schedule/unpublish");
+}
+
+export function getGroupInfo(): Promise<GroupInfo[]> {
+  return http.get("/raid/get_group_info");
+}
+
+export function saveGroupInfo(params: GroupInfo[]): Promise<GroupInfo[]> {
+  return http.post("/raid/save_group_info", params);
 }
