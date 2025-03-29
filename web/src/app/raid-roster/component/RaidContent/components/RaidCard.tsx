@@ -1,4 +1,4 @@
-import { App, Button, Card } from "antd";
+import { App, Button, Card, Tooltip } from "antd";
 import React, { memo, useMemo, useRef, useState } from "react";
 
 import { toPng } from "html-to-image";
@@ -9,6 +9,7 @@ import MobileRaidCard from "./components/MobileRaidCard";
 import Role, { RoleType } from "@/app/components/Role";
 import { PlayerData, PlayersData } from "@/app/raid-roster/types";
 import useWCLRanks from "@/app/raid-roster/hooks/useWCLRanks";
+import { FontColorsOutlined } from "@ant-design/icons";
 
 function RaidCard(props: RaidCardProps) {
   const { data, displayMode, rosterPlayer } = props;
@@ -68,12 +69,15 @@ function RaidCard(props: RaidCardProps) {
   const { getWCLRank } = useWCLRanks();
 
   function calcAvg(players: PlayerData[]) {
+    if (players.length === 0) return 0;
+
     const total = players.reduce((acc, player) => {
       const rank = getWCLRank(player.role_name, player.talent[0]);
       if (!rank) return acc;
 
       return acc + rank.average_rank_percent;
     }, 0);
+
     return total / players.length;
   }
 
@@ -119,6 +123,11 @@ function RaidCard(props: RaidCardProps) {
             )
           </span>
         </div>
+        {data.auto && (
+          <Tooltip title="自动排班">
+            <FontColorsOutlined />
+          </Tooltip>
+        )}
       </div>
     );
   }
