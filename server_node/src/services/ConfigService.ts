@@ -2,7 +2,7 @@ import { IRaidTimeResponse } from '../interfaces/IRaidTime';
 import GroupInfo from '../models/GroupInfo';
 import RaidTime from '../models/RaidTime';
 
-// const { NODE_ENV } = process.env;
+const { NODE_ENV } = process.env;
 
 class ConfigService {
   static async initRaidTime(): Promise<void> {
@@ -30,10 +30,19 @@ class ConfigService {
       '5-3': '周五 - 21:30',
       '6-1': '周六 - 19:30',
       '6-2': '周六 - 20:30',
+      '6-3': '周六 - 21:30',
       '7-1': '周日 - 19:30',
       '7-2': '周日 - 20:30',
+      '7-3': '周日 - 21:30',
       '1-1': '周一 - 19:30',
       '1-2': '周一 - 20:30',
+      '1-3': '周一 - 21:30',
+      '2-1': '周二 - 19:30',
+      '2-2': '周二 - 20:30',
+      '2-3': '周二 - 21:30',
+      '3-1': '周三 - 19:30',
+      '3-2': '周三 - 20:30',
+      '3-3': '周三 - 21:30',
     };
 
     const data = Object.entries(titleMap).map(([time_key, title]) => ({

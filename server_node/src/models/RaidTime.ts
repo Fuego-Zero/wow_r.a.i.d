@@ -32,6 +32,7 @@ const schema = new Schema<IRaidTime>(
     time_key: {
       type: String,
       required: true,
+      unique: true,
     },
     order: {
       type: Number,

@@ -26,7 +26,6 @@ const schema = new Schema<IGroupInfo>(
     time_key: {
       type: String,
       required: true,
-      index: true,
       ref: 'RaidTime',
       validate: {
         async validator(v: string) {
