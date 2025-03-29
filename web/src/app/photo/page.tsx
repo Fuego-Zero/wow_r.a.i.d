@@ -27,7 +27,7 @@ const ScrollWrap = dynamic(() => import("../components/common/ScrollWrap"), {
 });
 
 function PhotoContent() {
-  const images = Array.from({ length: 28 }).map((_, index) => {
+  const images = Array.from({ length: 29 }).map((_, index) => {
     return `/images/${index}.jpg`;
   });
 
