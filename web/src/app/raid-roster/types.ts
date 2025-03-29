@@ -14,6 +14,10 @@ export type RaidData = {
    * 团队时间编号
    */
   group_time_key: GroupTimeKey;
+  /**
+   * 是否自动排班
+   */
+  auto: boolean;
   players: PlayersData;
 }[];
 
@@ -87,4 +91,11 @@ export type Handler = {
   ) => Promise<void>;
   changeCharacterRole: (roleId: GroupTimeKey, role: RoleType) => Promise<void>;
   hoverTalent: (talent: TalentType[]) => void;
+};
+
+export type GroupInfo = {
+  time_key: GroupTimeKey;
+  title: GroupTitle;
+  enable: boolean;
+  auto: boolean;
 };
