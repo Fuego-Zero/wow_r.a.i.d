@@ -16,7 +16,7 @@ import { useAuth } from "../player/context/authContext";
 import { useAppConfig } from "../player/context/appConfigContext";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { getRaidRoster, saveRaidRoster } from "./api";
+import { getRaidRoster, postAutoRoster, saveRaidRoster } from "./api";
 import {
   GroupTimeKey,
   GroupTitle,
@@ -44,18 +44,21 @@ function ScheduleContent() {
   const [isHiddenBtn, setIsHiddenBtn] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  async function onLoadPlayersData() {
+  const onLoadPlayersData = useCallback(async () => {
     try {
       setLoading(true);
       const res = await getRaidRoster();
       setPlayersData(res);
     } catch (error) {
-      if (isBizException(error)) return message.error(error.message);
-      throw error;
+      if (isBizException(error)) {
+        message.error(error.message);
+      } else {
+        throw error;
+      }
     } finally {
       setLoading(false);
     }
-  }
+  }, [message]);
 
   useEffect(() => {
     onLoadPlayersData();
@@ -149,7 +152,8 @@ function ScheduleContent() {
     [playersData]
   );
 
-  const [openGroupManage, groupManageHolder, groupInfo] = useGroupManage();
+  const [openGroupManage, groupManageHolder, groupInfo] =
+    useGroupManage(onLoadPlayersData);
 
   const raidData = useMemo<RaidData>(() => {
     const raidDataMap = formatRaidData(playersData).reduce((acc, item) => {
@@ -250,6 +254,24 @@ function ScheduleContent() {
   const [openUnassignedModal, unassignedModalContextHolder] =
     useUnassignedPlayers(playersData);
 
+  const autoRoster = useCallback(() => {
+    const excludedTimeKeys: GroupTimeKey[] = [];
+    const excludedRoleIds: string[] = [];
+
+    raidData
+      .filter((item) => !item.auto)
+      .forEach((item) => {
+        excludedTimeKeys.push(item.group_time_key);
+        excludedRoleIds.push(
+          ...item.players.map((player) => {
+            return player.role_id;
+          })
+        );
+      });
+
+    return postAutoRoster({ excludedTimeKeys, excludedRoleIds });
+  }, [raidData]);
+
   if (!isAdmin) return "再见";
 
   return (
@@ -269,6 +291,7 @@ function ScheduleContent() {
             openUnassignedModal={openUnassignedModal}
             openGroupManage={openGroupManage}
             reload={onLoadPlayersData}
+            autoRoster={autoRoster}
           />
         </Layout.Header>
         <Layout.Content>

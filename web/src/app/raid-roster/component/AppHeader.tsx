@@ -5,7 +5,6 @@ import { App, Button } from "antd";
 import classNames from "classnames";
 import React, { useState } from "react";
 import { useAuth } from "@/app/player/context/authContext";
-import axios from "axios";
 import { publishRaidRoster, unpublishRaidRoster } from "../api";
 import AppUserMenu from "@/app/components/AppUserMenu";
 
@@ -15,6 +14,7 @@ function AppHeader(props: {
   onDownload: () => Promise<void>;
   openUnassignedModal: () => void;
   openGroupManage: () => void;
+  autoRoster: () => Promise<void>;
   showAdvancedBtn: boolean;
 }) {
   const {
@@ -23,28 +23,12 @@ function AppHeader(props: {
     onDownload,
     openUnassignedModal,
     openGroupManage,
+    autoRoster,
     showAdvancedBtn,
   } = props;
   const { notification, message } = App.useApp();
   const [loading, setLoading] = useState(false);
   const { isAdmin } = useAuth();
-
-  async function submit() {
-    try {
-      setLoading(true);
-      await axios.get("/api/roster");
-      reload();
-    } catch (error) {
-      console.log(error);
-
-      notification.error({
-        message: "自动分配失败",
-        description: (error as Error).message,
-      });
-    } finally {
-      setLoading(false);
-    }
-  }
 
   async function publish() {
     try {
@@ -74,6 +58,22 @@ function AppHeader(props: {
         message: "自动分配失败",
         description: (error as Error).message,
       });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function onAutoRoster() {
+    try {
+      setLoading(true);
+      await autoRoster();
+      reload();
+    } catch (error) {
+      notification.error({
+        message: "自动分配失败",
+        description: (error as Error).message,
+      });
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -112,7 +112,7 @@ function AppHeader(props: {
             <Button type="primary" onClick={unpublish} disabled={loading}>
               撤销名单
             </Button>
-            <Button type="primary" onClick={submit} disabled={loading}>
+            <Button type="primary" onClick={onAutoRoster} disabled={loading}>
               自动分配
             </Button>
           </>

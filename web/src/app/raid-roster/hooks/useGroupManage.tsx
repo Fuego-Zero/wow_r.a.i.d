@@ -7,7 +7,9 @@ import { getGroupInfo, saveGroupInfo } from "../api";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { isBizException } from "@yfsdk/web-basic-library";
 
-function useGroupManage(): [() => void, React.ReactNode, GroupInfo[]] {
+function useGroupManage(
+  onLoad: () => Promise<void>
+): [() => void, React.ReactNode, GroupInfo[]] {
   const { message } = App.useApp();
   const [groupInfo, setGroupInfo] = useState<GroupInfo[]>([]);
 
@@ -38,6 +40,7 @@ function useGroupManage(): [() => void, React.ReactNode, GroupInfo[]] {
   }, []);
 
   function onClose() {
+    form.resetFields();
     setIsOpen(false);
   }
 
@@ -45,9 +48,14 @@ function useGroupManage(): [() => void, React.ReactNode, GroupInfo[]] {
     try {
       const values = form.getFieldValue("groupInfo");
       await saveGroupInfo(values);
+
+      setGroupInfo(values);
       message.success("保存成功");
-      getData();
       setIsOpen(false);
+
+      setTimeout(() => {
+        onLoad();
+      }, 750);
     } catch (error) {
       if (isBizException(error)) return message.error(error.message);
       console.error(error);

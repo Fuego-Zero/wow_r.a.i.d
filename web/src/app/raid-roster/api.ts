@@ -1,5 +1,6 @@
+import axios from "axios";
 import http from "../player/http";
-import { GroupInfo, PlayersData } from "./types";
+import { GroupInfo, GroupTimeKey, PlayersData } from "./types";
 
 export function getRaidRoster(): Promise<PlayersData> {
   return http.get("/schedule/now");
@@ -24,4 +25,11 @@ export function getGroupInfo(): Promise<GroupInfo[]> {
 
 export function saveGroupInfo(params: GroupInfo[]): Promise<GroupInfo[]> {
   return http.post("/raid/save_group_info", params);
+}
+
+export async function postAutoRoster(params: {
+  excludedRoleIds: string[];
+  excludedTimeKeys: GroupTimeKey[];
+}): Promise<void> {
+  return axios.post("/api/roster", params);
 }
