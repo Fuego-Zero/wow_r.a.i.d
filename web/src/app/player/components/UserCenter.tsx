@@ -10,7 +10,11 @@ import AddSignupRecord from "./AddSignupRecord";
 import DelSignupRecord from "./DelSignupRecord";
 import EditRole from "./EditRole";
 import Nameplate from "./Nameplate";
-import { SolutionOutlined, SyncOutlined } from "@ant-design/icons";
+import {
+  FontColorsOutlined,
+  SolutionOutlined,
+  SyncOutlined,
+} from "@ant-design/icons";
 import { getPublishedSchedule } from "@/app/api";
 import { isBizException } from "@yfsdk/web-basic-library";
 import axios from "axios";
@@ -18,7 +22,7 @@ import axios from "axios";
 function UserCenter() {
   const { message, notification } = App.useApp();
   const { userInfo } = useAuth();
-  const { raidTimeNameMap } = useAppConfig();
+  const { raidTimeNameMap, reloadWCLRanks } = useAppConfig();
   const [roles, setRoles] = useState<RoleInfo[]>([]);
   const [signupRecordSet, setSignupRecordSet] = useState<
     Set<SignupRecord["id"]>
@@ -70,18 +74,30 @@ function UserCenter() {
     }
   }
 
+  const [syncWCLRoles, setSyncWCLRoles] = useState<Set<RoleInfo["role_name"]>>(
+    new Set()
+  );
+
   async function syncWCL(roleName: RoleInfo["role_name"]) {
     try {
+      setSyncWCLRoles(new Set(syncWCLRoles.add(roleName)));
       await axios.post("/api/wcl_query", { role_name: roleName });
       message.success("同步 WCL 成功");
-      onReload();
+      reloadWCLRanks();
     } catch (error) {
-      console.log(error);
-
       notification.error({
         message: "同步 WCL 失败",
         description: (error as Error).message,
       });
+      console.log(error);
+    } finally {
+      setTimeout(() => {
+        setSyncWCLRoles((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(roleName);
+          return newSet;
+        });
+      }, 500);
     }
   }
 
@@ -106,17 +122,19 @@ function UserCenter() {
                     talent={role.talent}
                     className="flex-1"
                   />
-                  <div className="space-x-2 ml-2">
+                  <div className="!space-x-2 [&>*:last-child]:mr-0 ml-2">
                     <Tooltip title="同步WCL">
                       <SyncOutlined
+                        spin={syncWCLRoles.has(role.role_name)}
+                        className="inline-flex"
                         onClick={() => {
+                          if (syncWCLRoles.has(role.role_name)) return;
                           syncWCL(role.role_name);
                         }}
                       />
                     </Tooltip>
                     <Tooltip title="查看WCL">
                       <SolutionOutlined
-                        className=""
                         onClick={() => {
                           window.open(
                             `https://cn.classic.warcraftlogs.com/character/cn/法琳娜/${role.role_name}`
@@ -124,13 +142,14 @@ function UserCenter() {
                         }}
                       />
                     </Tooltip>
+                    <Tooltip title="自动报名">
+                      <FontColorsOutlined />
+                    </Tooltip>
                     {signupRecordSet.has(role.id) && !schedule.get(role.id) && (
-                      <Tag color="cyan" className="mr-0">
-                        已报名
-                      </Tag>
+                      <Tag color="cyan">已报名</Tag>
                     )}
                     {schedule.get(role.id) && (
-                      <Tag color="green" className="mr-0">
+                      <Tag color="green">
                         {schedule.get(role.id).group_title}
                       </Tag>
                     )}

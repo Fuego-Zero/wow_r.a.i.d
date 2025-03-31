@@ -18,6 +18,7 @@ type AppConfigContextType = {
   raidTimeOrderMap: Map<RaidTime["time_key"], number>;
   raidTimeNameMap: Map<RaidTime["time_key"], RaidTime["time_name"]>;
   WCLRanksMap: Map<string, WCLRank>;
+  reloadWCLRanks: () => void;
 };
 
 const AppConfigContext = createContext<AppConfigContextType | undefined>(
@@ -72,7 +73,13 @@ export function AppConfigProvider({ children }: PropsWithChildren) {
 
   return (
     <AppConfigContext.Provider
-      value={{ raidTime, raidTimeNameMap, raidTimeOrderMap, WCLRanksMap }}
+      value={{
+        raidTime,
+        raidTimeNameMap,
+        raidTimeOrderMap,
+        WCLRanksMap,
+        reloadWCLRanks: getWCLData,
+      }}
     >
       {children}
     </AppConfigContext.Provider>
