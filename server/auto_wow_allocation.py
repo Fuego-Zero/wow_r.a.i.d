@@ -683,7 +683,7 @@ def roster():
     class_to_enum = {e.value: e.name for e in ActorMap}
 
     schedule_coll = db["schedule"]
-    schedule_coll.delete_many({})
+    schedule_coll.delete_many({"role_id": {"$nin": excluded_role_ids_object}})
 
     # 一次性全量查询缓存数据，避免循环中逐条检索数据库
     # signup_records_cursor = signup_coll.find({"delete_time": None})
