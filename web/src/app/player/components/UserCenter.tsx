@@ -18,6 +18,7 @@ import {
 import { getPublishedSchedule } from "@/app/api";
 import { isBizException } from "@yfsdk/web-basic-library";
 import axios from "axios";
+import PlayTime from "@/app/components/PlayTime";
 
 function UserCenter() {
   const { message, notification } = App.useApp();
@@ -148,7 +149,15 @@ function UserCenter() {
                       </Tooltip>
                     )}
                     {signupRecordSet.has(role.id) && !schedule.get(role.id) && (
-                      <Tag color="cyan">已报名</Tag>
+                      <PlayTime
+                        play_time={
+                          signupRecords.find(
+                            (record) => record.role_id === role.id
+                          )!.play_time
+                        }
+                      >
+                        <Tag color="cyan">已报名</Tag>
+                      </PlayTime>
                     )}
                     {schedule.get(role.id) && (
                       <Tag color="green">
