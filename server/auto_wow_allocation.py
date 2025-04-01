@@ -648,7 +648,7 @@ def sort_roles(roster):
     return tanks + melee + ranged + heals
 
 
-@allocation_api.route("/api/roster", methods=["GET"])
+@allocation_api.route("/api/roster", methods=["POST"])
 def roster():
     data = request.json
     excluded_role_ids = data.get("excludedRoleIds", [])
