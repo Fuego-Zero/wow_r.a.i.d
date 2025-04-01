@@ -155,12 +155,6 @@ def load_players_from_db(excluded_role_names):
     # Talent 英文缩写到中文职业名的映射
     talent_enum_to_class = {e.name: e.value for e in ActorMap}
 
-    # group_info 的time_key到title的映射
-    time_key_map = {
-        record["time_key"]: record["title"]
-        for record in group_info_collection.find({})
-    }
-
     # 一次批量查询所有有效报名记录
     # signup_records = signup_collection.find({"delete_time": None})
     cycle_start, cycle_end = get_cycle_start_end()
@@ -210,8 +204,8 @@ def load_players_from_db(excluded_role_names):
         user_id = user_record["_id"]
         play_times_raw = user_record.get("play_time", [])
         available_slots = {
-            time_key_map[time_key]
-            for time_key in play_times_raw if time_key in time_key_map
+            key_time_map[time_key]
+            for time_key in play_times_raw if time_key in key_time_map
         }
         players_dict[user_id]["available_times"] = available_slots
 
