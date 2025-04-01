@@ -5,7 +5,7 @@ import { App, Button } from "antd";
 import classNames from "classnames";
 import React, { useState } from "react";
 import { useAuth } from "@/app/player/context/authContext";
-import { publishRaidRoster, unpublishRaidRoster } from "../api";
+import { publishRaidRoster, saveRaidRoster, unpublishRaidRoster } from "../api";
 import AppUserMenu from "@/app/components/AppUserMenu";
 
 function AppHeader(props: {
@@ -79,6 +79,22 @@ function AppHeader(props: {
     }
   }
 
+  async function clear() {
+    try {
+      setLoading(true);
+      await saveRaidRoster([]);
+      reload();
+    } catch (error) {
+      notification.error({
+        message: "清空失败",
+        description: (error as Error).message,
+      });
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="flex">
       <h1 className="flex-1 truncate min-w-0">
@@ -105,6 +121,9 @@ function AppHeader(props: {
             </Button>
             <Button type="dashed" onClick={openUnassignedModal}>
               未分配名单
+            </Button>
+            <Button type="primary" danger onClick={clear} disabled={loading}>
+              清空排班
             </Button>
             <Button type="primary" onClick={publish} disabled={loading}>
               发布名单
