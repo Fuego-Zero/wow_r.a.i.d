@@ -1,6 +1,6 @@
 from enum import Enum
 
-from flask import Blueprint, json, Response
+from flask import Blueprint, json, Response, request
 from pymongo import MongoClient
 import copy
 from collections import defaultdict
@@ -70,6 +70,31 @@ CLASS_COLORS = {
     '邪DK': 'FF4500', '冰DK': 'FF4500', '血DK': 'FF4500'  # 红色
 }
 
+# Weekday and time mapping
+time_key_map = {
+    "周四-19:30": "4-1", "周四-20:30": "4-2", "周四-21:30": "4-3",
+    "周五-19:30": "5-1", "周五-20:30": "5-2", "周五-21:30": "5-3",
+    "周六-19:30": "6-1", "周六-20:30": "6-2", "周六-21:30": "6-3",
+    "周日-19:30": "7-1", "周日-20:30": "7-2", "周日-21:30": "7-3",
+    "周一-19:30": "1-1", "周一-20:30": "1-2",
+}
+
+key_time_map = {
+    "4-1": "周四-19:30", "4-2": "周四-20:30", "4-3": "周四-21:30",
+    "5-1": "周五-19:30", "5-2": "周五-20:30", "5-3": "周五-21:30",
+    "6-1": "周六-19:30", "6-2": "周六-20:30", "6-3": "周六-21:30",
+    "7-1": "周日-19:30", "7-2": "周日-20:30", "7-3": "周日-21:30",
+    "1-1": "周一-19:30", "1-2": "周一-20:30",
+}
+
+# 计算order
+day_order_map = {
+    "4-1": 0, "4-2": 1, "4-3": 2,
+    "5-1": 3, "5-2": 4, "5-3": 5,
+    "6-1": 6, "6-2": 7,
+    "7-1": 8, "7-2": 9, "7-3": 10,
+    "1-1": 11, "1-2": 12,
+}
 
 class ActorMap(Enum):
     FQ = "防骑"  # 防骑
@@ -117,7 +142,7 @@ class Player:
 
 
 # 从mongoDB中加载用户和角色数据
-def load_players_from_db():
+def load_players_from_db(excluded_role_names):
     players_dict = defaultdict(lambda: {"characters": [], "available_times": set()})
 
     signup_collection = db["signup_record"]
@@ -155,8 +180,8 @@ def load_players_from_db():
         role_name = signup.get("role_name")
         talents = signup.get("talent", [])
 
-        if role_name in banned_roles_set:
-            continue  # 跳过禁用的角色
+        if role_name in banned_roles_set or role_name in excluded_role_names:
+            continue  # 跳过禁用和已经被手动选择的角色
 
         # 解析有效职业（过滤无效天赋）
         valid_classes = {
@@ -631,14 +656,28 @@ def sort_roles(roster):
 
 @allocation_api.route("/api/roster", methods=["GET"])
 def roster():
-    players = load_players_from_db()
+    data = request.json
+    excluded_role_ids = data.get("excludedRoleIds", [])
+    excluded_time_keys = data.get("excludedTimeKeys", [])
+
+    signup_coll = db["signup_record"]
+    user_coll = db["user"]
+    role_coll = db["role"]
+    banned_roles_set = {role["role_name"] for role in role_coll.find({"disable_schedule": True})}
+
+    excluded_role_ids_object = [ObjectId(role_id) for role_id in excluded_role_ids]
+    excluded_role_datas = signup_coll.find({"_id": {"$in": excluded_role_ids_object}})
+    excluded_role_names = [role["role_name"] for role in excluded_role_datas]
+
+    players = load_players_from_db(excluded_role_names)
     cd_role_pool = build_cd_role_pool(players)
 
-    time_slots = ["周一-19:30", "周一-20:30",
-                  "周四-19:30", "周四-20:30", "周四-21:30",
-                  "周五-19:30", "周五-20:30", "周五-21:30",
-                  "周六-19:30", "周六-20:30", "周六-21:30",
-                  "周日-19:30", "周日-20:30"]
+    system_config_coll = db["system_config"]
+    time_slots_config = system_config_coll.find_one({"name": "TIME_SLOTS"})
+    time_slots = time_slots_config["value"]
+    for excluded_time_key in excluded_time_keys:
+        time_key = key_time_map[excluded_time_key]
+        time_slots.remove(time_key)
 
     required_players_level = [
         ["炸酱面", "薄荷", "古子哥", "戴森", "大力", "伊欧玟", "故事", "悠妮"],
