@@ -142,9 +142,11 @@ function UserCenter() {
                         }}
                       />
                     </Tooltip>
-                    <Tooltip title="自动报名">
-                      <FontColorsOutlined />
-                    </Tooltip>
+                    {role.auto_signup && (
+                      <Tooltip title="自动报名">
+                        <FontColorsOutlined />
+                      </Tooltip>
+                    )}
                     {signupRecordSet.has(role.id) && !schedule.get(role.id) && (
                       <Tag color="cyan">已报名</Tag>
                     )}
