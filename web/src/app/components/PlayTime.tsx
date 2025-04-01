@@ -10,8 +10,14 @@ function PlayTime(props: {
   play_time: UserInfo["play_time"];
   className?: string;
   highlightTime?: UserInfo["play_time"];
+  children?: React.ReactNode;
 }) {
-  const { play_time, className, highlightTime = [] } = props;
+  const {
+    play_time,
+    className,
+    highlightTime = [],
+    children = <CalendarFilled />,
+  } = props;
   const { raidTimeNameMap, raidTimeOrderMap } = useAppConfig();
 
   const playTime = useMemo(() => {
@@ -55,7 +61,7 @@ function PlayTime(props: {
         </>
       }
     >
-      <CalendarFilled />
+      {children}
     </Tooltip>
   );
 }
