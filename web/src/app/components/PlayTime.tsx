@@ -25,7 +25,7 @@ function PlayTime(props: {
       const timeName = raidTimeNameMap.get(time);
       const timeOrder = raidTimeOrderMap.get(time);
 
-      if (!timeName || !timeOrder) return prev;
+      if (timeName === undefined || timeOrder === undefined) return prev;
 
       prev.push({
         timeName,
