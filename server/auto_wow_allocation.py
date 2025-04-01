@@ -271,7 +271,7 @@ def parse_available_times(available_str):
         '周四': ['周四-19:30', '周四-20:30', '周四-21:30'],
         '周五': ['周五-19:30', '周五-20:30', '周五-21:30'],
         '周六': ['周六-19:30', '周六-20:30', '周六-21:30'],
-        '周日': ['周日-19:30', '周日-20:30'],
+        '周日': ['周日-19:30', '周日-20:30', '周日-21:30'],
         '周一': ['周一-19:30', '周一-20:30']
     }
     parts = available_str.split('、')
@@ -660,8 +660,9 @@ def roster():
     banned_roles_set = {role["role_name"] for role in role_coll.find({"disable_schedule": True})}
 
     excluded_role_ids_object = [ObjectId(role_id) for role_id in excluded_role_ids]
-    excluded_role_datas = signup_coll.find({"_id": {"$in": excluded_role_ids_object}})
+    excluded_role_datas = list(signup_coll.find({"role_id": {"$in": excluded_role_ids_object}}))
     excluded_role_names = [role["role_name"] for role in excluded_role_datas]
+    excluded_role_names = set(excluded_role_names)
 
     players = load_players_from_db(excluded_role_names)
     cd_role_pool = build_cd_role_pool(players)
@@ -680,24 +681,6 @@ def roster():
     ]
 
     class_to_enum = {e.value: e.name for e in ActorMap}
-
-    # Weekday and time mapping
-    time_key_map = {
-        "周四-19:30": "4-1", "周四-20:30": "4-2", "周四-21:30": "4-3",
-        "周五-19:30": "5-1", "周五-20:30": "5-2", "周五-21:30": "5-3",
-        "周六-19:30": "6-1", "周六-20:30": "6-2", "周六-21:30": "6-3",
-        "周日-19:30": "7-1", "周日-20:30": "7-2",
-        "周一-19:30": "1-1", "周一-20:30": "1-2",
-    }
-
-    # 计算order
-    day_order_map = {
-        "4-1": 0, "4-2": 1, "4-3": 2,
-        "5-1": 3, "5-2": 4, "5-3": 5,
-        "6-1": 6, "6-2": 7, "6-3": 8,
-        "7-1": 9, "7-2": 10,
-        "1-1": 11, "1-2": 12,
-    }
 
     schedule_coll = db["schedule"]
     schedule_coll.delete_many({})
