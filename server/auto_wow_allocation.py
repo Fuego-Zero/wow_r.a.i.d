@@ -685,11 +685,6 @@ def roster():
     schedule_coll = db["schedule"]
     schedule_coll.delete_many({})
 
-    signup_coll = db["signup_record"]
-    user_coll = db["user"]
-    role_coll = db["role"]
-    banned_roles_set = {role["role_name"] for role in role_coll.find({"disable_schedule": True})}
-
     # 一次性全量查询缓存数据，避免循环中逐条检索数据库
     # signup_records_cursor = signup_coll.find({"delete_time": None})
     cycle_start, cycle_end = get_cycle_start_end()
