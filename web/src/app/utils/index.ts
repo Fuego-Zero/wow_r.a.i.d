@@ -6,6 +6,8 @@ import {
   PlayersData,
   RaidData,
 } from "../raid-roster/types";
+import { TalentType } from "../constant";
+import { RoleType } from "../components/Role";
 
 export async function htmlToPngDownload(el: HTMLElement, name: string) {
   const dataUrl = await toPng(el, { cacheBust: true });
@@ -94,4 +96,24 @@ export function getWClColor(rank: number) {
   if (rank < 99) return "#ff8000";
   if (rank < 100) return "#e268a8";
   if (rank === 100) return "#e5cc80";
+}
+
+export function getRoleByTalent(talent: TalentType): RoleType {
+  switch (talent) {
+    case "FQ":
+    case "FZ":
+    case "XT":
+    case "DKT":
+      return "TANK";
+
+    case "NS":
+    case "NQ":
+    case "JLM":
+    case "ND":
+    case "SM":
+      return "HEALER";
+
+    default:
+      return "DPS";
+  }
 }

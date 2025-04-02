@@ -8,8 +8,9 @@ import Nameplate from "@/app/player/components/Nameplate";
 
 import dynamic from "next/dynamic";
 import useTalentSelect from "@/app/hooks/useTalentSelect";
-import { playersSortByRoleAndTalent } from "@/app/utils";
+import { getRoleByTalent, playersSortByRoleAndTalent } from "@/app/utils";
 import PlayTime from "@/app/components/PlayTime";
+import Role from "@/app/components/Role";
 const ScrollWrap = dynamic(() => import("@/app/components/common/ScrollWrap"), {
   ssr: false,
 });
@@ -51,6 +52,27 @@ function useUnassignedPlayers(
     return grouped;
   }, [enableTalentSelect, players, selectedActor]);
 
+  const unassignedPlayersTotal = useMemo(() => {
+    const map = players
+      .filter((player) => !player.is_scheduled)
+      .reduce(
+        (acc, player) => {
+          const { talent } = player;
+          acc[getRoleByTalent(talent[0])].push(player);
+          return acc;
+        },
+        {
+          TANK: [],
+          DPS: [],
+          HEALER: [],
+        } as Record<PlayerData["assignment"], PlayerData[]>
+      );
+
+    console.log(map, "map");
+
+    return map;
+  }, [players]);
+
   const assignedPlayers = useMemo(() => {
     const grouped = players
       .filter((player) => player.is_scheduled)
@@ -68,7 +90,17 @@ function useUnassignedPlayers(
     <Modal
       title={
         <span className="flex items-center">
-          当前 CD 未安排活动玩家与角色名单
+          <span>当前 CD 未安排活动玩家与角色名单</span>
+          <span className="flex items-center ml-3 space-x-2">
+            <Role role="TANK" />
+            <span>{unassignedPlayersTotal.TANK.length ?? 0}</span>
+            <span>/</span>
+            <Role role="DPS" />
+            <span>{unassignedPlayersTotal.DPS.length ?? 0}</span>
+            <span>/</span>
+            <Role role="HEALER" />
+            <span>{unassignedPlayersTotal.HEALER.length ?? 0}</span>
+          </span>
           <span className="ml-20 flex items-center">
             <span>按天赋筛选：</span>
             <Switch
