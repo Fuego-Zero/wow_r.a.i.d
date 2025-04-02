@@ -19,6 +19,7 @@ import { getPublishedSchedule } from "@/app/api";
 import { isBizException } from "@yfsdk/web-basic-library";
 import axios from "axios";
 import PlayTime from "@/app/components/PlayTime";
+import RecreateSignupRecord from "./RecreateSignupRecord";
 
 function UserCenter() {
   const { message, notification } = App.useApp();
@@ -173,14 +174,17 @@ function UserCenter() {
       </Col>
       <Col span={24}>
         <Row gutter={[8, 8]}>
-          <Col span={12}>
+          <Col span={8}>
             <AddSignupRecord
               onReload={onReload}
               roles={roles}
               signupRecords={signupRecordSet}
             />
           </Col>
-          <Col span={12}>
+          <Col span={8}>
+            <RecreateSignupRecord onReload={onReload} roles={roles} />
+          </Col>
+          <Col span={8}>
             <DelSignupRecord
               onReload={onReload}
               roles={roles}

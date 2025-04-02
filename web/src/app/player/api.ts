@@ -63,6 +63,12 @@ export function delRecord(params: {
   return http.post("/raid/del_record", params);
 }
 
+export function recreateRecord(params: {
+  ids: RoleInfo["id"][];
+}): Promise<SignupRecord[]> {
+  return http.post("/raid/recreate_record", params);
+}
+
 export function getWCLRanks(): Promise<WCLRank[]> {
   return http.get("/common/wcl_rankings");
 }
