@@ -11,6 +11,9 @@ import useTalentSelect from "@/app/hooks/useTalentSelect";
 import { getRoleByTalent, playersSortByRoleAndTalent } from "@/app/utils";
 import PlayTime from "@/app/components/PlayTime";
 import Role from "@/app/components/Role";
+import { InferArrayItem } from "@yfsdk/web-basic-library";
+import { useAppConfig } from "@/app/player/context/appConfigContext";
+import { CalendarFilled } from "@ant-design/icons";
 const ScrollWrap = dynamic(() => import("@/app/components/common/ScrollWrap"), {
   ssr: false,
 });
@@ -21,6 +24,7 @@ function useUnassignedPlayers(
   players: PlayersData
 ): [() => void, React.ReactNode] {
   const [isOpen, setIsOpen] = useState(false);
+  const { raidTimeNameMap, raidTimeOrderMap } = useAppConfig();
 
   const open = useCallback((): void => {
     setIsOpen(true);
@@ -53,28 +57,52 @@ function useUnassignedPlayers(
   }, [enableTalentSelect, players, selectedActor]);
 
   const unassignedPlayersTotal = useMemo(() => {
+    const innerPlayers = players.filter((player) => !player.is_scheduled);
+
     let total = 0;
+    const roleMap: Record<PlayerData["assignment"], PlayerData[]> = {
+      TANK: [],
+      DPS: [],
+      HEALER: [],
+    };
+    const timeKeyMap: Record<
+      InferArrayItem<PlayerData["play_time"]>,
+      PlayerData[]
+    > = {};
 
-    const map = players
-      .filter((player) => !player.is_scheduled)
-      .reduce(
-        (acc, player) => {
-          const { talent } = player;
-          talent.forEach((talent) => {
-            acc[getRoleByTalent(talent)].push(player);
-          });
-          total++;
-          return acc;
-        },
-        {
-          TANK: [],
-          DPS: [],
-          HEALER: [],
-        } as Record<PlayerData["assignment"], PlayerData[]>
-      );
+    innerPlayers.forEach((player) => {
+      const { talent } = player;
 
-    return Object.assign(map, { total });
-  }, [players]);
+      talent.forEach((talent) => {
+        roleMap[getRoleByTalent(talent)].push(player);
+      });
+
+      player.play_time.forEach((timeKey) => {
+        timeKeyMap[timeKey] ??= [];
+        timeKeyMap[timeKey].push(player);
+      });
+
+      total++;
+    });
+
+    const timeKeyNumMap = Object.keys(timeKeyMap)
+      .sort((a, b) => {
+        const aOrder = raidTimeOrderMap.get(a) ?? 0;
+        const bOrder = raidTimeOrderMap.get(b) ?? 0;
+        return aOrder - bOrder;
+      })
+      .reduce((acc, key) => {
+        acc[raidTimeNameMap.get(key) ?? `未知日期${key}`] =
+          timeKeyMap[key].length;
+        return acc;
+      }, {} as Record<string, number>);
+
+    return {
+      total,
+      ...roleMap,
+      play_time: timeKeyNumMap,
+    };
+  }, [players, raidTimeNameMap, raidTimeOrderMap]);
 
   const assignedPlayers = useMemo(() => {
     const grouped = players
@@ -92,12 +120,12 @@ function useUnassignedPlayers(
   const Holder = (
     <Modal
       title={
-        <span className="flex items-center">
+        <span className="flex items-center space-x-2">
           <span>
             当前 CD 未安排活动玩家与角色名单
             <span className="ml-1">({unassignedPlayersTotal.total})</span>
           </span>
-          <span className="flex items-center ml-3 space-x-2">
+          <span className="flex items-center space-x-2">
             <Role role="TANK" />
             <span>{unassignedPlayersTotal.TANK.length}</span>
             <span>/</span>
@@ -106,6 +134,22 @@ function useUnassignedPlayers(
             <span>/</span>
             <Role role="HEALER" />
             <span>{unassignedPlayersTotal.HEALER.length}</span>
+          </span>
+          <span>
+            <Tooltip
+              title={Object.entries(unassignedPlayersTotal.play_time).map(
+                ([key, value]) => {
+                  return (
+                    <span key={key} className="flex items-center space-x-2">
+                      <span>{key}</span>
+                      <span>{value}</span>
+                    </span>
+                  );
+                }
+              )}
+            >
+              <CalendarFilled />
+            </Tooltip>
           </span>
           <span className="ml-20 flex items-center">
             <span>按天赋筛选：</span>
