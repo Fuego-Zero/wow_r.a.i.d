@@ -90,16 +90,25 @@ function useUnassignedPlayers(
     <Modal
       title={
         <span className="flex items-center">
-          <span>当前 CD 未安排活动玩家与角色名单</span>
+          <span>
+            当前 CD 未安排活动玩家与角色名单
+            <span className="ml-1">
+              (
+              {unassignedPlayersTotal.TANK.length +
+                unassignedPlayersTotal.DPS.length +
+                unassignedPlayersTotal.HEALER.length}
+              )
+            </span>
+          </span>
           <span className="flex items-center ml-3 space-x-2">
             <Role role="TANK" />
-            <span>{unassignedPlayersTotal.TANK.length ?? 0}</span>
+            <span>{unassignedPlayersTotal.TANK.length}</span>
             <span>/</span>
             <Role role="DPS" />
-            <span>{unassignedPlayersTotal.DPS.length ?? 0}</span>
+            <span>{unassignedPlayersTotal.DPS.length}</span>
             <span>/</span>
             <Role role="HEALER" />
-            <span>{unassignedPlayersTotal.HEALER.length ?? 0}</span>
+            <span>{unassignedPlayersTotal.HEALER.length}</span>
           </span>
           <span className="ml-20 flex items-center">
             <span>按天赋筛选：</span>
