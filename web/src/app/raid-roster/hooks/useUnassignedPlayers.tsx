@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Col, Divider, Modal, Row, Switch } from "antd";
+import { Button, Col, Divider, Modal, Row, Switch, Tooltip } from "antd";
 import React, { useCallback, useMemo, useState } from "react";
 
 import { PlayerData, PlayersData } from "../types";
@@ -110,13 +110,12 @@ function useUnassignedPlayers(
                       <Row>
                         <Col span={3}>
                           {user_name}
-                          <span
-                            className="mx-1 text-blue-400"
-                            title="已安排/总数"
-                          >
-                            ({assigned.length}/
-                            {assigned.length + players.length})
-                          </span>
+                          <Tooltip title="已安排/报名车次/报名角色">
+                            <span className="mx-1 text-blue-400">
+                              ({assigned.length}/{players[0].play_time.length}/
+                              {assigned.length + players.length})
+                            </span>
+                          </Tooltip>
                           <PlayTime
                             play_time={players[0].play_time}
                             className="ml-1"
