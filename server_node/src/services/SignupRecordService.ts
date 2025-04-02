@@ -67,16 +67,24 @@ class SignupRecordService {
   }
 
   static async delRecord(userId: UserId, recordIds: SignupRecordId[]): Promise<boolean> {
-    // 检查是否已存在报名记录
-    const existingRecords = await SignupRecord.find({
+    const date = getRaidDateRange();
+
+    const findParams = {
       user_id: userId,
       _id: { $in: recordIds },
       delete_time: null,
-    }).lean();
+      create_time: {
+        $gte: date.startDate,
+        $lte: date.endDate,
+      },
+    };
+
+    // 检查是否已存在报名记录
+    const existingRecords = await SignupRecord.find(findParams).lean();
     if (existingRecords.length !== recordIds.length) throw new BizException('部分报名记录不存在');
 
     // 批量修改多条记录
-    const result = await SignupRecord.updateMany({ _id: { $in: recordIds } }, { delete_time: new Date() });
+    const result = await SignupRecord.updateMany(findParams, { delete_time: new Date() });
 
     // 检查是否所有记录都已更新
     if (result.modifiedCount !== recordIds.length) throw new BizException('部分记录删除失败');
@@ -173,6 +181,13 @@ class SignupRecordService {
     return createdRecords.length;
   }
 
+  /**
+   * 内部方法，删除报名记录
+   *
+   * @param userId
+   * @param roleIds
+   * @returns
+   */
   static async delRoleRecord(userId: UserId, roleIds: RoleId[]): Promise<boolean> {
     // 查询用户
     const user = await User.findById(userId).lean();
@@ -200,6 +215,12 @@ class SignupRecordService {
     // 检查是否所有记录都已更新
     if (result.modifiedCount !== existingIds.length) throw new BizException('部分记录删除失败');
 
+    return true;
+  }
+
+  static async recreateRecord(userId: UserId, roleIds: RoleId[]): Promise<boolean> {
+    await SignupRecordService.delRoleRecord(userId, roleIds);
+    await SignupRecordService.addRecord(userId, roleIds);
     return true;
   }
 }

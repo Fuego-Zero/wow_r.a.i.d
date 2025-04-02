@@ -1,7 +1,7 @@
 import { BizException, isBizException } from '@yfsdk/web-basic-library';
 import { Context } from 'koa';
 
-import { IAddSignupRecordBody, IDelSignupRecordBody } from '../interfaces/ISignupRecord';
+import { IAddSignupRecordBody, IDelSignupRecordBody, IRecreateRecordBody } from '../interfaces/ISignupRecord';
 import SignupRecordService from '../services/SignupRecordService';
 
 class SignupRecordController {
@@ -32,6 +32,23 @@ class SignupRecordController {
     try {
       SignupRecordController.validateDelRoleParams(ctx.request.body);
       const res = await SignupRecordService.delRecord(ctx.state.user.id, ctx.request.body.ids);
+      ctx.success(res);
+    } catch (error) {
+      if (isBizException(error)) ctx.bizError(error.message);
+      throw error;
+    }
+  }
+
+  private static validateRecreateRecordBody(body: any): asserts body is IRecreateRecordBody {
+    if (!body) throw new BizException('body is undefined');
+    const { ids } = body as IRecreateRecordBody;
+    if (ids === undefined) throw new BizException(`body.ids is error`);
+  }
+
+  static async recreateRecord(ctx: Context) {
+    try {
+      SignupRecordController.validateRecreateRecordBody(ctx.request.body);
+      const res = await SignupRecordService.recreateRecord(ctx.state.user.id, ctx.request.body.ids);
       ctx.success(res);
     } catch (error) {
       if (isBizException(error)) ctx.bizError(error.message);

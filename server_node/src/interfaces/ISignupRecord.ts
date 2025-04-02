@@ -12,4 +12,9 @@ export interface IAddSignupRecordResponse extends Array<SignupRecord> {}
 export interface IDelSignupRecordBody {
   ids: Array<ISignupRecord['role_id']>;
 }
+
 export interface IAllSignupRecordResponse extends Array<SignupRecord> {}
+
+export interface IRecreateRecordBody {
+  ids: Array<ISignupRecord['role_id']>;
+}
