@@ -7,6 +7,7 @@ from collections import defaultdict
 import random
 from bson import ObjectId
 import datetime
+import ast
 
 from config import MONGO_CONN_STRING
 
@@ -16,19 +17,13 @@ allocation_api = Blueprint('allocation_api', __name__)
 mongo_client = MongoClient(MONGO_CONN_STRING)
 db = mongo_client["wow_raid"]
 
+system_config_coll = db["system_config"]
+
 # 常量定义：
 TANK_NEED = {'防骑': 2, '血DK': 1}
 HEALER_MAX = 4
 HEALER_MIN = 4
 HEALER_MUST_HAVE = {'奶骑': 2, '戒律牧': 1}
-
-DPS_LIMIT = {
-    '增强萨': (1, 1), '盗贼': (1, 1),
-    '惩戒骑': (1, 1), '暗牧': (1, 1), '痛苦术': (1, 2), '恶魔术': (1, 1), '鸟德': (1, 2),
-    '猎人': (2, 3), '邪DK': (1, 2), '冰DK': (0, 1),
-    '猫德': (0, 1), '电萨': (1, 1), '法师': (2, 3),
-    '战士': (1, 2),
-}
 
 HEALER_LIMIT = {
     '奶骑': 2,  # 奶骑人数上限（不超过2）
@@ -96,6 +91,7 @@ day_order_map = {
     "1-1": 11, "1-2": 12,
 }
 
+
 class ActorMap(Enum):
     FQ = "防骑"  # 防骑
     CJQ = "惩戒骑"  # 惩戒骑
@@ -156,7 +152,6 @@ def load_players_from_db(excluded_role_names):
     talent_enum_to_class = {e.name: e.value for e in ActorMap}
 
     # 一次批量查询所有有效报名记录
-    # signup_records = signup_collection.find({"delete_time": None})
     cycle_start, cycle_end = get_cycle_start_end()
     signup_records = signup_collection.find({
         "$and": [
@@ -302,48 +297,8 @@ def get_classes(char_class):
     return char_class.strip().split("+")
 
 
-# 检查团本配置合法性
-def validate_roster(roster):
-    tank = defaultdict(int)
-    heal = defaultdict(int)
-    dps = defaultdict(int)
-    for player, char, cls in roster:
-        role = ROLES[cls]
-        if role == '坦克':
-            tank[cls] += 1
-        elif role == '治疗':
-            heal[cls] += 1
-        else:
-            dps[cls] += 1
-
-    # 检查坦克是否满足
-    for cls, num in TANK_NEED.items():
-        if tank[cls] != num:
-            return False
-
-    # 检查治疗数量和必须职业
-    if not (HEALER_MIN <= sum(heal.values()) <= HEALER_MAX):
-        return False
-    for cls, num in HEALER_MUST_HAVE.items():
-        if heal[cls] < num:
-            return False
-
-    # 检查输出职业限制条件
-    for cls, (min_n, max_n) in DPS_LIMIT.items():
-        if dps[cls] < min_n or dps[cls] > max_n:
-            return False
-
-    # 检查远程近战尽可能均衡
-    melee_count = sum([v for k, v in dps.items() if ROLES[k] == "近战输出"])
-    ranged_count = sum([v for k, v in dps.items() if ROLES[k] == "远程输出"])
-    if abs(melee_count - ranged_count) > 2:  # 允许小幅偏差
-        return False
-
-    return True
-
-
 # 排团函数
-def create_group(players, cd_role_pool, time_slot, required_players_levels):
+def create_group(players, cd_role_pool, time_slot, required_players_levels, DPS_LIMIT):
     available_pool = {}
     player_dict = {p.player_name: p for p in players}
     for pname, chars in cd_role_pool.items():
@@ -432,8 +387,7 @@ def create_group(players, cd_role_pool, time_slot, required_players_levels):
                 break
             current_cls_count += 1
 
-    # 后续的坦克和DPS选择，保持原有剔除已选玩家逻辑
-    # 改进为支持分级别VIP处理
+    # 后续的坦克和DPS选择，剔除已选玩家逻辑，支持分级别VIP处理
     for vip_level in required_players_levels:
         shuffled_require_players = [p for p in vip_level if p in available_pool and p not in used_players]
         random.shuffle(shuffled_require_players)  # 随机玩家顺序
@@ -543,34 +497,33 @@ def create_group(players, cd_role_pool, time_slot, required_players_levels):
                 fixed_roles.append(role)
         selected_roles = fixed_roles
 
-    # DK特殊处理 (修复版本，严格检查 DPS_LIMIT并确保输出DK不超过2人)
-    dk_selected = {'邪DK': 0, '冰DK': 0}
-    dk_classes = ['邪DK', '冰DK']
-
-    # 先挑选邪DK玩家
-    xiedk_candidates = []
-    for pname in available_pool:
-        if any('邪DK' in get_classes(c['class']) for c in available_pool[pname]):
-            xiedk_candidates.append((remaining_counts[pname], pname))
-    random.shuffle(xiedk_candidates)
-
-    max_xiedk = DPS_LIMIT['邪DK'][1]  # 获取邪DK的上限人数
-
-    for _, pname in xiedk_candidates:
-        # 增添额外总数检查条件
-        if dps_selected['邪DK'] >= max_xiedk or sum(dps_selected[dk] for dk in dk_classes) >= 2:
-            break
-        if pick_role(pname, '邪DK'):
-            dps_selected['邪DK'] += 1
-            dk_selected['邪DK'] += 1
-
-    # 如果未选到足够的邪DK，则采用占位补充，但严格检查当前DK总数，确保不超过2
-    while dps_selected['邪DK'] < DPS_LIMIT['邪DK'][0]:
-        # 👇再增加一次总人数检查！这是第二个关键防护措施！
-        if sum(dps_selected[dk] for dk in dk_classes) >= 2:
-            break
-        selected_roles.append(("", "", "邪DK"))
-        dps_selected['邪DK'] += 1
+    # # DK特殊处理
+    # dk_selected = {'邪DK': 0, '冰DK': 0}
+    # dk_classes = ['邪DK', '冰DK']
+    #
+    # # 先挑选邪DK玩家
+    # xiedk_candidates = []
+    # for pname in available_pool:
+    #     if any('邪DK' in get_classes(c['class']) for c in available_pool[pname]):
+    #         xiedk_candidates.append((remaining_counts[pname], pname))
+    # random.shuffle(xiedk_candidates)
+    #
+    # max_xiedk = DPS_LIMIT['邪DK'][1]  # 获取邪DK的上限人数
+    #
+    # for _, pname in xiedk_candidates:
+    #     # 增添额外总数检查条件
+    #     if dps_selected['邪DK'] >= max_xiedk or sum(dps_selected[dk] for dk in dk_classes) >= 2:
+    #         break
+    #     if pick_role(pname, '邪DK'):
+    #         dps_selected['邪DK'] += 1
+    #         dk_selected['邪DK'] += 1
+    #
+    # # 如果未选到足够的邪DK，则采用占位补充，但严格检查当前DK总数，确保不超过2
+    # while dps_selected['邪DK'] < DPS_LIMIT['邪DK'][0]:
+    #     if sum(dps_selected[dk] for dk in dk_classes) >= 2:
+    #         break
+    #     selected_roles.append(("", "", "邪DK"))
+    #     dps_selected['邪DK'] += 1
 
     # DPS基础需求
     dps_min_requirements = {cls: limit[0] for cls, limit in DPS_LIMIT.items() if limit[0] > 0}
@@ -659,6 +612,9 @@ def roster():
     role_coll = db["role"]
     banned_roles_set = {role["role_name"] for role in role_coll.find({"disable_schedule": True})}
 
+    DPS_LIMIT = system_config_coll.find_one({"name": "DPS_LIMIT"})["value"]
+    DPS_LIMIT = ast.literal_eval(DPS_LIMIT)
+
     excluded_role_ids_object = [ObjectId(role_id) for role_id in excluded_role_ids]
     excluded_role_datas = list(signup_coll.find({"role_id": {"$in": excluded_role_ids_object}}))
     excluded_role_names = [role["role_name"] for role in excluded_role_datas]
@@ -667,7 +623,6 @@ def roster():
     players = load_players_from_db(excluded_role_names)
     cd_role_pool = build_cd_role_pool(players)
 
-    system_config_coll = db["system_config"]
     time_slots_config = system_config_coll.find_one({"name": "TIME_SLOTS"})
     time_slots = time_slots_config["value"]
     for excluded_time_key in excluded_time_keys:
@@ -686,7 +641,6 @@ def roster():
     schedule_coll.delete_many({"role_id": {"$nin": excluded_role_ids_object}})
 
     # 一次性全量查询缓存数据，避免循环中逐条检索数据库
-    # signup_records_cursor = signup_coll.find({"delete_time": None})
     cycle_start, cycle_end = get_cycle_start_end()
     signup_records_cursor = signup_coll.find({
         "$and": [
@@ -714,7 +668,7 @@ def roster():
     insert_documents = []  # 统一批量插入用的列表
 
     for slot in time_slots:
-        roster = create_group(players, cd_role_pool, slot, required_players_level)
+        roster = create_group(players, cd_role_pool, slot, required_players_level, DPS_LIMIT)
         sorted_roster = sort_roles(roster)
 
         group_time_key = time_key_map[slot]
