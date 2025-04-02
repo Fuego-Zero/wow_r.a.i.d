@@ -53,12 +53,17 @@ function useUnassignedPlayers(
   }, [enableTalentSelect, players, selectedActor]);
 
   const unassignedPlayersTotal = useMemo(() => {
+    let total = 0;
+
     const map = players
       .filter((player) => !player.is_scheduled)
       .reduce(
         (acc, player) => {
           const { talent } = player;
-          acc[getRoleByTalent(talent[0])].push(player);
+          talent.forEach((talent) => {
+            acc[getRoleByTalent(talent)].push(player);
+          });
+          total++;
           return acc;
         },
         {
@@ -68,9 +73,7 @@ function useUnassignedPlayers(
         } as Record<PlayerData["assignment"], PlayerData[]>
       );
 
-    console.log(map, "map");
-
-    return map;
+    return Object.assign(map, { total });
   }, [players]);
 
   const assignedPlayers = useMemo(() => {
@@ -92,13 +95,7 @@ function useUnassignedPlayers(
         <span className="flex items-center">
           <span>
             当前 CD 未安排活动玩家与角色名单
-            <span className="ml-1">
-              (
-              {unassignedPlayersTotal.TANK.length +
-                unassignedPlayersTotal.DPS.length +
-                unassignedPlayersTotal.HEALER.length}
-              )
-            </span>
+            <span className="ml-1">({unassignedPlayersTotal.total})</span>
           </span>
           <span className="flex items-center ml-3 space-x-2">
             <Role role="TANK" />
