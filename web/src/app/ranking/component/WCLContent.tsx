@@ -2,7 +2,7 @@ import Actor from "@/app/components/Actor";
 import useTalentSelect from "@/app/hooks/useTalentSelect";
 import { useAppConfig } from "@/app/player/context/appConfigContext";
 import { WCLRank } from "@/app/player/types";
-import { getWClColor } from "@/app/utils";
+import { getServerRankColor, getWClColor } from "@/app/utils";
 import { Col, Divider, Row, Table, TableColumnsType } from "antd";
 import React, { memo, useMemo } from "react";
 
@@ -36,6 +36,11 @@ const columns: TableColumnsType<DataType> = [
     title: "服务器排名",
     dataIndex: "server_rank",
     sorter: (a, b) => a.server_rank - b.server_rank,
+    render: (server_rank) => (
+      <span style={{ color: getServerRankColor(server_rank) }}>
+        {server_rank}
+      </span>
+    ),
   },
 ];
 

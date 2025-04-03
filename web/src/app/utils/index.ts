@@ -98,6 +98,15 @@ export function getWClColor(rank: number) {
   if (rank === 100) return "#e5cc80";
 }
 
+export function getServerRankColor(rank: number) {
+  if (rank === 1) return "#e5cc80";
+  if (rank <= 25) return "#e268a8";
+  if (rank <= 100) return "#ff8000";
+  if (rank <= 250) return "#a335ee";
+  if (rank <= 1000) return "#0070ff";
+  if (rank <= 5000) return "#1eff00";
+}
+
 export function getRoleByTalent(talent: TalentType): RoleType {
   switch (talent) {
     case "FQ":
