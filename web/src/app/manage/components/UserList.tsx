@@ -58,7 +58,7 @@ function UserList() {
                       {...role}
                       className="space-x-1 min-w-0 flex-1 truncate"
                     />
-                    <div className="ml-2 space-x-2">
+                    <div className="mx-2 space-x-2">
                       {role.disable_schedule ? (
                         <StopOutlined
                           title="禁止排班"
