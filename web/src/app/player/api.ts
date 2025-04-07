@@ -72,3 +72,7 @@ export function recreateRecord(params: {
 export function getWCLRanks(): Promise<WCLRank[]> {
   return http.get("/common/wcl_rankings");
 }
+
+export function leaveRaid(id: RoleInfo["id"]): Promise<boolean> {
+  return http.post("/schedule/leave", [id]);
+}

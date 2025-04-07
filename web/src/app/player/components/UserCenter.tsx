@@ -14,12 +14,15 @@ import {
   FontColorsOutlined,
   SolutionOutlined,
   SyncOutlined,
+  TwitterOutlined,
 } from "@ant-design/icons";
 import { getPublishedSchedule } from "@/app/api";
 import { isBizException } from "@yfsdk/web-basic-library";
 import axios from "axios";
 import PlayTime from "@/app/components/PlayTime";
 import RecreateSignupRecord from "./RecreateSignupRecord";
+import LeaveRaid from "./LeaveRaid";
+import { PlayerData } from "@/app/raid-roster/types";
 
 function UserCenter() {
   const { message, notification } = App.useApp();
@@ -58,7 +61,9 @@ function UserCenter() {
     );
   }, [raidTimeNameMap, userInfo?.play_time]);
 
-  const [schedule, setSchedule] = useState(new Map());
+  const [schedule, setSchedule] = useState<
+    Map<PlayerData["role_id"], PlayerData>
+  >(new Map());
 
   async function onLoadScheduleData() {
     try {
@@ -161,9 +166,22 @@ function UserCenter() {
                       </PlayTime>
                     )}
                     {schedule.get(role.id) && (
-                      <Tag color="green">
-                        {schedule.get(role.id).group_title}
-                      </Tag>
+                      <>
+                        {!schedule.get(role.id)!.is_leave ? (
+                          <LeaveRaid id={role.id} onReload={onReload} />
+                        ) : (
+                          <Tooltip title="已当鸽子">
+                            <TwitterOutlined
+                              style={{
+                                color: "#dc4446",
+                              }}
+                            />
+                          </Tooltip>
+                        )}
+                        <Tag color="green">
+                          {schedule.get(role.id)!.group_title}
+                        </Tag>
+                      </>
                     )}
                   </div>
                 </div>
