@@ -63,6 +63,10 @@ export type PlayersData = {
    * 团队职责
    */
   assignment: RoleType;
+  /**
+   * 是否请假
+   */
+  is_leave: boolean;
 
   /**
    * 安排的参团时间的key
