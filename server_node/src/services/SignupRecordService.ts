@@ -89,8 +89,9 @@ class SignupRecordService {
     // 检查是否所有记录都已更新
     if (result.modifiedCount !== recordIds.length) throw new BizException('部分记录删除失败');
 
+    //* 修改排班表中的记录，请假状态改为已请假
     const roleIds = existingRecords.map((r) => r.role_id);
-    await ScheduleService.delSchedules(userId, roleIds);
+    await ScheduleService.leave(userId, roleIds);
 
     return true;
   }

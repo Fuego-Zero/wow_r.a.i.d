@@ -56,6 +56,10 @@ export interface ISchedule extends Document<ScheduleId> {
    * 分配职责
    */
   assignment: AssignmentMap;
+  /**
+   * 是否请假
+   */
+  is_leave: boolean;
 
   /**
    * 创建时间
@@ -123,6 +127,10 @@ const schema = new Schema<ISchedule>(
       type: String,
       required: true,
       enum: AssignmentMap,
+    },
+    is_leave: {
+      type: Boolean,
+      default: false,
     },
 
     create_time: {

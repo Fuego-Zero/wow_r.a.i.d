@@ -1,4 +1,5 @@
 import { ISchedule } from '../models/Schedule';
+import { RoleId } from '../types';
 
 interface SchedulePlayer
   extends Pick<
@@ -14,6 +15,7 @@ interface SchedulePlayer
     | 'group_time_order'
     | 'group_title'
     | 'assignment'
+    | 'is_leave'
   > {
   /**
    * 是否已安排
@@ -27,3 +29,5 @@ export interface IGetScheduleResponse extends Array<SchedulePlayer> {}
 
 export interface ISaveScheduleBody
   extends Array<Omit<SchedulePlayer, 'is_scheduled' | 'group_time_order' | 'group_title'>> {}
+
+export interface ILeaveScheduleBody extends Array<RoleId> {}

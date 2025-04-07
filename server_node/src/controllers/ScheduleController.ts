@@ -1,7 +1,7 @@
 import { BizException, isArray, isBizException } from '@yfsdk/web-basic-library';
 import { Context } from 'koa';
 
-import { ISaveScheduleBody } from '../interfaces/ISchedule';
+import { ILeaveScheduleBody, ISaveScheduleBody } from '../interfaces/ISchedule';
 import ScheduleService from '../services/ScheduleService';
 
 class ScheduleController {
@@ -55,6 +55,23 @@ class ScheduleController {
   static async unpublish(ctx: Context) {
     try {
       const res = await ScheduleService.unpublish(ctx.state.user.id);
+      ctx.success(res);
+    } catch (error) {
+      if (isBizException(error)) ctx.bizError(error.message);
+      throw error;
+    }
+  }
+
+  private static validateLeaveParams(body: any): asserts body is ILeaveScheduleBody {
+    if (!body) throw new BizException('body is undefined');
+    const ids = body as ILeaveScheduleBody;
+    if (!isArray(ids)) throw new BizException(`ids is error`);
+  }
+
+  static async leave(ctx: Context) {
+    try {
+      ScheduleController.validateLeaveParams(ctx.request.body);
+      const res = await ScheduleService.leave(ctx.state.user.id, ctx.request.body);
       ctx.success(res);
     } catch (error) {
       if (isBizException(error)) ctx.bizError(error.message);

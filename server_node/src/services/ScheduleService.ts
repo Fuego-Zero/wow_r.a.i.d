@@ -53,6 +53,7 @@ class ScheduleService {
 
         is_scheduled: true,
         assignment: player.assignment,
+        is_leave: player.is_leave,
 
         group_time_key: player.group_time_key,
         group_time_order: player.group_time_order,
@@ -71,8 +72,9 @@ class ScheduleService {
         play_time: record.play_time,
         user_name: record.user_name,
 
-        is_scheduled: false,
+        is_scheduled: false, //* 默认未安排
         assignment: AssignmentMap.DPS, //* 默认职责全部是DPS
+        is_leave: false, //* 默认未请假
 
         group_time_key: '',
         group_time_order: -1,
@@ -178,6 +180,7 @@ class ScheduleService {
 
       is_scheduled: true,
       assignment: player.assignment,
+      is_leave: player.is_leave,
 
       group_time_key: player.group_time_key,
       group_time_order: player.group_time_order,
@@ -291,6 +294,27 @@ class ScheduleService {
     if (schedule.length === 0) return true;
 
     await Schedule.deleteMany(params);
+    return true;
+  }
+
+  static async leave(userId: UserId, roleIds: RoleId[]): Promise<boolean> {
+    const { startDate, endDate } = getRaidDateRange();
+
+    const params = {
+      user_id: userId,
+      role_id: {
+        $in: roleIds,
+      },
+      create_time: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    };
+
+    const schedule = await Schedule.find(params).lean();
+    if (schedule.length !== roleIds.length) throw new BizException('请假角色不存在或不属于当前用户');
+
+    await Schedule.updateMany(params, { is_leave: true });
     return true;
   }
 }

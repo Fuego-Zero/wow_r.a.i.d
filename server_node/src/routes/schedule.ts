@@ -9,5 +9,6 @@ route.post('/save', ScheduleController.saveSchedule);
 route.get('/published', ScheduleController.getPublished);
 route.post('/publish', ScheduleController.publish);
 route.post('/unpublish', ScheduleController.unpublish);
+route.post('/leave', ScheduleController.leave);
 
 export default route;
