@@ -1,5 +1,5 @@
-import { CloseOutlined } from "@ant-design/icons";
-import { Button, Card, Dropdown, MenuProps } from "antd";
+import { CloseOutlined, TwitterOutlined } from "@ant-design/icons";
+import { Button, Card, Dropdown, MenuProps, Tooltip } from "antd";
 import React from "react";
 import Empty from "./Empty";
 import Nameplate from "@/app/player/components/Nameplate";
@@ -62,6 +62,7 @@ function DesktopRaidCard(props: RaidPlayerCardsProps) {
             "flex relative items-center justify-start py-1 px-1 min-w-0 w-[20%] min-h-[52px] group/delPlayer",
             {
               "bg-amber-300/20": !item.role_id,
+              "bg-red-600/20": item.is_leave,
             },
             item.talent.join(" ")
           )}
@@ -91,6 +92,7 @@ function DesktopRaidCard(props: RaidPlayerCardsProps) {
                     changeCharacterRole?.(item.role_id, key as RoleType);
                   },
                 }}
+                disabled={displayMode}
                 destroyPopupOnHide
                 trigger={["contextMenu"]}
               >
@@ -101,6 +103,12 @@ function DesktopRaidCard(props: RaidPlayerCardsProps) {
                   />
                 </div>
               </Dropdown>
+
+              {item.is_leave && (
+                <Tooltip title="这是个鸽子">
+                  <TwitterOutlined className="ml-2" />
+                </Tooltip>
+              )}
 
               {!displayMode && (
                 <Button
