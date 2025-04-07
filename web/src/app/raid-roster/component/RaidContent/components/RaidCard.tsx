@@ -99,9 +99,9 @@ function RaidCard(props: RaidCardProps) {
     const HEALER_AVG = Number(calcAvg(roleMap.get("HEALER")!).toFixed(2));
 
     return (
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2 max-md:flex-col">
         <span>{data.group_title}</span>
-        <div className="flex items-center space-x-0.5 md:space-x-2 text-[12px] md:text-[14px]">
+        <div className="flex items-center space-x-0.5 md:space-x-2 max-md:text-[12px] max-md:scale-[0.85]">
           <Role role="TANK" />
           <span>坦克</span>
           <span>{roleMap.get("TANK")?.length}</span>
