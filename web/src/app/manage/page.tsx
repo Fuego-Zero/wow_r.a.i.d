@@ -22,19 +22,17 @@ function PlayerContent() {
     });
   }
 
+  if (!isAdmin) return null;
+
   return (
     <Layout className={classNames("h-[100vh] flex overflow-auto")}>
       <Layout.Header>
         <Header openCreateAccount={openCreateAccount} />
       </Layout.Header>
       <Layout.Content className="min-w-0">
-        {isAdmin ? (
-          <div className="p-4">
-            <UserList key={userListKey} />
-          </div>
-        ) : (
-          <>无权浏览</>
-        )}
+        <div className="p-4">
+          <UserList key={userListKey} />
+        </div>
         {holder}
       </Layout.Content>
     </Layout>

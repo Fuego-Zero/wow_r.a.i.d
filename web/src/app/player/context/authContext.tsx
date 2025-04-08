@@ -16,6 +16,7 @@ import { BizException, isBizException } from "@yfsdk/web-basic-library";
 import * as api from "../api";
 import { App } from "antd";
 import { hashPassword } from "../utils";
+import { useRouter } from "next/navigation";
 
 type AuthContextType = {
   isLoading: boolean;
@@ -34,6 +35,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const [isLogin, setIsLogin] = useState(false);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const { message } = App.useApp();
+  const router = useRouter();
 
   async function reloadUserInfo() {
     const user = await api.getUserInfo();
@@ -69,6 +71,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     userStorage.clear();
     setUserInfo(null);
     setIsLogin(false);
+    router.push("/player");
   };
 
   const isAdmin = useMemo<boolean>(() => {
