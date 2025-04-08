@@ -16,7 +16,7 @@ function useCreateAccount(): [() => Promise<void>, React.ReactNode] {
   const prs = useRef<(value?: any) => void>(() => {});
 
   function open() {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       setIsOpen(true);
       prs.current = resolve;
     });
