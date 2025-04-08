@@ -16,6 +16,7 @@ import PlayTime from "@/app/components/PlayTime";
 import { CheckOutlined, IdcardFilled, StopOutlined } from "@ant-design/icons";
 import Nameplate from "@/app/player/components/Nameplate";
 import { isBizException } from "@yfsdk/web-basic-library";
+import dayjs from "dayjs";
 
 const PW = "ly0uQlp7LMaMVhzh"; /* cspell: disable-line */
 
@@ -134,6 +135,18 @@ function UserList() {
       dataIndex: "play_time",
       key: "play_time",
       render: (_, { play_time }) => <PlayTime play_time={play_time} />,
+    },
+    {
+      title: "最后登录时间",
+      dataIndex: "last_login_time",
+      key: "last_login_time",
+      render: (_, { last_login_time }) => (
+        <>
+          {last_login_time
+            ? dayjs(last_login_time).format("YYYY-MM-DD HH:mm:ss")
+            : "-"}
+        </>
+      ),
     },
     {
       title: "身份",

@@ -8,6 +8,7 @@ import * as types from "../player/types";
  */
 export type UserInfo = Omit<types.UserInfo, "token"> & {
   id: string;
+  last_login_time?: string;
   roles: Array<{
     id: string;
     role_name: string;
