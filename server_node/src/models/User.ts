@@ -35,6 +35,12 @@ export interface IUser extends Document<UserId> {
    * 更新时间
    */
   update_time: Date;
+  /**
+   * 最后登录时间
+   *
+   * @description 该字段在登录时更新
+   */
+  last_login_time: Date;
 }
 
 const schema = new Schema<IUser>(
@@ -51,7 +57,10 @@ const schema = new Schema<IUser>(
       type: String,
       required: true,
     },
-    wechat_name: String,
+    wechat_name: {
+      type: String,
+      default: '',
+    },
     play_time: [String],
     is_admin: {
       type: Boolean,
@@ -61,10 +70,8 @@ const schema = new Schema<IUser>(
       type: Date,
       default: Date.now,
     },
-    update_time: {
-      type: Date,
-      default: Date.now,
-    },
+    update_time: Date,
+    last_login_time: Date,
   },
   {
     versionKey: false,

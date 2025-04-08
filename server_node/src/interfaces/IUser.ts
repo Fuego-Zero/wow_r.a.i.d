@@ -15,3 +15,5 @@ export interface IAllUsersResponse extends Array<User & { id: IUser['_id']; role
 export interface IResetPasswordBody extends Pick<IUser, 'password'> {
   targetUserId: IUser['_id'];
 }
+
+export interface ICreateAccountBody extends Pick<IUser, 'account' | 'user_name'> {}

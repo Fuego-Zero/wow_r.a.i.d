@@ -9,5 +9,6 @@ user.post('/change_password', UserController.changePassword);
 user.post('/change_user_info', UserController.changeUserInfo);
 user.get('/all_users', UserController.allUsers);
 user.post('/reset_password', UserController.resetPassword);
+user.post('/create_account', UserController.createAccount);
 
 export default user;

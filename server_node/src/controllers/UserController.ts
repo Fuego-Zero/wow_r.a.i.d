@@ -2,7 +2,7 @@ import { BizException, isBizException } from '@yfsdk/web-basic-library';
 import { Context } from 'koa';
 
 import { ILoginBody } from '../interfaces/ILogin';
-import { IChangePasswordBody, IChangeUserInfoBody, IResetPasswordBody } from '../interfaces/IUser';
+import { IChangePasswordBody, IChangeUserInfoBody, ICreateAccountBody, IResetPasswordBody } from '../interfaces/IUser';
 import UserService from '../services/UserService';
 
 class UserController {
@@ -103,6 +103,25 @@ class UserController {
       UserController.validateResetPasswordParams(ctx.request.body);
       const { password, targetUserId } = ctx.request.body;
       const user = await UserService.resetPassword(ctx.state.user.id, targetUserId, password);
+      ctx.success(user);
+    } catch (error) {
+      if (isBizException(error)) ctx.bizError(error.message);
+      throw error;
+    }
+  }
+
+  private static validateCreateAccountParams(body: any): asserts body is ICreateAccountBody {
+    if (!body) throw new BizException('body is undefined');
+    const { account, user_name } = body as ICreateAccountBody;
+    if (!account) throw new BizException('body.account is error');
+    if (!user_name) throw new BizException('body.user_name is error');
+  }
+
+  static async createAccount(ctx: Context) {
+    try {
+      UserController.validateCreateAccountParams(ctx.request.body);
+      const { account, user_name } = ctx.request.body;
+      const user = await UserService.createAccount(ctx.state.user.id, account, user_name);
       ctx.success(user);
     } catch (error) {
       if (isBizException(error)) ctx.bizError(error.message);

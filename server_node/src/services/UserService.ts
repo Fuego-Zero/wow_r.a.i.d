@@ -7,7 +7,7 @@ import { ILoginBody, ILoginResponse } from '../interfaces/ILogin';
 import { IAllUsersResponse, IChangeUserInfoBody, IChangeUserInfoResponse } from '../interfaces/IUser';
 import Role from '../models/Role';
 import SignupRecord from '../models/SignupRecord';
-import User from '../models/User';
+import User, { IUser } from '../models/User';
 import { UserId } from '../types';
 import { getRaidDateRange } from '../utils';
 import { validateUserAccess } from '../utils/user';
@@ -27,6 +27,8 @@ class UserService {
 
     const isValid = await bcrypt.compare(body.password, user.password);
     if (!isValid) throw new BizException('用户密码错误');
+
+    await User.updateOne({ _id: user._id }, { last_login_time: new Date() });
 
     const { user_name, wechat_name, play_time, id, account } = user;
     const token = jwt.sign({ id }, secretKey, { expiresIn: '12h' });
@@ -134,6 +136,31 @@ class UserService {
     password = await bcrypt.hash(password, salt);
 
     await User.updateOne({ _id: targetUserId }, { password, update_time: Date.now() });
+    return true;
+  }
+
+  static async createAccount(
+    userId: UserId,
+    account: IUser['account'],
+    user_name: IUser['user_name'],
+  ): Promise<boolean> {
+    await validateUserAccess(userId);
+
+    let res = await User.findOne({ account }).lean();
+    if (res) throw new BizException('账号已存在');
+
+    res = await User.findOne({ user_name }).lean();
+    if (res) throw new BizException('用户名已存在');
+
+    const user = await User.insertOne({ account, user_name, password: ' ' });
+    if (!user) throw new BizException('创建账号失败');
+
+    await UserService.resetPassword(
+      userId,
+      user.id,
+      '113d2a09de647f8102f5a34492e15ecb66ce173a2ea59fb67acc3cd18a330e68',
+    );
+
     return true;
   }
 }
