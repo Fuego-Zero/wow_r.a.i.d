@@ -97,6 +97,11 @@ function useGroupManage(
                         <Switch
                           checkedChildren="启用"
                           unCheckedChildren="停用"
+                          onChange={(checked) => {
+                            const groupInfo = form.getFieldValue("groupInfo");
+                            groupInfo[field.name].auto = checked;
+                            form.setFieldsValue({ groupInfo });
+                          }}
                         />
                       </Form.Item>
                     </Col>
@@ -105,6 +110,13 @@ function useGroupManage(
                         <Switch
                           checkedChildren="自动"
                           unCheckedChildren="手动"
+                          disabled={
+                            !form.getFieldValue([
+                              "groupInfo",
+                              field.name,
+                              "enable",
+                            ])
+                          }
                         />
                       </Form.Item>
                     </Col>
