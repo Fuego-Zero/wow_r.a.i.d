@@ -5,8 +5,9 @@ import { batchAddRecords } from "../api";
 import { isBizException } from "@yfsdk/web-basic-library";
 import AppTitle from "@/app/components/AppTitle";
 
-export const Header = () => {
+export const Header = (props: { openCreateAccount: () => void }) => {
   const { message } = App.useApp();
+  const { openCreateAccount } = props;
 
   async function addRecords() {
     try {
@@ -28,6 +29,14 @@ export const Header = () => {
         }}
       >
         一键报名
+      </Button>
+      <Button
+        type="primary"
+        onClick={() => {
+          openCreateAccount();
+        }}
+      >
+        创建账号
       </Button>
       <AppUserMenu />
     </div>

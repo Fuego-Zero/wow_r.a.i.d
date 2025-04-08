@@ -26,3 +26,10 @@ export function changeRoleDisableSchedule(
     disable_schedule: disableSchedule,
   });
 }
+
+export function createAccount(
+  account: UserInfo["account"],
+  user_name: UserInfo["user_name"]
+): Promise<void> {
+  return http.post("/create_account", { account, user_name });
+}
