@@ -122,6 +122,7 @@ class UserService {
       user_name: user.user_name,
       wechat_name: user.wechat_name,
       is_admin: user.is_admin,
+      last_login_time: user.last_login_time,
       roles: rolesMap[user._id.toString()] ?? [],
     }));
   }

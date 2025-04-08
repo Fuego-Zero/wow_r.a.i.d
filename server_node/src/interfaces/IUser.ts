@@ -10,7 +10,8 @@ interface Role extends Pick<IRole, 'role_name' | 'classes' | 'talent' | 'disable
 export interface IChangePasswordBody extends Pick<IUser, 'password'> {}
 export interface IChangeUserInfoBody extends User {}
 export interface IChangeUserInfoResponse extends User {}
-export interface IAllUsersResponse extends Array<User & { id: IUser['_id']; roles: Array<Role> }> {}
+export interface IAllUsersResponse
+  extends Array<User & Partial<Pick<IUser, 'last_login_time'>> & { id: IUser['_id']; roles: Array<Role> }> {}
 
 export interface IResetPasswordBody extends Pick<IUser, 'password'> {
   targetUserId: IUser['_id'];
