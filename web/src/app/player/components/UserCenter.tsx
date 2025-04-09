@@ -118,12 +118,13 @@ function UserCenter() {
       .filter((role) => signupRecordSet.has(role.id))
       .sort(
         (a, b) =>
-          schedule.get(a.id)!.group_time_order -
-          schedule.get(b.id)!.group_time_order
+          (schedule.get(a.id)?.group_time_order ?? 0) -
+          (schedule.get(b.id)?.group_time_order ?? 0)
       )
       .map((role) => {
         return {
           label: schedule.get(role.id)!.group_title,
+          color: "#207F4C",
           children: (
             <div className="flex items-center">
               <Actor className="m-[-18px] mr-0" actor={role.talent}></Actor>
