@@ -1,4 +1,4 @@
-import { App, Card, Col, Row, Tag, Tooltip } from "antd";
+import { App, Card, Col, Row, Tag, Timeline, Tooltip } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/authContext";
 import BindRole from "./BindRole";
@@ -23,6 +23,8 @@ import PlayTime from "@/app/components/PlayTime";
 import RecreateSignupRecord from "./RecreateSignupRecord";
 import LeaveRaid from "./LeaveRaid";
 import { PlayerData } from "@/app/raid-roster/types";
+import Actor from "@/app/components/Actor";
+import Players from "@/app/components/Players";
 
 function UserCenter() {
   const { message, notification } = App.useApp();
@@ -108,6 +110,30 @@ function UserCenter() {
     }
   }
 
+  const items = useMemo(() => {
+    if (schedule.size === 0) return [];
+    if (signupRecordSet.size === 0) return [];
+
+    return roles
+      .filter((role) => signupRecordSet.has(role.id))
+      .sort(
+        (a, b) =>
+          schedule.get(a.id)!.group_time_order -
+          schedule.get(b.id)!.group_time_order
+      )
+      .map((role) => {
+        return {
+          label: schedule.get(role.id)!.group_title,
+          children: (
+            <div className="flex items-center">
+              <Actor className="m-[-18px] mr-0" actor={role.talent}></Actor>
+              <Players classes={role.classes}>{role.role_name}</Players>
+            </div>
+          ),
+        };
+      });
+  }, [roles, schedule, signupRecordSet]);
+
   return (
     <Row justify="center" className="max-md:!mx-0 mt-5" gutter={[16, 16]}>
       <Col span={24}>
@@ -117,8 +143,21 @@ function UserCenter() {
           extra={`微信名：${userInfo?.wechat_name}`}
         >
           <Card.Grid className="p-2 w-full" hoverable={false}>
-            报名时间：{playTime.join("、")}
+            报名时间：
+            <div>{playTime.join("、")}</div>
           </Card.Grid>
+
+          {items.length > 0 && (
+            <Card.Grid className="p-2 w-full" hoverable={false}>
+              出师表：
+              <Timeline
+                className="[&>*:last-child]:p-0"
+                mode="left"
+                items={items}
+              />
+            </Card.Grid>
+          )}
+
           {roles.map((role) => {
             return (
               <Card.Grid className="p-2 w-full" hoverable={false} key={role.id}>
