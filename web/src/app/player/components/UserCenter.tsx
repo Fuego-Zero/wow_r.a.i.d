@@ -112,10 +112,9 @@ function UserCenter() {
 
   const items = useMemo(() => {
     if (schedule.size === 0) return [];
-    if (signupRecordSet.size === 0) return [];
 
     return roles
-      .filter((role) => signupRecordSet.has(role.id))
+      .filter((role) => schedule.has(role.id))
       .sort(
         (a, b) =>
           (schedule.get(a.id)?.group_time_order ?? 0) -
@@ -124,7 +123,8 @@ function UserCenter() {
       .map((role) => {
         return {
           label: schedule.get(role.id)!.group_title,
-          color: "#207F4C",
+          // color: "#207F4C",
+          color: "#55bb8a",
           children: (
             <div className="flex items-center">
               <Actor className="m-[-18px] mr-0" actor={role.talent}></Actor>
@@ -133,7 +133,7 @@ function UserCenter() {
           ),
         };
       });
-  }, [roles, schedule, signupRecordSet]);
+  }, [roles, schedule]);
 
   return (
     <Row justify="center" className="max-md:!mx-0 mt-5" gutter={[16, 16]}>
