@@ -65,15 +65,18 @@ function ScheduleContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function setDataHandler(value: PlayersData) {
-    try {
-      await saveRaidRoster(value);
-      setPlayersData(value);
-    } catch (error) {
-      if (isBizException(error)) return message.error(error.message);
-      throw error;
-    }
-  }
+  const setDataHandler = useCallback(
+    async (value: PlayersData) => {
+      try {
+        await saveRaidRoster(value);
+        setPlayersData(value);
+      } catch (error) {
+        if (isBizException(error)) return message.error(error.message);
+        throw error;
+      }
+    },
+    [message]
+  );
 
   const el = useRef<HTMLElement>(null);
 
@@ -149,7 +152,7 @@ function ScheduleContent() {
 
       setDataHandler(newData);
     },
-    [playersData]
+    [playersData, setDataHandler]
   );
 
   const [openGroupManage, groupManageHolder, groupInfo] =
@@ -203,7 +206,7 @@ function ScheduleContent() {
 
       setDataHandler([...playersData]);
     },
-    [openSelectModal, playersData, raidTimeOrderMap]
+    [openSelectModal, playersData, raidTimeOrderMap, setDataHandler]
   );
 
   const changeCharacterRole = useCallback(
@@ -214,7 +217,7 @@ function ScheduleContent() {
       });
       setDataHandler([...playersData]);
     },
-    [playersData]
+    [playersData, setDataHandler]
   );
 
   const showAdvancedBtn = useMemo(() => {
@@ -248,7 +251,7 @@ function ScheduleContent() {
 
       setDataHandler([...playersData]);
     },
-    [openChangeModal, playersData, raidTimeOrderMap]
+    [openChangeModal, playersData, raidTimeOrderMap, setDataHandler]
   );
 
   const [openUnassignedModal, unassignedModalContextHolder] =
