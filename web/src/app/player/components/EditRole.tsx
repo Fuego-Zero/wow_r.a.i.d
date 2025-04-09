@@ -139,7 +139,11 @@ function EditRole(props: Props) {
           <Form.Item name="role_name" label="名称" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="auto_signup" label="自动报名">
+          <Form.Item
+            name="auto_signup"
+            label="自动报名"
+            tooltip="开启后系统会每周自动报名一次参加活动，不需要每周手动报名"
+          >
             <Switch />
           </Form.Item>
           <Form.Item label="职业" name="classes">
