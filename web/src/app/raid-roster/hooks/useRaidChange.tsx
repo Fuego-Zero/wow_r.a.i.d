@@ -15,6 +15,7 @@ import Nameplate from "@/app/player/components/Nameplate";
 
 import dynamic from "next/dynamic";
 import PlayTime from "@/app/components/PlayTime";
+import { convertToMatrixIndex } from "../component/RaidContent/components/utils";
 const ScrollWrap = dynamic(() => import("@/app/components/common/ScrollWrap"), {
   ssr: false,
 });
@@ -196,7 +197,7 @@ function useRaidChange(
         <div>
           <Divider orientation="left">已安排</Divider>
           <Row align="middle" className="!mx-0" gutter={[8, 8]}>
-            {assignedPlayers.map((item) => {
+            {assignedPlayers.map((item, index) => {
               let el = null;
               const reserves = reservesPlayers[item.user_id];
 
@@ -243,6 +244,9 @@ function useRaidChange(
                 <div
                   className="w-[20%] px-[4px] h-[32px] flex items-center"
                   key={item.role_id}
+                  style={{
+                    order: convertToMatrixIndex(index),
+                  }}
                 >
                   <Button block className="min-w-0">
                     {el}
