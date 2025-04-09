@@ -148,6 +148,7 @@ class ScheduleService {
       group_time_order: groupInfoMap[item.group_time_key].order,
       group_title: groupInfoMap[item.group_time_key].title,
       assignment: item.assignment,
+      is_leave: item.is_leave || false,
       create_time: new Date(),
     }));
 
