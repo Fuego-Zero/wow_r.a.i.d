@@ -39,7 +39,7 @@ class WCLRankingsService {
       average_rank_percent: item.average_rank_percent,
       server_rank: item.server_rank,
       classes: rolesMap[item.role_name]?.classes,
-      user_name: usersMap[rolesMap[item.role_name]?.user_id] ?? '',
+      user_name: usersMap[rolesMap[item.role_name]?.user_id] ?? '未知',
     }));
   }
 }
