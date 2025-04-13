@@ -15,7 +15,7 @@ function RankingContent() {
         <AppTitle title="轻风之语" subTitle="WCL 排行榜" />
         <AppPublicMenu />
       </Layout.Header>
-      <Layout.Content>
+      <Layout.Content className="my-5">
         <WCLContent />
       </Layout.Content>
     </Layout>

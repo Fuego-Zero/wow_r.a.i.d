@@ -3,19 +3,18 @@ import useTalentSelect from "@/app/hooks/useTalentSelect";
 import { useAppConfig } from "@/app/player/context/appConfigContext";
 import { WCLRank } from "@/app/player/types";
 import { getServerRankColor, getWClColor } from "@/app/utils";
-import { Col, Divider, Row, Table, TableColumnsType } from "antd";
+import { Col, Divider, Flex, Row, Table, TableColumnsType } from "antd";
 import React, { memo, useMemo } from "react";
+import Charts from "./components/Charts";
+import dynamic from "next/dynamic";
 
 type DataType = WCLRank & { key: React.Key };
 
 const columns: TableColumnsType<DataType> = [
-  //   { title: "玩家", dataIndex: "user_name" },
+  { title: "玩家", dataIndex: "user_name" },
   {
     title: "角色",
     dataIndex: "role_name",
-    // render: (_, record) => {
-    //   return <Players classes={record.}></Players>;
-    // },
   },
   {
     title: "天赋",
@@ -43,6 +42,10 @@ const columns: TableColumnsType<DataType> = [
     ),
   },
 ];
+
+const ScrollWrap = dynamic(() => import("../../components/common/ScrollWrap"), {
+  ssr: false,
+});
 
 function WCLContent() {
   const { WCLRanksMap } = useAppConfig();
@@ -76,19 +79,26 @@ function WCLContent() {
   }, [WCLData, selectedActor]);
 
   return (
-    <Row gutter={[16, 16]} className="!mx-0">
-      <Col span={24} className="mt-5">
-        {contextHolder}
-      </Col>
-      <Col span={24}>
-        <Divider className="my-4" />
-        <Table<DataType>
-          pagination={false}
-          columns={columns}
-          dataSource={dataSource}
-        />
-      </Col>
-    </Row>
+    <Flex vertical className="h-full">
+      <Row gutter={[16, 16]} className="!mx-0">
+        <Col span={24}>{contextHolder}</Col>
+      </Row>
+      <Divider className="my-4" />
+      <Row gutter={[16, 16]} className="flex-1 min-h-0 !mx-0">
+        <Col span={24} xl={12} className="h-full">
+          <ScrollWrap>
+            <Table<DataType>
+              pagination={false}
+              columns={columns}
+              dataSource={dataSource}
+            />
+          </ScrollWrap>
+        </Col>
+        <Col span={24} xl={12} className="h-full">
+          <Charts filtered={WCLData.get(selectedActor) ?? []} />
+        </Col>
+      </Row>
+    </Flex>
   );
 }
 

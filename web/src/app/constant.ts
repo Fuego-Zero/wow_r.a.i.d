@@ -58,6 +58,19 @@ enum RoleClassesMap {
 
 export type RoleClasses = keyof typeof RoleClassesMap;
 
+export const ROLE_CLASSES_NAME_MAP: Record<RoleClasses, string> = {
+  DK: "死亡骑士",
+  XD: "德鲁伊",
+  LR: "猎人",
+  FS: "法师",
+  QS: "圣骑士",
+  MS: "牧师",
+  DZ: "盗贼",
+  SM: "萨满祭司",
+  SS: "术士",
+  ZS: "战士",
+};
+
 export const ROLE_CLASSES_COLOR_MAP: Record<RoleClasses, string> = {
   DK: "#c41e3a",
   XD: "#ff7c0a",

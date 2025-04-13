@@ -113,4 +113,12 @@ export type WCLRank = {
    * 服务器排名
    */
   server_rank: number;
+  /**
+   * 角色职业
+   */
+  classes: RoleClasses;
+  /**
+   * 用户名
+   */
+  user_name: string;
 };
