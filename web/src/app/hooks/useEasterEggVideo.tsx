@@ -7,12 +7,12 @@ function useEasterEggVideo() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const num = Math.randomInt(1, 10);
+    const num = Math.randomInt(1, 100);
     if (num !== 1) return;
 
     setTimeout(() => {
       setIsOpen(true);
-    }, 2000);
+    }, 500);
   }, []);
 
   const holder = (
@@ -26,7 +26,9 @@ function useEasterEggVideo() {
       }}
       destroyOnClose
     >
-      <video width={700} height={700} controls src="/videos/welcome.mp4" />
+      {isOpen && (
+        <video width={700} height={700} controls src="/videos/welcome.mp4" />
+      )}
     </Modal>
   );
 

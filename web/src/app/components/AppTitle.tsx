@@ -42,7 +42,7 @@ function AppTitle(props: { title: string; subTitle: string }) {
   }
 
   const bgmSrc = useMemo(() => {
-    const num = Math.randomInt(1, 10);
+    const num = Math.randomInt(1, 100);
 
     if (num === 1) return "/audio/四娘打呼.mp3";
     return "/audio/曹万江 - 你要结婚了.mp3";
