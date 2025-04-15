@@ -5,6 +5,10 @@ import { ConfigProvider, theme, App } from "antd";
 import zhCN from "antd/locale/zh_CN";
 import "core-js";
 
+import { extend } from "@yfsdk/web-basic-library";
+
+extend();
+
 export default function BaseProvider(props: React.PropsWithChildren) {
   return (
     <StyleProvider layer>

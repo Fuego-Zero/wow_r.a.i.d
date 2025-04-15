@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 
 function AppTitle(props: { title: string; subTitle: string }) {
   const bgmEl = useRef<HTMLAudioElement>(null);
@@ -35,6 +35,13 @@ function AppTitle(props: { title: string; subTitle: string }) {
     }
   }
 
+  const bgmSrc = useMemo(() => {
+    const num = Math.randomInt(1, 10);
+
+    if (num === 1) return "/audio/四娘打呼.mp3";
+    return "/audio/曹万江 - 你要结婚了.mp3";
+  }, []);
+
   return (
     <>
       <Image
@@ -52,14 +59,7 @@ function AppTitle(props: { title: string; subTitle: string }) {
         </span>
         <span className="text-base text-[12px]"> {props.subTitle}</span>
       </h1>
-      <audio
-        hidden
-        ref={bgmEl}
-        src="/audio/曹万江 - 你要结婚了.mp3"
-        autoPlay
-        loop
-        muted
-      />
+      <audio hidden ref={bgmEl} src={bgmSrc} autoPlay loop muted />
     </>
   );
 }
