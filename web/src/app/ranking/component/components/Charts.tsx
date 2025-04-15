@@ -33,7 +33,7 @@ function Charts(props: Props) {
       "ZS",
     ];
 
-    const data = WCLRanksMap.values().reduce(
+    const data = [...WCLRanksMap.values()].reduce(
       (acc, item) => {
         acc[item.classes].set(item.user_name, item);
         return acc;
@@ -105,7 +105,7 @@ function Charts(props: Props) {
       ["#666666", "灰色"],
     ]);
 
-    const data = WCLRanksMap.values().reduce(
+    const data = [...WCLRanksMap.values()].reduce(
       (acc, item) => {
         acc[getWClColor(item.average_rank_percent)!]++;
         return acc;
