@@ -1,25 +1,31 @@
 import Image from "next/image";
 import React, { useEffect, useMemo, useRef } from "react";
+import useEasterEggVideo from "../hooks/useEasterEggVideo";
 
 function AppTitle(props: { title: string; subTitle: string }) {
   const bgmEl = useRef<HTMLAudioElement>(null);
+
+  const [isVideoOpen, videoHolder] = useEasterEggVideo();
 
   useEffect(() => {
     if (!bgmEl.current) return;
     if (!bgmEl.current.muted) return;
     if (localStorage.getItem("BGM") === "0") return;
 
-    document.addEventListener(
-      "click",
-      () => {
-        bgmEl.current!.muted = false;
-        bgmEl.current!.play();
-      },
-      {
-        once: true,
-      }
-    );
-  }, []);
+    function onClick() {
+      if (isVideoOpen) return;
+      bgmEl.current!.muted = false;
+      bgmEl.current!.play();
+    }
+
+    document.addEventListener("click", onClick, {
+      once: true,
+    });
+
+    return () => {
+      document.removeEventListener("click", onClick);
+    };
+  }, [isVideoOpen]);
 
   function onToggleBGM() {
     if (!bgmEl.current) return;
@@ -60,6 +66,7 @@ function AppTitle(props: { title: string; subTitle: string }) {
         <span className="text-base text-[12px]"> {props.subTitle}</span>
       </h1>
       <audio hidden ref={bgmEl} src={bgmSrc} autoPlay loop muted />
+      {videoHolder}
     </>
   );
 }
