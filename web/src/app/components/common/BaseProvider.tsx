@@ -3,6 +3,7 @@ import { AuthProvider } from "@/app/player/context/authContext";
 import { StyleProvider } from "@ant-design/cssinjs";
 import { ConfigProvider, theme, App } from "antd";
 import zhCN from "antd/locale/zh_CN";
+import "core-js";
 
 export default function BaseProvider(props: React.PropsWithChildren) {
   return (

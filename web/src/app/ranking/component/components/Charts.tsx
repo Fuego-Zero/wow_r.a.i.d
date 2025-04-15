@@ -33,7 +33,7 @@ function Charts(props: Props) {
       "ZS",
     ];
 
-    const data = [...WCLRanksMap.values()].reduce(
+    const data = WCLRanksMap.values().reduce(
       (acc, item) => {
         acc[item.classes].set(item.user_name, item);
         return acc;
@@ -105,7 +105,7 @@ function Charts(props: Props) {
       ["#666666", "灰色"],
     ]);
 
-    const data = [...WCLRanksMap.values()].reduce(
+    const data = WCLRanksMap.values().reduce(
       (acc, item) => {
         acc[getWClColor(item.average_rank_percent)!]++;
         return acc;
@@ -121,7 +121,7 @@ function Charts(props: Props) {
       }
     );
 
-    const seriesData = Array.from(COLOR_RANK.keys())
+    const seriesData = COLOR_RANK.keys()
       .map((color) => ({
         value: data[color as keyof typeof data],
         name: COLOR_RANK.get(color)!,
@@ -143,7 +143,7 @@ function Charts(props: Props) {
       series: [
         {
           type: "pie",
-          data: seriesData,
+          data: [...seriesData],
           radius: ["35%", "65%"],
           itemStyle: {
             borderRadius: 10,
@@ -182,7 +182,7 @@ function Charts(props: Props) {
       }
     );
 
-    const seriesData = Array.from(COLOR_RANK.keys())
+    const seriesData = COLOR_RANK.keys()
       .map((color) => ({
         value: data[color as keyof typeof data],
         name: COLOR_RANK.get(color)!,
@@ -204,7 +204,7 @@ function Charts(props: Props) {
       series: [
         {
           type: "pie",
-          data: seriesData,
+          data: [...seriesData],
           radius: ["35%", "65%"],
           itemStyle: {
             borderRadius: 10,
