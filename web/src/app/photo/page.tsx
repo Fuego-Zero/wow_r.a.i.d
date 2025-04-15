@@ -7,6 +7,7 @@ import BaseProvider from "../components/common/BaseProvider";
 
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import { useMemo } from "react";
 
 const Masonry = dynamic(
   () => import("react-responsive-masonry").then((lib) => lib.default),
@@ -27,9 +28,18 @@ const ScrollWrap = dynamic(() => import("../components/common/ScrollWrap"), {
 });
 
 function PhotoContent() {
-  const images = Array.from({ length: 29 }).map((_, index) => {
-    return `/images/${index}.jpg`;
-  });
+  const images = useMemo(() => {
+    const images = Array.from({ length: 31 }).map((_, index) => {
+      return `/images/${index}.jpg`;
+    });
+
+    for (let i = images.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [images[i], images[j]] = [images[j], images[i]];
+    }
+
+    return images;
+  }, []);
 
   return (
     <Layout className="h-[100vh] flex overflow-auto">
@@ -62,7 +72,7 @@ function PhotoContent() {
   );
 }
 
-export default function Game() {
+export default function Photo() {
   return (
     <BaseProvider>
       <PhotoContent />
