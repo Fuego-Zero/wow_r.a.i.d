@@ -63,7 +63,7 @@ function Charts() {
 
     return {
       title: {
-        text: "职业数量",
+        text: "职业角色数量",
       },
       tooltip: null,
       xAxis: {
