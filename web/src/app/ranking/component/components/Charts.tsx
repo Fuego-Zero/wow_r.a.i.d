@@ -299,7 +299,7 @@ function Charts() {
       },
       legend: {
         data: legendData,
-        right: 0,
+        right: "5%",
         top: 0,
       },
       xAxis: {
