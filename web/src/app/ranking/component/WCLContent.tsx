@@ -95,7 +95,7 @@ function WCLContent() {
           </ScrollWrap>
         </Col>
         <Col span={24} xl={12} className="h-full">
-          <Charts filtered={WCLData.get(selectedActor) ?? []} />
+          <Charts />
         </Col>
       </Row>
     </Flex>

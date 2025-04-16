@@ -10,29 +10,25 @@ import {
 import { ECBasicOption } from "echarts/types/dist/shared";
 import { getWClColor } from "@/app/utils";
 import { WCLRank } from "@/app/player/types";
+import { MapValueType } from "@/app/types";
 
-type Props = {
-  filtered: WCLRank[];
-};
+const ROLE_CLASSES: RoleClasses[] = [
+  "DK",
+  "XD",
+  "LR",
+  "FS",
+  "MS",
+  "SM",
+  "QS",
+  "DZ",
+  "SS",
+  "ZS",
+];
 
-function Charts(props: Props) {
-  const { filtered } = props;
+function Charts() {
   const { WCLRanksMap } = useAppConfig();
 
   const chartOptions1 = useMemo<ECBasicOption>(() => {
-    const ROLE_CLASSES: RoleClasses[] = [
-      "DK",
-      "XD",
-      "LR",
-      "FS",
-      "QS",
-      "MS",
-      "DZ",
-      "SM",
-      "SS",
-      "ZS",
-    ];
-
     const data = WCLRanksMap.values().reduce(
       (acc, item) => {
         acc[item.classes].set(item.user_name, item);
@@ -67,7 +63,7 @@ function Charts(props: Props) {
 
     return {
       title: {
-        text: "全部职业数量与分布",
+        text: "职业数量",
       },
       tooltip: null,
       xAxis: {
@@ -105,25 +101,27 @@ function Charts(props: Props) {
       ["#666666", "灰色"],
     ]);
 
-    const data = WCLRanksMap.values().reduce(
-      (acc, item) => {
-        acc[getWClColor(item.average_rank_percent)!]++;
-        return acc;
-      },
-      {
-        "#e5cc80": 0,
-        "#e268a8": 0,
-        "#ff8000": 0,
-        "#a335ee": 0,
-        "#0070ff": 0,
-        "#1eff00": 0,
-        "#666666": 0,
-      }
-    );
+    const colorRankMap: Record<
+      string,
+      Array<MapValueType<typeof WCLRanksMap>>
+    > = {
+      "#e5cc80": [],
+      "#e268a8": [],
+      "#ff8000": [],
+      "#a335ee": [],
+      "#0070ff": [],
+      "#1eff00": [],
+      "#666666": [],
+    };
 
-    const seriesData = COLOR_RANK.keys()
+    WCLRanksMap.values().forEach((item) => {
+      const color = getWClColor(item.average_rank_percent)!;
+      colorRankMap[color].push(item);
+    });
+
+    const seriesData = [...COLOR_RANK.keys()]
       .map((color) => ({
-        value: data[color as keyof typeof data],
+        value: colorRankMap[color].length,
         name: COLOR_RANK.get(color)!,
         itemStyle: {
           color: color,
@@ -131,20 +129,20 @@ function Charts(props: Props) {
         label: {
           fontSize: 14,
           color: color,
-          formatter: "{c} ({d}%)",
+          formatter: "{c}\n{d}%",
         },
       }))
       .filter((item) => item.value > 0);
 
     return {
       title: {
-        text: "全部职业分数与分布",
+        text: "职业分数总览",
       },
       series: [
         {
           type: "pie",
-          data: [...seriesData],
-          radius: ["35%", "65%"],
+          data: seriesData,
+          radius: [0, "65%"],
           itemStyle: {
             borderRadius: 10,
             borderWidth: 2,
@@ -157,64 +155,167 @@ function Charts(props: Props) {
 
   const chartOptions3 = useMemo<ECBasicOption>(() => {
     const COLOR_RANK = new Map([
-      ["#e5cc80", "金色"],
-      ["#e268a8", "粉色"],
-      ["#ff8000", "橙色"],
-      ["#a335ee", "紫色"],
-      ["#0070ff", "蓝色"],
-      ["#1eff00", "绿色"],
       ["#666666", "灰色"],
+      ["#1eff00", "绿色"],
+      ["#0070ff", "蓝色"],
+      ["#a335ee", "紫色"],
+      ["#ff8000", "橙色"],
+      ["#e268a8", "粉色"],
+      ["#e5cc80", "金色"],
     ]);
 
-    const data = filtered.reduce(
+    const COLOR_ORDER = [...COLOR_RANK.keys()];
+
+    const roleClassesMap = WCLRanksMap.values().reduce(
       (acc, item) => {
-        acc[getWClColor(item.average_rank_percent)!]++;
+        acc[item.classes].push(item);
         return acc;
       },
-      {
-        "#e5cc80": 0,
-        "#e268a8": 0,
-        "#ff8000": 0,
-        "#a335ee": 0,
-        "#0070ff": 0,
-        "#1eff00": 0,
-        "#666666": 0,
-      }
+      ROLE_CLASSES.reduce((acc, roleClass) => {
+        acc[roleClass] = [];
+        return acc;
+      }, {} as Record<RoleClasses, WCLRank[]>)
     );
 
-    const seriesData = COLOR_RANK.keys()
-      .map((color) => ({
-        value: data[color as keyof typeof data],
-        name: COLOR_RANK.get(color)!,
-        itemStyle: {
-          color: color,
-        },
+    const series = ROLE_CLASSES.map((classes) => {
+      const data = roleClassesMap[classes].reduce((prev, item) => {
+        const color = getWClColor(item.average_rank_percent)!;
+        const index = COLOR_ORDER.indexOf(color);
+        prev[index]++;
+        return prev;
+      }, Array<number>(ROLE_CLASSES.length).fill(0));
+
+      return {
+        name: ROLE_CLASSES_NAME_MAP[classes],
+        type: "bar",
+        stack: "total",
         label: {
-          fontSize: 14,
+          show: true,
+          formatter: (row: any) => {
+            if (row.data === 0) return "";
+            return row.data + "%";
+          },
+        },
+        emphasis: {
+          focus: "series",
+        },
+        itemStyle: {
+          color: ROLE_CLASSES_COLOR_MAP[classes],
+        },
+        data: data,
+      };
+    });
+
+    const columnTotals = Array(ROLE_CLASSES.length).fill(0);
+    series.forEach((rowData) => {
+      rowData.data.forEach((value, colIndex) => {
+        columnTotals[colIndex] += value;
+      });
+    });
+
+    const originalDataMap = new Map<string, number[]>();
+
+    series.forEach((seriesItem) => {
+      const originalData = [...seriesItem.data];
+      originalDataMap.set(seriesItem.name, originalData);
+
+      seriesItem.data = seriesItem.data.map((value, colIndex) => {
+        const total = columnTotals[colIndex];
+        return total > 0 ? +((value / total) * 100).toFixed(2) : 0;
+      });
+    });
+
+    const yAxisData = [...COLOR_RANK]
+      .map(([color, name]) => ({
+        value: name,
+        textStyle: {
           color: color,
-          formatter: "{c} ({d}%)",
         },
       }))
-      .filter((item) => item.value > 0);
+      .filter((_, index) => {
+        let total = 0;
+
+        series.forEach((seriesItem) => {
+          total += seriesItem.data[index];
+        });
+
+        return total > 0;
+      });
+
+    const legendData = ROLE_CLASSES.map((key) => ({
+      name: ROLE_CLASSES_NAME_MAP[key as RoleClasses],
+      icon: "roundRect",
+    }));
+
+    legendData.splice(5, 0, "\n" as any);
 
     return {
       title: {
-        text: "当前天赋分数与分布",
+        text: "职业分数分布",
       },
-      series: [
-        {
-          type: "pie",
-          data: [...seriesData],
-          radius: ["35%", "65%"],
-          itemStyle: {
-            borderRadius: 10,
-            borderWidth: 2,
-            borderColor: "#000",
-          },
+      grid: {
+        left: "2%",
+        right: "3%",
+        bottom: "15%",
+        top: "15%",
+        containLabel: true,
+      },
+      tooltip: {
+        trigger: "axis",
+        axisPointer: {
+          type: "shadow",
         },
-      ],
+        backgroundColor: "#121212",
+        borderColor: "#121212",
+        textStyle: {
+          color: "#f0f0f0",
+          fontWeight: "normal",
+        },
+        formatter: function (params: any) {
+          let result = `<div>${params[0].axisValue}</div>`;
+          params.forEach((param: any) => {
+            const originalValue =
+              param.seriesName && originalDataMap.has(param.seriesName)
+                ? originalDataMap.get(param.seriesName)![param.dataIndex]
+                : 0;
+
+            if (originalValue === 0) return;
+
+            const color = param.color;
+            const seriesName = param.seriesName;
+            const percentValue = param.value;
+
+            result += `<div style="display:flex;justify-content:space-between;margin:3px 0">
+              <span style="margin-right:15px">
+                <span style="display:inline-block;width:10px;height:10px;background:${color};margin-right:5px;border-radius:50%;"></span>
+                ${seriesName}
+              </span>
+              <span>${originalValue} (${percentValue}%)</span>
+            </div>`;
+          });
+
+          return result;
+        },
+      },
+      legend: {
+        data: legendData,
+        right: 0,
+        top: 0,
+      },
+      xAxis: {
+        type: "value",
+        max: 100,
+        axisLabel: {
+          formatter: "{value}%",
+        },
+      },
+      yAxis: {
+        type: "category",
+        data: yAxisData,
+      },
+      series: series,
     };
-  }, [filtered]);
+  }, [WCLRanksMap]);
 
   return (
     <Flex className="w-full h-full min-h-0" vertical>
