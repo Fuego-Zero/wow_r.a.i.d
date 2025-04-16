@@ -29,7 +29,7 @@ const ScrollWrap = dynamic(() => import("../components/common/ScrollWrap"), {
 
 function PhotoContent() {
   const images = useMemo(() => {
-    const images = Array.from({ length: 31 }).map((_, index) => {
+    const images = Array.from({ length: 32 }).map((_, index) => {
       return `/images/${index}.jpg`;
     });
 
