@@ -131,7 +131,10 @@ function useChangeUserinfo(): [() => void, React.ReactNode] {
         >
           <Input />
         </Form.Item>
-        <Form.Item label="报名时间">
+        <Form.Item
+          label="报名时间"
+          tooltip="如果当前CD已经报名，修改后需要重新报名才会生效。"
+        >
           <Checkbox
             indeterminate={indeterminate}
             onChange={onCheckAllChange}
