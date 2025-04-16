@@ -2,13 +2,15 @@ import {
   App,
   Button,
   Card,
+  Input,
+  Select,
   Space,
   Table,
   TableProps,
   Tag,
   Tooltip,
 } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { changeRoleDisableSchedule, getAllUsers, resetPassword } from "../api";
 import { UserInfo } from "../types";
 import { hashPassword } from "@/app/player/utils";
@@ -195,7 +197,56 @@ function UserList() {
     getData();
   }, []);
 
-  return <Table<UserInfo> rowKey="id" columns={columns} dataSource={data} />;
+  const [filterType, setFilterType] = useState<keyof UserInfo>("user_name");
+  const [filterInput, setFilterInput] = useState("");
+
+  const options = [
+    {
+      value: "user_name",
+      label: "用户名",
+    },
+    {
+      value: "wechat_name",
+      label: "微信名",
+    },
+  ];
+
+  const title = () => (
+    <Space.Compact>
+      <Select
+        defaultValue="user_name"
+        value={filterType}
+        options={options}
+        onChange={(e) => {
+          setFilterType(e as keyof UserInfo);
+        }}
+      />
+      <Input
+        allowClear
+        value={filterInput}
+        onChange={(e) => {
+          setFilterInput(e.target.value);
+        }}
+      />
+    </Space.Compact>
+  );
+
+  const dataSource = useMemo(() => {
+    if (filterInput === "") return data;
+
+    return data.filter((item) => {
+      return item[filterType]?.toString().includes(filterInput);
+    });
+  }, [filterInput, data, filterType]);
+
+  return (
+    <Table<UserInfo>
+      title={title}
+      rowKey="id"
+      columns={columns}
+      dataSource={dataSource}
+    />
+  );
 }
 
 export default UserList;
