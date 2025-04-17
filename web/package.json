@@ -5,6 +5,7 @@
   "description": "WOW R.A.I.D (Roster Auto-Integrated Deployment)",
   "scripts": {
     "dev": "next dev --turbopack",
+    "svc": "cd ../server_node/ && yarn debug",
     "build": "rimraf .next && next build",
     "bp": "yarn build && cd ../deploy && yarn run p-w",
     "start": "next start",
