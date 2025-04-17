@@ -300,6 +300,7 @@ function Charts() {
       legend: {
         data: legendData,
         right: "5%",
+        left: "6%",
         top: "7%",
         type: "scroll",
       },
