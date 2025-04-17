@@ -247,7 +247,7 @@ function Charts() {
       icon: "roundRect",
     }));
 
-    legendData.splice(5, 0, "\n" as any);
+    // legendData.splice(5, 0, "\n" as any);
 
     return {
       title: {
@@ -300,7 +300,8 @@ function Charts() {
       legend: {
         data: legendData,
         right: "5%",
-        top: 0,
+        top: "7%",
+        type: "scroll",
       },
       xAxis: {
         type: "value",
