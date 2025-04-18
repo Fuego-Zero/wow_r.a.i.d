@@ -605,11 +605,17 @@ def roster():
 
     class_to_enum = {e.value: e.name for e in ActorMap}
 
+    cycle_start, cycle_end = get_cycle_start_end()
+
     schedule_coll = db["schedule"]
-    schedule_coll.delete_many({"role_id": {"$nin": excluded_role_ids_object}})
+    schedule_coll.delete_many({
+        "$and": [
+            {"role_id": {"$nin": excluded_role_ids_object}},
+            {"create_time": {"$gte": cycle_start, "$lte": cycle_end}}
+        ]
+    })
 
     # 一次性全量查询缓存数据，避免循环中逐条检索数据库
-    cycle_start, cycle_end = get_cycle_start_end()
     signup_records_cursor = signup_coll.find({
         "$and": [
             {"delete_time": None},
